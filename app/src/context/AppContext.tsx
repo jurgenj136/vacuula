@@ -1,8 +1,8 @@
-import { createContext, useEffect, useRef, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { BASE_PATH, Http, type LoadingState, type ServerInfo } from '../http'
 import { GEN3_COMMANDS } from '../http/gen3'
-import type { UseState } from '../pages/map/types'
+import type { UseState } from '../components/map/types'
 import { Neato, RobotType, type QuickRobotInfo, type Robot } from '../types'
 import { GEN4_COMMANDS } from '../http/gen4'
 import { OrbitalServices, type AnyEvent } from '../types/neato/gen4'
@@ -19,10 +19,6 @@ interface AppContextType {
     selectRobot: (serial: string) => void,
     updateRobotName: (name: string) => Promise<void>
     lastHeartbeat?: number,
-
-    persistentMaps?: (Neato.Gen3.PersistentMap[] | Neato.Gen4.Floorplan[])
-
-    setPersistentMaps: UseState<(Neato.Gen3.PersistentMap[] | Neato.Gen4.Floorplan[]) | undefined>
 
     cleanings?: Neato.Gen4.Cleaning[] | Neato.Gen3.CleaningRun[]
     setCleanings: UseState<Neato.Gen4.Cleaning[] | Neato.Gen3.CleaningRun[] | undefined>
@@ -50,7 +46,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const [robots, setRobots] = useState<QuickRobotInfo>()
     const [lastHeartbeat, setLastHeartbeat] = useState<number | undefined>()
     // const [persistentMaps, setPersistentMaps] = useState<PersistentMap[]>()
-    const [cleanings, setCleanings] = useState<Neato.Gen4.Cleaning[] | Neato.Gen3.Cleaning[]>()
+    const [cleanings, setCleanings] = useState<Neato.Gen4.Cleaning[] | Neato.Gen3.CleaningRun[]>()
     const { isDark: isDarkMode, setTheme } = useTheme()
     const setIsDarkMode = (dark: boolean) => setTheme(dark ? 'dark' : 'light')
     const [isLoading, setIsLoading] = useState(false)
@@ -225,12 +221,23 @@ export function AppProvider({ children }: { children: ReactNode }) {
             }
         }
 
-        interface VacuulaRobotEvent {
+        interface Gen3RobotEventData {
+            type?: string,
+            eventId?: string,
+            data: Pick<Neato.Gen3.GetRobotStateResponse, 'availableCommands' | 'details' | 'alert' | 'error' | 'state' | 'action'>
+        }
+
+        type VacuulaRobotEvent = {
             serial: string,
             ts: number,
-            type: RobotType,
+        } & ({
+            type: RobotType.NeatoGen4,
             data: AnyEvent
-        }
+        } | {
+            type?: RobotType.NeatoGen3,
+            event: string,
+            data: Gen3RobotEventData
+        })
 
         events.onmessage = (event) => {
             setLastHeartbeat(Date.now());
@@ -268,6 +275,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
             setRobot(cur => cur ? {
                 ...cur,
+                type: RobotType.NeatoGen3,
                 availableCommands: wrapper.data.data.availableCommands,
                 details: wrapper.data.data.details,
                 alert: wrapper.data.data.alert,

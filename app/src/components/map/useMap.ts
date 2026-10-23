@@ -3,7 +3,6 @@ import { DRAWING } from './constants'
 import { useCanvasViewport } from './useCanvasViewport'
 import { decodeRLE, calcFitZoomAndOffset } from './utils'
 import { drawMap, computeIgnoredRunValues, colorForPathValue, type CellShape } from './drawingFunctions'
-import { Http } from '../../http'
 import type { Offset } from './types'
 import { useCleaning, usePersistentMap } from '../../loaders/resources'
 import { useRobot } from '../../context/useRobot'
@@ -41,7 +40,7 @@ export function useMap({
     redrawKey,
     backgroundToken
 }: UseMapOptions) {
-    const canvasRef = useRef<HTMLCanvasElement | undefined>(undefined)
+    const canvasRef = useRef<HTMLCanvasElement>(null)
     const cellsRef = useRef<number[] | null>(null)
     const runCellsRef = useRef<number[] | null>(null)
     const runIgnoreSetRef = useRef<Set<number>>(new Set())
@@ -84,7 +83,7 @@ export function useMap({
         userInteractedRef.current = true
         handleTouchStart(e)
     }, [handleTouchStart])
-    const onWheel = useCallback((e: React.WheelEvent) => {
+    const onWheel = useCallback((e: React.WheelEvent<HTMLCanvasElement>) => {
         userInteractedRef.current = true
         handleWheel(e)
     }, [handleWheel])

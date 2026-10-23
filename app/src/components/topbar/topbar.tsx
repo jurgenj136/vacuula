@@ -8,7 +8,7 @@ let onlineTimeout: number;
 
 export default function Topbar({ variant = 'header' }: { variant?: 'header' | 'sidebar' }) {
     const { lastHeartbeat } = useApp()
-    const [isOnline, setIsOnline] = useState(false)
+    const [, setIsOnline] = useState(false)
 
     useEffect(() => {
         clearTimeout(onlineTimeout)

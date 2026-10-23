@@ -1,4 +1,4 @@
-import type { NoGoLine, Zone } from "../../../pages/map/types";
+import type { NoGoLine, Zone } from "../../../components/map/types";
 import type { GetSchedule } from "../../../pages/schedule/types";
 import { biEnum } from "../../.helpers";
 import type { Preferences } from "./settings";

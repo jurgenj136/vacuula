@@ -62,8 +62,8 @@ function StatusIcons() {
     const { robot } = useRobot()
     return (
         <>
-            {robot.error && <LuCircleAlert size={16} className="shrink-0 text-err" aria-hidden="true" />}
-            {robot.alert && <LuTriangleAlert size={16} className="shrink-0 text-warn" aria-hidden="true" />}
+            {robot.type === RobotType.NeatoGen3 && robot.error && <LuCircleAlert size={16} className="shrink-0 text-err" aria-hidden="true" />}
+            {robot.type === RobotType.NeatoGen3 && robot.alert && <LuTriangleAlert size={16} className="shrink-0 text-warn" aria-hidden="true" />}
             {isDocked(robot) && (
                 <LuPlugZap size={15} className="shrink-0 text-info" title={t('topbar.docked')} />
             )}

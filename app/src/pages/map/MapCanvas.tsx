@@ -42,7 +42,7 @@ export default function MapCanvas({
 }: MapCanvasProps) {
     const { t } = useTranslation()
     // TODO: decide on how exactly i want this to work, for now just show the button if there is at least 3 points.
-    const [showCloseAsPolygon, setShowCloseAsPolygon] = useState(false)
+    const [, setShowCloseAsPolygon] = useState(false)
 
     const { canvasRef, mapSize, zoom, offset, isDragging, hasMoved, canvasHandlers } = useMap({
         mapId,
@@ -53,7 +53,7 @@ export default function MapCanvas({
     })
 
     const addPointAtCrosshair = () => {
-        const coords = getCrosshairWorldCoords(canvasRef, offset, zoom, mapSize)
+        const coords = getCrosshairWorldCoords(canvasRef, offset, zoom, mapSize!)
         setCurrentLinePoints(prev => [...prev, coords])
     }
 
@@ -75,7 +75,7 @@ export default function MapCanvas({
     const onTouchMove = (e: React.TouchEvent) => {
         canvasHandlers.onTouchMove(e)
         if (currentLinePoints.length > 1 && mapSize) {
-            const coords = getCrosshairWorldCoords(canvasRef, offset, zoom, mapSize)
+            const coords = getCrosshairWorldCoords(canvasRef, offset, zoom, mapSize!)
             const [fx, fy] = currentLinePoints[0]
             const distance = Math.sqrt((coords[0] - fx) ** 2 + (coords[1] - fy) ** 2)
             setShowCloseAsPolygon(distance < DRAWING.CLOSE_THRESHOLD)

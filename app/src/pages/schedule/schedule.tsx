@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import type { GetSchedule, ScheduleEvent } from './types'
+import type { GetSchedule, ScheduleEventDraft } from './types'
 import { LuTrash2 } from 'react-icons/lu'
 import Input from '../../components/input/input'
 import Button from '../../components/button/button'
@@ -46,7 +46,7 @@ export default () => {
         .flatMap(m => getCachedZones(robot.serial, m.id).map(z => ({ value: z.id, label: `${m.name} - ${z.name}` })))
 
 
-    const [scheduleForm, SetScheduleForm] = useState<ScheduleEvent>({
+    const [scheduleForm, SetScheduleForm] = useState<ScheduleEventDraft>({
         startTime: '',
         day: -1,
         mode: 0

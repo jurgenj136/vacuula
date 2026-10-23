@@ -16,6 +16,7 @@ import { Http } from '../../http'
 import { Neato, RobotType, type Robot } from '../../types'
 
 import MapCanvas, { type MapMode } from './MapCanvas'
+import type { ExtraDrawFn } from '../../components/map/useMap'
 import { GEN4_COMMANDS } from '../../http/gen4'
 import { useRobot } from '../../context/useRobot'
 import { usePersistentMaps } from '../../loaders/resources'
@@ -74,7 +75,7 @@ export default () => {
     }, [])
 
 
-    const extraDraw = useCallback((ctx, canvas, currentZoom, currentOffset, mapSize) => {
+    const extraDraw = useCallback<ExtraDrawFn>((ctx, canvas, currentZoom, currentOffset, mapSize) => {
         const showBoundaries = mode === 'boundary-edit'
             ? boundaries.filter(b => b.id !== activeBoundaryId)
             : boundaries

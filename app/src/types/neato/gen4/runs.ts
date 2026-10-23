@@ -50,6 +50,7 @@ export interface Run {
     state: RunStates
     stats: Stats
     settings: RunSettings
+    autonomous_dock?: boolean
 }
 
 export interface Stats {

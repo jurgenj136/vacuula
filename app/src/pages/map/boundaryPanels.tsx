@@ -13,7 +13,7 @@ import { BoundaryTypes } from './boundaryTypes'
 interface BoundaryDetailsProps {
     map?: Floorplan | Neato.Gen3.PersistentMap
     boundary: NoGoLine | Zone
-    docked: boolean
+    docked: boolean | undefined
     editBoundary: (id: string) => void
     deleteBoundary: (id: string) => void
     onCleanZone: (boundary: Zone) => void
