@@ -9,10 +9,17 @@ import './index.css'
 import App from './app.tsx'
 import { BASE_PATH } from './http.ts';
 
-createRoot(document.getElementById('root')!).render(
+const render = () => createRoot(document.getElementById('root')!).render(
   <AppProvider>
     <BrowserRouter basename={BASE_PATH}>
       <App />
     </BrowserRouter>
   </AppProvider>,
 )
+
+// `pnpm dev:mock` only; dropped from production builds
+if (import.meta.env.DEV && import.meta.env.MODE === 'mock') {
+  import('./mocks/browser').then(mocks => mocks.startMocking()).then(render)
+} else {
+  render()
+}
