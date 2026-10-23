@@ -1,9 +1,11 @@
 import { describe, expect, onTestFinished, test, vi } from 'vitest'
+import { cleanup } from '@testing-library/react'
 import { renderApp } from '../render'
 import { http } from 'msw'
 import { command, post, server } from '../server'
 import { SERIALS, type RobotKey } from '../fixtures/robots'
 import * as settings from '../drivers/settings'
+import { t } from '../drivers/common'
 
 async function open(robot: RobotKey, fakeTimers = false) {
     const app = renderApp({ robot, page: 'settings', fakeTimers })
@@ -28,6 +30,16 @@ describe('Settings - shared', () => {
         await settings.selectTheme(user, 'light')
         expect(document.documentElement).toHaveAttribute('data-theme', 'light')
         await requests.expectNoWrites()
+    })
+
+    test('remembers the chosen map blob shape, nothing is sent', async () => {
+        const { user, requests } = await open('gen4')
+        expect(settings.selectedMapShape()).toBe(t('settings.mapShape.circle'))
+        await settings.selectMapShape(user, 'square')
+        await requests.expectNoWrites()
+        cleanup()
+        await open('gen4')
+        expect(settings.selectedMapShape()).toBe(t('settings.mapShape.square'))
     })
 })
 
@@ -91,6 +103,12 @@ describe('Settings - Gen4', () => {
         await expect.poll(() => settings.serialShown('GPC2A1B2C3D4')).toBe(true)
         expect(settings.factoryResetAvailable()).toBe(false)
     })
+
+    test('shows battery cycles and model from the general info', async () => {
+        await open('gen3')
+        await settings.findBatteryCycles(412)
+        expect(settings.robotModelShown('BotVacD7Connected')).toBe(true)
+    })
 })
 
 describe('Settings - Gen3', () => {
@@ -106,6 +124,12 @@ describe('Settings - Gen3', () => {
         await open('gen3')
         expect(settings.serialShown(SERIALS.gen3)).toBe(true)
         expect(settings.factoryResetAvailable()).toBe(false)
+    })
+
+    test('shows battery cycles and model from the general info', async () => {
+        await open('gen3')
+        await settings.findBatteryCycles(412)
+        expect(settings.robotModelShown('BotVacD7Connected')).toBe(true)
     })
 
     test('toggle robot sounds sends all preferences', async () => {

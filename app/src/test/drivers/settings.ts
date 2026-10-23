@@ -37,3 +37,11 @@ export async function selectTheme(user: User, theme: 'dark' | 'soft' | 'light') 
     await user.click(screen.getByRole('button', { name: new RegExp(`^${t('settings.theme')}`) }))
     await user.click(await screen.findByRole('radio', { name: t(`settings.theme_${theme}`) }))
 }
+
+const mapShapeSelect = () => screen.getByRole('combobox', { name: t('settings.mapShapeSelect') }) as HTMLSelectElement
+export const selectMapShape = (user: User, shape: 'circle' | 'square' | 'heart') =>
+    user.selectOptions(mapShapeSelect(), t(`settings.mapShape.${shape}`))
+export const selectedMapShape = () => mapShapeSelect().selectedOptions[0]?.textContent
+
+export const findBatteryCycles = (cycles: number) => screen.findByText(t('settings.batteryCycles', { cycles }))
+export const robotModelShown = (model: string) => screen.queryByText(t('settings.robotModel', { model })) !== null

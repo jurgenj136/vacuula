@@ -6,7 +6,8 @@ import { SiBuymeacoffee, SiKofi } from 'react-icons/si'
 import { GrCertificate } from 'react-icons/gr'
 import { VscFeedback } from 'react-icons/vsc'
 import { FaFileLines } from 'react-icons/fa6'
-import { RobotType } from '../../types'
+import { Neato, RobotType } from '../../types'
+import { GEN3_COMMANDS } from '../../http/gen3'
 import { useRobot } from '../../context/useRobot'
 import Input from '../../components/input/input'
 import Button from '../../components/button/button'
@@ -21,6 +22,7 @@ import { Gen3RobotSettings, Gen4RobotSettings } from './robotSettings'
 import { MatchSystemRow, ThemeSwatch, ThemeTiles } from './themePicker'
 import { SelectRow } from './selectRow'
 import { Section } from './section'
+import { loadSelectedMapShape, saveSelectedMapShape, MAPSHAPES } from './mapshapes'
 
 const LINKS = [
     { icon: <FaGithub size={18} />, text: 'Github', url: 'https://github.com/vacuula' },
@@ -40,6 +42,7 @@ const Settings = () => {
     const { robot, updateRobotName, serverInfo } = useRobot()
 
     const [robotName, setRobotName] = useState(robot.name)
+    const [selectedMapShape, setSelectedMapShape] = useState(loadSelectedMapShape())
 
     useEffect(() => {
         setRobotName(robot.name)
@@ -55,6 +58,10 @@ const Settings = () => {
 
         return () => clearTimeout(timer)
     }, [robotName])
+
+    useEffect(() => {
+        saveSelectedMapShape(selectedMapShape)
+    }, [selectedMapShape])
 
     const link = (text: string, icon: React.ReactNode, url: string) => (
         <Button key={text} icon={icon as React.JSX.Element} text={text} style='secondary' className="justify-start" onClick={() => window.open(url)} />
@@ -76,12 +83,7 @@ const Settings = () => {
                                 extraInfo={(
                                     <>
                                         <span className="font-mono">{t('settings.serial', { serial: 'label_serial' in robot ? robot.label_serial : robot.serial })}</span>
-                                        {robot.type === RobotType.NeatoGen3 && (
-                                            <>
-                                                <br />
-                                                <span className="font-mono">{t('settings.birthday', { date: manufacturingCodeToDate(robot.serial.split('-')[0])?.toLocaleDateString(i18n.language) ?? '' })}</span>
-                                            </>
-                                        )}
+                                        {robot.type === RobotType.NeatoGen3 && <Gen3RobotDetails />}
                                     </>
                                 )}
                             />
@@ -113,6 +115,12 @@ const Settings = () => {
                                 options={APP_LANGUAGES.map(lang => ({ value: lang.code, label: lang.label }))}
                                 value={i18n.resolvedLanguage ?? DEFAULT_LANGUAGE}
                                 onChange={(code) => i18n.changeLanguage(code)}
+                            />
+                            <SelectRow
+                                label={t('settings.mapShapeSelect')}
+                                options={MAPSHAPES.map(shape => ({ value: shape.value, label: t(shape.label) }))}
+                                value={selectedMapShape}
+                                onChange={setSelectedMapShape}
                             />
                             <SelectRow
                                 label={t('settings.units')}
@@ -154,6 +162,34 @@ const Settings = () => {
 }
 
 export default Settings
+
+const Gen3RobotDetails = () => {
+    const { t } = useTranslation()
+    const { robot } = useRobot()
+
+    const [robotGeneralInfo, setRobotGeneralInfo] = useState<Neato.Gen3.GetGeneralInfo>()
+
+    useEffect(() => {
+        GEN3_COMMANDS.getGeneralInfo(robot.serial).then(res => {
+            setRobotGeneralInfo(res.data.data)
+        })
+    },[robot.serial])
+
+    return (
+        <>
+            <br />
+            <span className="font-mono">{t('settings.birthday', { date: manufacturingCodeToDate(robot.serial.split('-')[0])?.toLocaleDateString() ?? '' })}</span>
+            {robotGeneralInfo && (
+                <>
+                    <br />
+                    <span className="font-mono">{t('settings.batteryCycles', { cycles: robotGeneralInfo.battery.totalCharges })}</span>
+                    <br />
+                    <span className="font-mono">{t('settings.robotModel', { model: robotGeneralInfo.model })}</span>
+                </>
+            )}
+        </>
+    )
+}
 
 function manufacturingCodeToDate(code: string) {
     if (!/^[A-Z]{3}\d{5}$/.test(code)) {

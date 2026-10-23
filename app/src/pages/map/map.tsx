@@ -23,7 +23,6 @@ import { usePersistentMaps } from '../../loaders/resources'
 import type { Floorplan } from '../../types/neato/gen4'
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from 'react-i18next'
-import i18n from '../../i18n'
 import { useGetPromotedFloorplan } from '../../utils/floormaps'
 import type { NoGoLine, Point, UseState, Zone } from '../../components/map/types'
 import { drawZones, drawNoGoLines, drawBase, drawCrosshair, drawInProgressPolyline, onDockImageReady } from '../../components/map/drawingFunctions'
@@ -31,6 +30,7 @@ import { calcRelevancy, upsertPreserveOrder } from '../../components/map/utils'
 import { normalizeHex, pickUnusedPreset } from '../../components/map/color'
 import { isDocked } from '../../components/topbar/robotInfo'
 import { fetchGen3MapBoundaries } from '../../loaders/gen3Boundaries'
+import { getGen3CleaningMode, getGen3NavigationMode, getGen4CleaningMode, getGen4NavigationMode } from '../../utils/modes'
 import { BoundaryDetails, EditBoundaryDetails } from './boundaryPanels'
 import { BoundaryTypes } from './boundaryTypes'
 import { BoundaryType, IconTile, ItemRow, Swatch } from './featureRow'
@@ -265,12 +265,12 @@ export default () => {
     const cleanZone = async (zone: Zone) => {
         if (!persistentMap) return
         if (robot.type === RobotType.NeatoGen3) {
-            GEN3_COMMANDS.startCleaningZone(robot.serial, persistentMap, zone.id, Neato.Gen3.CleaningMode.ECO, Neato.Gen3.CleaningNavigationMode.NORMAL)
+            GEN3_COMMANDS.startCleaningZone(robot.serial, persistentMap, zone.id, getGen3CleaningMode(), getGen3NavigationMode())
             return;
         }
         const promotedFloorplan = await getPromotedFloorplan();
         if (!promotedFloorplan) return // TODO: ERROR (will do when i do gen3)
-        GEN4_COMMANDS.startCleaning(robot.serial, Neato.Gen4.CleaningMode.ECO, Neato.Gen4.CleaningNavigationMode.NORMAL, promotedFloorplan.id, true, [zone.id])
+        GEN4_COMMANDS.startCleaning(robot.serial, getGen4CleaningMode(), getGen4NavigationMode(), promotedFloorplan.id, true, [zone.id])
     }
 
 
@@ -318,7 +318,7 @@ export default () => {
                                     onClick={() => setPersistentMap(item.id)}
                                     description={
                                         <>
-                                            <span>{new Date('created_at' in item ? item.created_at : item.id).toLocaleString(i18n.language)}</span>
+                                            <span>{new Date('created_at' in item ? item.created_at : item.id).toLocaleString()}</span>
                                             {'promoted' in item && item.promoted && <Badge tone="accent">{t('map.floorPlan')}</Badge>}
                                         </>
                                     }>
@@ -349,7 +349,7 @@ export default () => {
                             !isDocked(robot) && 'pointer-events-none opacity-40',
                         )}
                         onClick={() => robot.type === RobotType.NeatoGen4
-                            ? GEN4_COMMANDS.startCleaning(robot.serial, Neato.Gen4.CleaningMode.ECO, Neato.Gen4.CleaningNavigationMode.GENTLE)
+                            ? GEN4_COMMANDS.startCleaning(robot.serial, getGen4CleaningMode(), getGen4NavigationMode())
                             : GEN3_COMMANDS.startPersistentMapExploration(robot.serial)}>
                         <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-on-accent">
                             <LuPlus size={18} strokeWidth={2.5} />

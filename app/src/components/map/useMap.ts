@@ -7,6 +7,7 @@ import type { Offset } from './types'
 import { useCleaning, usePersistentMap } from '../../loaders/resources'
 import { useRobot } from '../../context/useRobot'
 import { RobotType } from '../../types'
+import { loadSelectedMapShape } from '../../pages/settings/mapshapes'
 
 export interface MapSize { width: number; height: number }
 
@@ -43,7 +44,7 @@ function heightAboveSheet(container: HTMLElement, height: number) {
 export function useMap({
     mapId,
     runId,
-    shape = 'circle',
+    shape = loadSelectedMapShape(),
     fitOnLoad = true,
     extraDraw,
     redrawKey,

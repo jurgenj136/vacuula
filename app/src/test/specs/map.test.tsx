@@ -50,7 +50,15 @@ describe('Map - Gen4', () => {
         const { user, requests } = await open('gen4')
         expect(map.canExplore()).toBe(true)
         await map.exploreNewMap(user)
-        await requests.expectWrites([gen4({ ability: 'cleaning.start', runs: [{ map: null, settings: { mode: 'eco', navigation_mode: 'gentle' } }] })])
+        await requests.expectWrites([gen4({ ability: 'cleaning.start', runs: [{ map: null, settings: { mode: 'eco', navigation_mode: 'normal' } }] })])
+    })
+
+    test('explore a new map with the suction and navigation chosen on home', async () => {
+        localStorage.setItem('vacuula.gen4.cleaningMode', 'turbo')
+        localStorage.setItem('vacuula.gen4.navigationMode', 'gentle')
+        const { user, requests } = await open('gen4')
+        await map.exploreNewMap(user)
+        await requests.expectWrites([gen4({ ability: 'cleaning.start', runs: [{ map: null, settings: { mode: 'turbo', navigation_mode: 'gentle' } }] })])
     })
 
     test('exploring is not offered while undocked', async () => {

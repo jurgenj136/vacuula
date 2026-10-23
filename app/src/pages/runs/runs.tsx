@@ -6,15 +6,14 @@ import { useApp } from '../../context/useApp'
 import { useRobot } from '../../context/useRobot'
 import { useLayout } from '../../components/layout/useLayout'
 import { useTranslation } from 'react-i18next'
-import i18n from '../../i18n'
 import { useUnits } from '../../units'
 import { cn } from '../../utils/cn'
 import { SectionHeading } from '../../components/list/list'
 import RunDetail from './runDetail'
 import { areaOf, batteryOf, durationOf, isComplete, startOf, type Cleaning } from './format'
 
-const dayLabel = (iso: string) => new Date(iso).toLocaleDateString(i18n.language, { weekday: 'short', day: 'numeric', month: 'short' })
-const timeLabel = (iso: string) => new Date(iso).toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' })
+const dayLabel = (iso: string) => new Date(iso).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })
+const timeLabel = (iso: string) => new Date(iso).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
 
 export default () => {
     const { t } = useTranslation()
@@ -112,7 +111,7 @@ export default () => {
                 <div className="min-w-0 grow overflow-y-auto p-6 max-lg:pt-4">
                     {selectedCleaning ? (
                         <>
-                            <h2 className="m-0 mb-3 text-xl font-semibold tracking-[-0.01em] text-fg">{new Date(startOf(selectedCleaning)).toLocaleString(i18n.language)}</h2>
+                            <h2 className="m-0 mb-3 text-xl font-semibold tracking-[-0.01em] text-fg">{new Date(startOf(selectedCleaning)).toLocaleString()}</h2>
                             <RunDetail cleaning={selectedCleaning} />
                         </>
                     ) : (
@@ -125,7 +124,7 @@ export default () => {
                     handle={false}
                     onOpenChange={setDrawerOpen}
                     openHeightPercent={70}
-                    title={selectedCleaning && new Date(startOf(selectedCleaning)).toLocaleString(i18n.language)}
+                    title={selectedCleaning && new Date(startOf(selectedCleaning)).toLocaleString()}
                 >
                     {selectedCleaning && <RunDetail cleaning={selectedCleaning} />}
                 </Drawer>

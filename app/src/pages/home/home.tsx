@@ -18,6 +18,7 @@ import type { NoGoLine, Zone } from '../../components/map/types'
 import { usePersistentMaps } from '../../loaders/resources'
 import { fetchAllGen3Boundaries, getCachedZones } from '../../loaders/gen3Boundaries'
 import { isDocked, isGen4D10 } from '../../components/topbar/robotInfo'
+import { getGen3CleaningMode, getGen3NavigationMode, getGen4CleaningMode, getGen4NavigationMode } from '../../utils/modes'
 import AlertCard, { type AlertTone } from '../../components/alert/alert'
 import Button from '../../components/button/button'
 import IconButton from '../../components/iconButton/iconButton'
@@ -80,12 +81,19 @@ export default function Home() {
     const { mascot } = useMascot()
     const layout = useLayout()
 
-    const [gen3__cleaningMode, gen3__setCleaningMode] = useState<CleaningMode>(CleaningMode.ECO)
-    const [gen3__navigationMode, gen3__setNavigationMode] = useState<CleaningNavigationMode>(CleaningNavigationMode.NORMAL)
+    const [gen3__cleaningMode, gen3__setCleaningMode] = useState<CleaningMode>(getGen3CleaningMode())
+    const [gen3__navigationMode, gen3__setNavigationMode] = useState<CleaningNavigationMode>(getGen3NavigationMode())
     const [gen3__cleaningCategory, gen3__setCleaningCategory] = useState<CleaningCategory>(isDocked(robot) ? CleaningCategory.MAP : CleaningCategory.HOUSE)
 
-    const [gen4__cleaningMode, gen4__setCleaningMode] = useState<Neato.Gen4.CleaningMode>(Neato.Gen4.CleaningMode.ECO)
-    const [gen4__navigationMode, gen4__setNavigationMode] = useState<Neato.Gen4.CleaningNavigationMode>(Neato.Gen4.CleaningNavigationMode.NORMAL)
+    const [gen4__cleaningMode, gen4__setCleaningMode] = useState<Neato.Gen4.CleaningMode>(getGen4CleaningMode())
+    const [gen4__navigationMode, gen4__setNavigationMode] = useState<Neato.Gen4.CleaningNavigationMode>(getGen4NavigationMode())
+
+    useEffect(() => {
+        localStorage.setItem('vacuula.gen3.cleaningMode', gen3__cleaningMode.toString())
+        localStorage.setItem('vacuula.gen3.navigationMode', gen3__navigationMode.toString())
+        localStorage.setItem('vacuula.gen4.cleaningMode', gen4__cleaningMode.toString())
+        localStorage.setItem('vacuula.gen4.navigationMode', gen4__navigationMode.toString())
+    }, [gen3__cleaningMode, gen3__navigationMode, gen4__cleaningMode, gen4__navigationMode])
 
     const [spotHeight, setSpotHeight] = useState(200)
     const [spotWidth, setSpotWidth] = useState(200)

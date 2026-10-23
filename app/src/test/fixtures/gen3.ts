@@ -89,6 +89,22 @@ export const gen3Preferences: Neato.Gen3.Preferences = {
     brushChangeReminderInterval: 216000,
 }
 
+export const gen3GeneralInfo: Neato.Gen3.GetGeneralInfo = {
+    productNumber: '905-0429',
+    serial: 'OPS30422-0123456789AB',
+    model: 'BotVacD7Connected',
+    firmware: '4.5.3-189',
+    battery: {
+        level: 87,
+        timeToEmpty: -1,
+        timeToFullCharge: -1,
+        totalCharges: 412,
+        manufacturingDate: new Date('2022-07-25'),
+        authorizationStatus: 2,
+        vendor: 'Panasonic',
+    },
+}
+
 export const gen3Maps: Neato.Gen3.PersistentMap[] = [
     { id: 'map-ground', name: 'Ground floor', enabled: true, base: { x: 0.5, y: 0.5 } },
     { id: 'map-attic', name: 'Attic', enabled: false, base: { x: 0.3, y: 0.6 } },

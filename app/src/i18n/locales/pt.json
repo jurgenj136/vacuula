@@ -108,7 +108,13 @@
         "zonesHint": "Zonas · sem seleção limpa o mapa inteiro",
         "cleanSpot": "Limpeza localizada",
         "cleanZones_one": "Limpar {{count}} zona",
-        "cleanZones_other": "Limpar {{count}} zonas"
+        "cleanZones_other": "Limpar {{count}} zonas",
+        "btnExplain": {
+            "locate": "Robô perdido?",
+            "mode": "Modo",
+            "navigation": "Navegação",
+            "cleaning": "Limpeza"
+        }
     },
     "runs": {
         "entryTitle": "Limpeza {{startedBy}} | {{date}}",
@@ -202,6 +208,8 @@
     "settings": {
         "serial": "N.º de série: {{serial}}",
         "birthday": "Data de fabrico: {{date}}",
+        "batteryCycles": "Ciclos da bateria: {{cycles}}",
+        "robotModel": "Modelo: {{model}}",
         "robotSettings": "Definições do robot",
         "forceFloorplan": "Forçar mapa",
         "robotLanguage": "Idioma",
@@ -238,6 +246,12 @@
         "themeHint_contrast": "Amarelo",
         "matchSystem": "Acompanhar o sistema",
         "matchSystemInfo": "Usa o tema Claro de dia e o Escuro à noite",
+        "mapShapeSelect": "Forma dos pontos do mapa",
+        "mapShape": {
+            "circle": "Círculo",
+            "square": "Quadrado",
+            "heart": "Coração"
+        },
         "units": "Unidades",
         "units_metric": "Métrico (m², cm)",
         "units_imperial": "Imperial (ft², ft)",

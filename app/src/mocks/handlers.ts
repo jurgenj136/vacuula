@@ -34,6 +34,7 @@ function gen3Command(db: MockDb, serial: string, body: Body, onStateChange: (ser
         case 'enableSchedule': db.gen3.schedule.enabled = true; break
         case 'disableSchedule': db.gen3.schedule.enabled = false; break
         case 'getPreferences': return ok(db.gen3.preferences)
+        case 'getGeneralInfo': return ok(db.gen3.generalInfo)
         case 'setPreferences': db.gen3.preferences = params as unknown as MockDb['gen3']['preferences']; break
         case 'getMapBoundaries': return ok({ boundaries: db.gen3.boundaries[params.mapId as string] ?? [] })
         case 'setMapBoundaries': db.gen3.boundaries[params.mapId as string] = params.boundaries as MockDb['gen3']['boundaries'][string]; break

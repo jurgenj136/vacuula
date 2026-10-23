@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest'
+import { cleanup } from '@testing-library/react'
 import { renderApp } from '../render'
 import { command } from '../server'
 import { serverEvents } from '../eventSource'
@@ -52,6 +53,19 @@ describe('Home - Gen3', () => {
         await home.chooseArea(user, 'house')
         await home.selectSuction(user, 'normal')
         await home.selectNavigation(user, 'deep')
+        await home.pressStart(user)
+        await requests.expectWrites([gen3({ cmd: 'startCleaning', params: { category: 2, mode: 2, navigationMode: 3 } })])
+    })
+
+    test('remembers suction and navigation across visits', async () => {
+        const first = await open({ robot: 'gen3' })
+        await home.selectSuction(first.user, 'normal')
+        await home.selectNavigation(first.user, 'deep')
+        cleanup()
+        const { user, requests } = await open({ robot: 'gen3' })
+        expect(home.selectedSuction()).toBe('normal')
+        expect(home.selectedNavigation()).toBe('deep')
+        await home.chooseArea(user, 'house')
         await home.pressStart(user)
         await requests.expectWrites([gen3({ cmd: 'startCleaning', params: { category: 2, mode: 2, navigationMode: 3 } })])
     })
@@ -200,6 +214,22 @@ describe('Home - Gen4', () => {
         await home.chooseArea(user, 'house')
         await home.selectSuction(user, 'turbo')
         await home.selectNavigation(user, 'gentle')
+        await home.pressStart(user)
+        await requests.expectWrites([gen4({
+            ability: 'cleaning.start',
+            runs: [{ map: null, settings: { mode: 'turbo', navigation_mode: 'gentle' } }],
+        })])
+    })
+
+    test('remembers suction and navigation across visits', async () => {
+        const first = await open({ robot: 'gen4' })
+        await home.selectSuction(first.user, 'turbo')
+        await home.selectNavigation(first.user, 'gentle')
+        cleanup()
+        const { user, requests } = await open({ robot: 'gen4' })
+        expect(home.selectedSuction()).toBe('turbo')
+        expect(home.selectedNavigation()).toBe('gentle')
+        await home.chooseArea(user, 'house')
         await home.pressStart(user)
         await requests.expectWrites([gen4({
             ability: 'cleaning.start',

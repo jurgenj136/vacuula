@@ -1,5 +1,5 @@
 {
-    "String-version": "2",
+    "String-version": "3",
     "common": {
         "save": "Save",
         "cancel": "Cancel",
@@ -108,7 +108,13 @@
         "zonesHint": "Zones · none selected cleans the whole map",
         "cleanSpot": "Clean spot",
         "cleanZones_one": "Clean {{count}} zone",
-        "cleanZones_other": "Clean {{count}} zones"
+        "cleanZones_other": "Clean {{count}} zones",
+        "btnExplain": {
+            "locate": "Lost robot?",
+            "mode": "Mode",
+            "navigation": "Navigation",
+            "cleaning": "Cleaning"
+        }
     },
     "runs": {
         "entryTitle": "{{startedBy}} cleaning | {{date}}",
@@ -202,6 +208,8 @@
     "settings": {
         "serial": "Serial nr: {{serial}}",
         "birthday": "Birthday: {{date}}",
+        "batteryCycles": "Battery cycles: {{cycles}}",
+        "robotModel": "Model: {{model}}",
         "robotSettings": "Robot settings",
         "forceFloorplan": "Force floorplan",
         "robotLanguage": "Language",
@@ -238,6 +246,12 @@
         "themeHint_contrast": "Yellow",
         "matchSystem": "Match system",
         "matchSystemInfo": "Uses Light by day and Dark at night",
+        "mapShapeSelect": "Map blob shape",
+        "mapShape": {
+            "circle": "Circle",
+            "square": "Square",
+            "heart": "Heart"
+        },
         "units": "Units",
         "units_metric": "Metric (m², cm)",
         "units_imperial": "Imperial (ft², ft)",

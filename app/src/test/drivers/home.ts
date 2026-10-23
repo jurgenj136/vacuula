@@ -21,6 +21,9 @@ export const suctionOptions: (user: User) => Promise<string[]> = async () => mod
 export const navigationOptions: (user: User) => Promise<string[]> = async () => modeIds(['normal', 'extraCare', 'deep', 'gentle'], enabledLabels(group('home.navigation')))
 export const selectSuction = (user: User, mode: Suction) => selectIn(user, 'home.suction', t(`modes.${mode}`))
 export const selectNavigation = (user: User, mode: Navigation) => selectIn(user, 'home.navigation', t(`modes.${mode}`))
+const pressedIn = (key: string) => within(group(key)).getAllByRole('button').find(b => b.getAttribute('aria-pressed') === 'true')?.textContent ?? ''
+export const selectedSuction = () => modeIds(['eco', 'normal', 'turbo', 'max', 'auto'], [pressedIn('home.suction')])[0]
+export const selectedNavigation = () => modeIds(['normal', 'extraCare', 'deep', 'gentle'], [pressedIn('home.navigation')])[0]
 
 export const openAreaPicker: (user: User) => Promise<void> = async () => {
     if (!setup()) throw new Error('cleaning setup not shown')

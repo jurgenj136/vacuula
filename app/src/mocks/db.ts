@@ -3,7 +3,7 @@ import type { Neato, QuickRobotInfo } from '../types'
 import type { GetSchedule } from '../pages/schedule/types'
 import type { NoGoLine, VacuulaMapData, Zone } from '../components/map/types'
 import { SERIALS, robots, serverInfo } from '../test/fixtures/robots'
-import { gen3Boundaries, gen3MapData, gen3Maps, gen3Preferences, gen3Runs, gen3Schedule, gen3States, type Gen3State } from '../test/fixtures/gen3'
+import { gen3Boundaries, gen3GeneralInfo, gen3MapData, gen3Maps, gen3Preferences, gen3Runs, gen3Schedule, gen3States, type Gen3State } from '../test/fixtures/gen3'
 import { gen4Boundaries, gen4CleaningOptions, gen4Floorplans, gen4MapData, gen4RobotLanguage, gen4RunMapData, gen4Runs, gen4Schedule, gen4States } from '../test/fixtures/gen4'
 
 export interface MockDb {
@@ -13,6 +13,7 @@ export interface MockDb {
         states: Record<string, Gen3State>
         schedule: GetSchedule
         preferences: Neato.Gen3.Preferences
+        generalInfo: Neato.Gen3.GetGeneralInfo
         maps: Neato.Gen3.PersistentMap[]
         boundaries: Record<string, (NoGoLine | Zone)[]>
         runs: Neato.Gen3.CleaningRun[]
@@ -39,6 +40,7 @@ export function createDb(): MockDb {
             states: { [SERIALS.gen3]: gen3States.idle, [SERIALS.offline]: gen3States.idle },
             schedule: gen3Schedule,
             preferences: gen3Preferences,
+            generalInfo: gen3GeneralInfo,
             maps: gen3Maps,
             boundaries: gen3Boundaries,
             runs: gen3Runs,
