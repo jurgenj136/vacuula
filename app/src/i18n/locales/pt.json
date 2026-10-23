@@ -3,6 +3,7 @@
     "common": {
         "save": "Guardar",
         "cancel": "Cancelar",
+        "back": "Voltar",
         "delete": "Eliminar",
         "edit": "Editar",
         "ok": "OK",
@@ -54,6 +55,14 @@
         "acquiringPersistentMapIds": "A obter IDs do mapa",
         "creatingUploadingMap": "A criar o mapa",
         "suspendedExploration": "Exploração suspensa"
+    },
+    "nav": {
+        "main": "Principal",
+        "home": "Início",
+        "runs": "Limpezas",
+        "map": "Mapa",
+        "schedule": "Agenda",
+        "settings": "Definições"
     },
     "topbar": {
         "selectRobot": "Selecionar robot",
@@ -184,6 +193,14 @@
         "theme_dark": "Escuro",
         "theme_soft": "Escuro (suave)",
         "theme_light": "Claro",
+        "theme_black": "Preto (OLED)",
+        "theme_neato": "Neato",
+        "theme_neato-light": "Neato (claro clássico)",
+        "theme_midnight": "Meia-noite",
+        "theme_dusk": "Crepúsculo",
+        "theme_contrast": "Alto contraste",
+        "matchSystem": "Acompanhar o sistema",
+        "matchSystemInfo": "Usa o tema Claro de dia e o Escuro à noite",
         "units": "Unidades",
         "units_metric": "Métrico (m², cm)",
         "units_imperial": "Imperial (ft², ft)",

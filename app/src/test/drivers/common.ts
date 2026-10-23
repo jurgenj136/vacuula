@@ -26,9 +26,12 @@ export function field(label: string, container: HTMLElement = document.body) {
     return section
 }
 
-// list item whose first line reads `text`
-export const row = (text: string, container: HTMLElement = document.body) =>
-    within(container).getByText(text, { exact: true }).parentElement!.parentElement!
+// list item whose first line reads `text` (navigation labels are not list items)
+export function row(text: string, container: HTMLElement = document.body) {
+    const matches = within(container).getAllByText(text, { exact: true }).filter(el => !el.closest('nav'))
+    if (matches.length !== 1) throw new Error(`expected one row "${text}", found ${matches.length}`)
+    return matches[0].parentElement!.parentElement!
+}
 
 export const checkbox = (container: HTMLElement) => within(container).getByRole('checkbox') as HTMLInputElement
 

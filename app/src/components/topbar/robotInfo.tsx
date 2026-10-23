@@ -1,36 +1,27 @@
-import styles from './robotInfo.module.scss'
-import { MdCleaningServices, MdError, MdWarning } from 'react-icons/md'
-import { IoMdPause } from 'react-icons/io'
-import { TbChargingPile } from 'react-icons/tb'
-import { GiNightSleep } from 'react-icons/gi'
-import { GoDownload } from 'react-icons/go'
-import { FaCloudDownloadAlt, FaCloudUploadAlt, FaCopy } from 'react-icons/fa'
-import { FaMagnifyingGlassLocation } from 'react-icons/fa6'
-import { MdOutlineExplore } from 'react-icons/md'
-import { RiTestTubeFill } from 'react-icons/ri'
+import { LuBatteryCharging, LuCircleAlert, LuCloudDownload, LuCloudUpload, LuCompass, LuCopy, LuFlaskConical, LuHousePlug, LuMoon, LuPause, LuPlugZap, LuScanSearch, LuSparkles, LuTriangleAlert } from 'react-icons/lu'
 import type { IconType } from 'react-icons'
 import Battery from '../battery/Battery'
 import { useRobot } from '../../context/useRobot'
 import { RobotType, type Robot } from '../../types'
-import { BasicState, resolveRobotState } from '../../utils/state'
+import { BasicState, getRobotStateKey, resolveRobotState } from '../../utils/state'
 import { useTranslation } from 'react-i18next'
 
 const basicStateIcons: Record<BasicState, IconType> = {
-    [BasicState.INVALID]: MdError,
-    [BasicState.ERROR]: MdError,
-    [BasicState.PAUSED]: IoMdPause,
-    [BasicState.IDLE]: GiNightSleep,
-    [BasicState.DOCKING]: GoDownload,
-    [BasicState.CLEANING]: MdCleaningServices,
-    [BasicState.CLEANING_STANDBY]: MdCleaningServices,
-    [BasicState.UPDATING]: FaCloudDownloadAlt,
-    [BasicState.TEST]: RiTestTubeFill,
-    [BasicState.COPYING_LOGS]: FaCopy,
-    [BasicState.RECOVERING_LOCATION]: FaMagnifyingGlassLocation,
-    [BasicState.EXPLORING_MAP]: MdOutlineExplore,
-    [BasicState.ACQUIRING_PERSISTENT_MAP_IDS]: FaCloudDownloadAlt,
-    [BasicState.CREATING_UPLOADING_MAP]: FaCloudUploadAlt,
-    [BasicState.SUSPENDED_EXPLORATION]: IoMdPause,
+    [BasicState.INVALID]: LuCircleAlert,
+    [BasicState.ERROR]: LuCircleAlert,
+    [BasicState.PAUSED]: LuPause,
+    [BasicState.IDLE]: LuMoon,
+    [BasicState.DOCKING]: LuHousePlug,
+    [BasicState.CLEANING]: LuSparkles,
+    [BasicState.CLEANING_STANDBY]: LuBatteryCharging,
+    [BasicState.UPDATING]: LuCloudDownload,
+    [BasicState.TEST]: LuFlaskConical,
+    [BasicState.COPYING_LOGS]: LuCopy,
+    [BasicState.RECOVERING_LOCATION]: LuScanSearch,
+    [BasicState.EXPLORING_MAP]: LuCompass,
+    [BasicState.ACQUIRING_PERSISTENT_MAP_IDS]: LuCloudDownload,
+    [BasicState.CREATING_UPLOADING_MAP]: LuCloudUpload,
+    [BasicState.SUSPENDED_EXPLORATION]: LuPause,
 }
 
 export function isDocked(robot: Robot) {
@@ -50,25 +41,56 @@ export function isGen4D10(robot: Robot) {
     return robot.type === RobotType.NeatoGen4 && robot.label_serial.slice(4, 6) === 'N2';
 }
 
+const stateColors: Partial<Record<BasicState, string>> = {
+    [BasicState.INVALID]: 'text-err',
+    [BasicState.ERROR]: 'text-err',
+    [BasicState.PAUSED]: 'text-warn',
+    [BasicState.DOCKING]: 'text-info',
+    [BasicState.SUSPENDED_EXPLORATION]: 'text-warn',
+}
+
 // leading slot — sits before the name
-export function RobotStateIcon() {
+export function RobotStateIcon({ size = 20 }: { size?: number }) {
     const { robot } = useRobot()
-    const StateIcon = basicStateIcons[resolveRobotState(robot)]
-    return <StateIcon size={25} color="var(--accent)" className={styles.stateIcon} />
+    const state = resolveRobotState(robot)
+    const StateIcon = basicStateIcons[state]
+    return <StateIcon size={size} aria-hidden="true" className={`shrink-0 ${stateColors[state] ?? 'text-accent-text'}`} />
+}
+
+function StatusIcons() {
+    const { t } = useTranslation()
+    const { robot } = useRobot()
+    return (
+        <>
+            {robot.error && <LuCircleAlert size={16} className="shrink-0 text-err" aria-hidden="true" />}
+            {robot.alert && <LuTriangleAlert size={16} className="shrink-0 text-warn" aria-hidden="true" />}
+            {isDocked(robot) && (
+                <LuPlugZap size={15} className="shrink-0 text-info" title={t('topbar.docked')} />
+            )}
+        </>
+    )
 }
 
 // trailing slot — sits after the name, before the chevron
 export function RobotStatusBadges() {
+    const { robot } = useRobot()
+    return (
+        <span className="flex shrink-0 items-center gap-2">
+            <StatusIcons />
+            <Battery percentage={robot.details?.charge} isCharging={isCharging(robot)} />
+        </span>
+    )
+}
+
+// second line in the sidebar switcher: "Idle · 97%"
+export function RobotStatusLine() {
     const { t } = useTranslation()
     const { robot } = useRobot()
     return (
-        <div className={styles.status}>
-            {robot.error && <MdError size={16} className={styles.iconErr} />}
-            {robot.alert && <MdWarning size={16} className={styles.iconWarn} />}
-            {isDocked(robot) && (
-                <TbChargingPile size={15} className={styles.iconDocked} title={t('topbar.docked')} />
-            )}
+        <span className="flex min-w-0 items-center gap-1.5 text-xs text-muted">
+            <span className="truncate">{t(getRobotStateKey(robot))}</span>
+            <StatusIcons />
             <Battery percentage={robot.details?.charge} isCharging={isCharging(robot)} />
-        </div>
+        </span>
     )
 }

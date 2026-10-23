@@ -1,25 +1,99 @@
-body, html {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    color: var(--text);
-    background: var(--bg);
-    overscroll-behavior: none;
-    touch-action: none;
+@import "tailwindcss";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+@import "./theme/theme.css";
+
+/* Theme tokens (src/theme/theme.css) as Tailwind utilities: bg-surface, text-muted, border-line, ... */
+@theme inline {
+  --color-*: initial;
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-2: var(--surface-2);
+  --color-raised: var(--raised);
+  --color-raised-ring: var(--raised-ring);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-fg: var(--text);
+  --color-muted: var(--text-muted);
+  --color-dim: var(--text-dim);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-text: var(--accent-text);
+  --color-on-accent: var(--on-accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ring: var(--accent-ring);
+  --color-accent-surface: var(--accent-surface);
+  --color-accent-border: var(--accent-border);
+  --color-success: var(--success);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-warn-text: var(--warn-text);
+  --color-warn-icon-bg: var(--warn-icon-bg);
+  --color-err: var(--err);
+  --color-err-bg: var(--err-bg);
+  --color-err-text: var(--err-text);
+  --color-err-icon-bg: var(--err-icon-bg);
+  --color-err-soft: var(--err-soft);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+  --color-info-text: var(--info-text);
+  --color-info-icon-bg: var(--info-icon-bg);
+  --color-violet: var(--violet);
+  --color-overlay: var(--overlay);
+  --color-overlay-bg: var(--overlay-bg);
+  --color-switch-track: var(--switch-track);
+  --color-switch-knob: var(--switch-knob);
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  --shadow-raised: var(--shadow-md);
+  --shadow-float: var(--shadow-lg);
 }
 
-html {
-    font-size: 62.5%;
+@theme {
+  --font-sans: "Geist Variable", system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, monospace;
+
+  --text-micro: 11px;
+  --text-micro--line-height: 14px;
+  --text-caption: 13px;
+  --text-caption--line-height: 18px;
+  --text-body: 15px;
+  --text-body--line-height: 20px;
+  --text-display: 32px;
+  --text-display--line-height: 38px;
+
+  --radius-panel: 20px;
+}
+
+@utility focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+@utility pressable {
+  transition: transform 0.15s ease-out, background-color 0.15s ease-out, border-color 0.15s ease-out,
+    color 0.15s ease-out, opacity 0.15s ease-out;
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overscroll-behavior: none;
+  touch-action: none;
 }
 
 body {
-    font-size: 1.6rem;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* App-like scrolling: content still scrolls, but no scrollbar is drawn */

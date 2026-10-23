@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import styles from './drawer.module.scss'
-import { FaArrowLeft } from "react-icons/fa";
+import { LuArrowLeft } from "react-icons/lu";
 import { useTranslation } from "react-i18next";
+import { cn } from "../../utils/cn";
 
 
 
@@ -101,33 +101,44 @@ export default function Drawer(props: DrawerProps) {
 
     return (
         <div
-            className={styles.drawer}
+            className={cn(
+                'absolute inset-x-0 bottom-0 z-[999] flex touch-none flex-col overflow-hidden rounded-t-3xl bg-surface',
+                (props.handle || props.open) && 'border-t border-line-strong shadow-[0_-6px_20px_rgba(0,0,0,0.35)]',
+            )}
             style={{
                 height: `${drawerHeight}px`,
                 transition: isDraggingDrawer ? 'none' : 'height 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                borderTop: (props.handle || props.open) ? '2px solid var(--border-strong)' : ''
             }}>
 
             {(props.handle || props.open) && (
                 <div
-                    className={styles.drawerHandle}
+                    className="relative flex min-h-15 shrink-0 cursor-grab touch-none flex-col items-center justify-center gap-2 select-none active:cursor-grabbing"
                     onPointerDown={handlePointerDown}
                     onPointerMove={handlePointerMove}
                     onPointerUp={handlePointerUp}
                     onPointerCancel={handlePointerUp}
                     onClick={handleClick}>
-                    {props.showBackButton && props.open && <FaArrowLeft size={25} className={styles.handleIcon} onClick={(e) => {
-                        e.stopPropagation()
-                        props.onBackButtonClick?.()
-                    }} />}
-                    <div className={styles.drawerTitle}>
+                    <span className="h-1 w-10 rounded-full bg-line-strong" aria-hidden="true" />
+                    {props.showBackButton && props.open && (
+                        <button
+                            type="button"
+                            aria-label={t('common.back')}
+                            className="pressable focus-ring absolute top-1/2 left-3 flex size-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-xl text-fg hover:bg-surface-hover"
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                props.onBackButtonClick?.()
+                            }}>
+                            <LuArrowLeft size={22} aria-hidden="true" />
+                        </button>
+                    )}
+                    <div className="px-14 text-lg font-semibold tracking-[-0.01em] text-fg">
                         {props.title || t('common.options')}
                     </div>
                 </div>
             )}
 
             {drawerHeight > 100 && (
-                <div className={styles.drawerContent}>
+                <div className="flex flex-1 flex-col overflow-y-auto px-4 pt-2 pb-[max(16px,env(safe-area-inset-bottom))] text-fg">
                     {props.children}
                 </div>
             )}
