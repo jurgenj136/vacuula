@@ -58,8 +58,10 @@ export function useMap({
         handleTouchStart, handleTouchMove, handleTouchEnd,
         centerView, setZoom, setOffset
     } = useCanvasViewport({ initialZoom: 4, initialOffset: { x: 0, y: 0 } })
+    const viewportRef = useRef({ zoom, offset })
+    useEffect(() => { viewportRef.current = { zoom, offset } }, [zoom, offset])
 
-    const draw = useCallback((currentZoom: number = zoom, currentOffset: Offset = offset) => {
+    const draw = useCallback((currentZoom: number = viewportRef.current.zoom, currentOffset: Offset = viewportRef.current.offset) => {
         const canvas = canvasRef.current
         if (!canvas || !cellsRef.current || !mapSize) return
         const ctx = canvas.getContext('2d')
