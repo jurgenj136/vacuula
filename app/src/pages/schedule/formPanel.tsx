@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import Drawer from '../../components/drawer/drawer'
-import { useIsDesktop } from '../../components/layout/useIsDesktop'
+import { useIsDesktop } from '../../components/layout/useLayout'
 import Button from '../../components/button/button'
 
 interface FormPanelProps {

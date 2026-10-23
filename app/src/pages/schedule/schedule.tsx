@@ -82,7 +82,7 @@ export default () => {
 
     return (
         <div className="flex w-full lg:overflow-hidden">
-            <div className="flex min-w-0 flex-1 flex-col gap-4 p-4 lg:overflow-y-auto lg:p-6">
+            <div className="flex min-w-0 flex-1 flex-col gap-4 p-4 md:max-w-194 md:px-6 lg:max-w-none lg:overflow-y-auto lg:p-6">
                 <ScheduleHeader subtitle={serverInfo?.timezone} onNew={() => setDrawerOpen(true)} />
 
                 <ListGroup>

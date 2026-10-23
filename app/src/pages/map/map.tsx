@@ -9,7 +9,7 @@ import Switch from '../../components/switch/switch'
 import IconButton from '../../components/iconButton/iconButton'
 import AlertCard from '../../components/alert/alert'
 import { SectionHeading } from '../../components/list/list'
-import { useIsDesktop } from '../../components/layout/useIsDesktop'
+import { useLayout } from '../../components/layout/useLayout'
 import { cn } from '../../utils/cn'
 import { GEN3_COMMANDS } from '../../http/gen3'
 import { Http } from '../../http'
@@ -38,7 +38,7 @@ import { BoundaryType, IconTile, ItemRow, Swatch } from './featureRow'
 
 export default () => {
     const { t } = useTranslation()
-    const isDesktop = useIsDesktop()
+    const layout = useLayout()
     const [boundaries, setBoundaries] = useState<(NoGoLine | Zone)[]>([])
     const [drawerOpen, setDrawerOpen] = useState(true)
 
@@ -439,7 +439,7 @@ export default () => {
                         <Button text={t('map.addFeature')} style='tonal' icon={<LuPlus size={18} aria-hidden="true" />} onClick={() => openEdit(uuidv4())} />
                     </div>
 
-                    <div className="flex flex-col gap-2">
+                    <div className="grid gap-2 md:max-lg:grid-cols-2">
                         {boundaries.map((item, i) => (
                             <ItemRow
                                 key={i}
@@ -468,25 +468,45 @@ export default () => {
         </div>
     )
 
-    if (isDesktop) {
+    const panelTitle = (
+        <div className="flex min-h-18 shrink-0 items-center gap-2 px-4 pt-3 md:max-lg:px-6">
+            {showBackButton && (
+                <IconButton variant="ghost" label={t('common.back')} icon={<LuArrowLeft size={20} aria-hidden="true" />} onClick={handleBackBtn} />
+            )}
+            <h1 className={cn('m-0 min-w-0 truncate text-lg font-semibold tracking-[-0.01em]', !showBackButton && 'px-1')}>
+                {mode === 'boundary-edit' ? t('map.editBoundary') : getTitle()}
+            </h1>
+        </div>
+    )
+
+    if (layout === 'desktop') {
         return (
             <div className="flex min-w-0 flex-1">
                 <div className="relative min-w-0 flex-1">
                     {canvasArea}
                 </div>
                 <aside className="flex w-90 shrink-0 flex-col border-l border-line bg-surface">
-                    <div className="flex min-h-18 shrink-0 items-center gap-2 px-4 pt-3">
-                        {showBackButton && (
-                            <IconButton variant="ghost" label={t('common.back')} icon={<LuArrowLeft size={20} aria-hidden="true" />} onClick={handleBackBtn} />
-                        )}
-                        <h1 className={cn('m-0 min-w-0 truncate text-lg font-semibold tracking-[-0.01em]', !showBackButton && 'px-1')}>
-                            {mode === 'boundary-edit' ? t('map.editBoundary') : getTitle()}
-                        </h1>
-                    </div>
+                    {panelTitle}
                     <div className="flex flex-1 flex-col overflow-y-auto px-4 pt-2 pb-4">
                         {panel}
                     </div>
                 </aside>
+            </div>
+        )
+    }
+
+    if (layout === 'tablet') {
+        return (
+            <div className="flex min-w-0 flex-1 flex-col">
+                <div className="relative min-h-0 flex-1">
+                    {canvasArea}
+                </div>
+                <div className="flex h-2/5 min-h-80 shrink-0 flex-col border-t border-line bg-surface">
+                    {panelTitle}
+                    <div className="flex flex-1 flex-col overflow-y-auto px-6 pt-2 pb-[max(16px,env(safe-area-inset-bottom))]">
+                        {panel}
+                    </div>
+                </div>
             </div>
         )
     }

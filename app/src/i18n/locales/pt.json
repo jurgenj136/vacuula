@@ -61,7 +61,10 @@
         "runs": "Limpezas",
         "map": "Mapa",
         "schedule": "Agenda",
-        "settings": "Definições"
+        "settings": "Definições",
+        "expand": "Expandir menu",
+        "collapse": "Recolher menu",
+        "collapseShort": "Recolher"
     },
     "topbar": {
         "selectRobot": "Selecionar robot",

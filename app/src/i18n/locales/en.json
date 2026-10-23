@@ -61,7 +61,10 @@
         "runs": "Runs",
         "map": "Map",
         "schedule": "Schedule",
-        "settings": "Settings"
+        "settings": "Settings",
+        "expand": "Expand menu",
+        "collapse": "Collapse menu",
+        "collapseShort": "Collapse"
     },
     "topbar": {
         "selectRobot": "Select robot",

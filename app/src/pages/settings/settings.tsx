@@ -16,7 +16,7 @@ import { APP_LANGUAGES, DEFAULT_LANGUAGE } from '../../i18n/languages'
 import { useTheme } from '../../theme'
 import { UNITS, useUnits, type Units } from '../../units'
 import { MASCOTS, useMascot } from '../../mascot'
-import { useIsDesktop } from '../../components/layout/useIsDesktop'
+import { useIsDesktop } from '../../components/layout/useLayout'
 import { Gen3RobotSettings, Gen4RobotSettings } from './robotSettings'
 import { MatchSystemRow, ThemeSwatch, ThemeTiles } from './themePicker'
 import { SelectRow } from './selectRow'
@@ -61,7 +61,7 @@ const Settings = () => {
     )
 
     return (
-        <div className="mx-auto flex w-full max-w-5xl self-start flex-col gap-6 px-4 pt-2 pb-6 lg:px-8 lg:pt-8">
+        <div className="flex w-full max-w-5xl self-start flex-col gap-6 px-4 pt-2 pb-6 md:max-w-194 md:px-6 lg:max-w-5xl lg:px-8 lg:pt-8">
             <h1 className="m-0 text-xl font-semibold tracking-[-0.01em] text-fg lg:text-2xl">{t('nav.settings')}</h1>
 
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start">

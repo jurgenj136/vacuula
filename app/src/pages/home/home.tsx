@@ -26,13 +26,15 @@ import Switch from '../../components/switch/switch'
 import Chip from '../../components/chip/chip'
 import Card from '../../components/card/card'
 import { HeaderActions } from '../../components/layout/headerActions'
-import { useIsDesktop } from '../../components/layout/useIsDesktop'
+import { useLayout } from '../../components/layout/useLayout'
 
 // How long the "locate" bell icon keeps animating. The Neato Gen4 firmware
 // queues the find-me sound 5 times back-to-back (2.46 s file + <=0.1 s polling
 // between repeats), so 5 x 2.5 s. Must match `--animate-bell-swing` in index.css
 // (animation duration x iteration count) or the class is removed mid-swing.
 const BELL_MS = 5 * 2500;
+
+const MODES_ROW = 'contents md:max-lg:grid md:max-lg:grid-cols-2 md:max-lg:gap-x-4 md:max-lg:gap-y-3'
 
 const SEVERITY_TONES: Record<Neato.Gen4.ErrorSeverity, AlertTone> = {
     [Neato.Gen4.ErrorSeverity.INVALID]: 'info',
@@ -76,7 +78,7 @@ export default function Home() {
     const { t } = useTranslation()
     const timeAgoFormatter = useTimeAgoFormatter()
     const { mascot } = useMascot()
-    const isDesktop = useIsDesktop()
+    const layout = useLayout()
 
     const [gen3__cleaningMode, gen3__setCleaningMode] = useState<CleaningMode>(CleaningMode.ECO)
     const [gen3__navigationMode, gen3__setNavigationMode] = useState<CleaningNavigationMode>(CleaningNavigationMode.NORMAL)
@@ -237,15 +239,17 @@ export default function Home() {
     const hasAlerts = robot.type === RobotType.NeatoGen4 ? !!robot.errors?.length : !!(robot.error || robot.alert)
 
     return (
-        <div className="flex min-h-full w-full flex-col gap-3 self-start px-4 pt-2 pb-4 lg:mx-auto lg:max-w-5xl lg:gap-5 lg:px-7 lg:py-6">
-            {isDesktop ? (
+        <div className="flex min-h-full w-full flex-col gap-3 self-start px-4 pt-2 pb-4 md:max-w-194 md:gap-4 md:px-6 lg:max-w-5xl lg:gap-5 lg:px-7 lg:py-6">
+            {layout === 'desktop' ? (
                 <header className="flex items-center gap-3">
                     <h1 className="m-0 grow text-2xl font-semibold tracking-[-0.02em]">{t('nav.home')}</h1>
                     <Button style="secondary" text={t('home.locate')} icon={bell} onClick={locate} />
                 </header>
             ) : (
                 <HeaderActions>
-                    <IconButton size="lg" label={t('home.locate')} icon={bell} onClick={locate} />
+                    {layout === 'tablet'
+                        ? <Button style="secondary" className="!h-13 !rounded-2xl" text={t('home.locate')} icon={bell} onClick={locate} />
+                        : <IconButton size="lg" label={t('home.locate')} icon={bell} onClick={locate} />}
                 </HeaderActions>
             )}
 
@@ -285,10 +289,10 @@ export default function Home() {
                 </div>
             )}
 
-            <div className="flex flex-1 flex-col gap-3 lg:grid lg:flex-none lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:items-start lg:gap-5">
+            <div className="flex flex-1 flex-col gap-3 md:gap-4 lg:grid lg:flex-none lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:items-start lg:gap-5">
 
-                <section className="flex flex-1 flex-col items-center justify-center gap-1 py-4 text-center lg:col-start-1 lg:row-start-1 lg:flex-row lg:justify-start lg:gap-5 lg:rounded-panel lg:border lg:border-line lg:bg-surface lg:p-6 lg:text-left">
-                    <img src={mascot.src} alt={t('home.logoAlt')} className="mb-2 size-26 object-contain lg:mb-0 lg:size-24" />
+                <section className="flex flex-1 flex-col items-center justify-center gap-1 py-4 text-center md:flex-none md:flex-row md:justify-start md:gap-5 md:rounded-panel md:border md:border-line md:bg-surface md:p-6 md:text-left lg:col-start-1 lg:row-start-1">
+                    <img src={mascot.src} alt={t('home.logoAlt')} className="mb-2 size-26 object-contain md:mb-0 md:size-24" />
                     <div className="flex min-w-0 flex-col gap-1">
                         <h2 className="m-0 text-2xl font-semibold tracking-[-0.02em]">{t(getRobotStateKey(robot))}</h2>
                         <p className="m-0 text-caption text-muted">
@@ -305,23 +309,23 @@ export default function Home() {
                     </SetupGroup>
 
                     {robot.type === RobotType.NeatoGen3 ? (
-                        <>
+                        <div className={MODES_ROW}>
                             <SetupGroup label={t('home.suction')}>
                                 <Segmented ariaLabel={t('home.suction')} options={gen3Suction} value={gen3__cleaningMode} onChange={gen3__setCleaningMode} />
                             </SetupGroup>
                             <SetupGroup label={t('home.navigation')}>
                                 <Segmented ariaLabel={t('home.navigation')} options={gen3Navigation} value={gen3__navigationMode} onChange={gen3__setNavigationMode} />
                             </SetupGroup>
-                        </>
+                        </div>
                     ) : (
-                        <>
+                        <div className={MODES_ROW}>
                             <SetupGroup label={t('home.suction')}>
                                 <Segmented ariaLabel={t('home.suction')} options={gen4Suction} value={gen4__cleaningMode} onChange={gen4__setCleaningMode} />
                             </SetupGroup>
                             <SetupGroup label={t('home.navigation')}>
                                 <Segmented ariaLabel={t('home.navigation')} options={gen4Navigation} value={gen4__navigationMode} onChange={gen4__setNavigationMode} />
                             </SetupGroup>
-                        </>
+                        </div>
                     )}
 
                     {(cleaningZones.length > 0 || gen3Zones.length > 0 || nogoShown) && (
@@ -361,8 +365,8 @@ export default function Home() {
                     )}
                 </Card>
 
-                {/* Phone: sticky offsets count from inside <main>'s capsule padding, so the buttons sit just above the capsule */}
-                <div className="flex gap-2 max-lg:sticky max-lg:-bottom-6 max-lg:z-10 max-lg:-mx-4 max-lg:-mt-3 max-lg:-mb-8 max-lg:bg-bg max-lg:before:pointer-events-none max-lg:before:absolute max-lg:before:inset-x-0 max-lg:before:bottom-full max-lg:before:h-6 max-lg:before:bg-linear-to-t max-lg:before:from-bg max-lg:before:to-transparent max-lg:px-4 max-lg:pt-3 max-lg:pb-8 lg:col-start-1 lg:row-start-2">
+                {/* Phone: sticky offsets count from inside <main>'s capsule padding, so the buttons sit just above the capsule. Tablet: pinned to the bottom of the column */}
+                <div className="flex gap-2 max-lg:sticky max-lg:z-10 max-lg:bg-bg max-lg:before:pointer-events-none max-lg:before:absolute max-lg:before:inset-x-0 max-lg:before:bottom-full max-lg:before:h-6 max-lg:before:bg-linear-to-t max-lg:before:from-bg max-lg:before:to-transparent max-lg:pt-3 max-md:-bottom-6 max-md:-mx-4 max-md:-mt-3 max-md:-mb-8 max-md:px-4 max-md:pb-8 md:max-lg:bottom-0 md:max-lg:-mb-4 md:max-lg:mt-auto md:max-lg:pb-4 lg:col-start-1 lg:row-start-2">
                     <IconButton
                         size="xl"
                         label={t('home.stop')}

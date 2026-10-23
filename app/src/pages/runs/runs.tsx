@@ -4,7 +4,7 @@ import Drawer from '../../components/drawer/drawer'
 import { Http } from '../../http'
 import { useApp } from '../../context/useApp'
 import { useRobot } from '../../context/useRobot'
-import { useIsDesktop } from '../../components/layout/useIsDesktop'
+import { useLayout } from '../../components/layout/useLayout'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../i18n'
 import { useUnits } from '../../units'
@@ -21,7 +21,7 @@ export default () => {
     const { formatArea } = useUnits()
     const { setCleanings, cleanings } = useApp()
     const { robot } = useRobot()
-    const isDesktop = useIsDesktop()
+    const twoPanes = useLayout() !== 'phone'
     const [selectedCleaning, setSelectedCleaning] = useState<Cleaning>();
     const [drawerOpen, setDrawerOpen] = useState(false)
 
@@ -54,11 +54,11 @@ export default () => {
     }
 
     return (
-        <div className="flex w-full flex-col lg:h-full lg:flex-row">
+        <div className="flex w-full flex-col md:h-full md:flex-row">
             <div className={cn(
                 'flex flex-col gap-5 px-4 pt-2 pb-6',
-                'lg:w-105 lg:shrink-0 lg:overflow-y-auto lg:border-r lg:border-line lg:p-6',
-                drawerOpen && !isDesktop && 'overflow-hidden',
+                'md:w-80 md:shrink-0 md:overflow-y-auto md:border-r md:border-line md:px-6 md:pt-4 lg:w-105 lg:p-6',
+                drawerOpen && !twoPanes && 'overflow-hidden',
             )}>
                 <h1 className="m-0 text-2xl font-semibold tracking-[-0.02em] text-fg">{t('nav.runs')}</h1>
 
@@ -68,7 +68,7 @@ export default () => {
                         <div className="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface">
                             {group.items.map(item => {
                                 const complete = isComplete(item)
-                                const selected = isDesktop && item.id === selectedCleaning?.id
+                                const selected = twoPanes && item.id === selectedCleaning?.id
                                 return (
                                     <button
                                         key={item.id}
@@ -108,8 +108,8 @@ export default () => {
                 )}
             </div>
 
-            {isDesktop ? (
-                <div className="min-w-0 grow overflow-y-auto p-6">
+            {twoPanes ? (
+                <div className="min-w-0 grow overflow-y-auto p-6 max-lg:pt-4">
                     {selectedCleaning ? (
                         <>
                             <h2 className="m-0 mb-3 text-xl font-semibold tracking-[-0.01em] text-fg">{new Date(startOf(selectedCleaning)).toLocaleString(i18n.language)}</h2>

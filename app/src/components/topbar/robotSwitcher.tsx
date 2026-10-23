@@ -37,7 +37,7 @@ export default function RobotSwitcher({ icon, children, subtitle, variant = 'hea
     const sidebar = variant === 'sidebar'
 
     return (
-        <div className={cn("relative min-w-0", sidebar ? "w-full" : "flex-1")} ref={containerRef}>
+        <div className={cn("relative min-w-0", sidebar ? "w-full" : "flex-1 md:max-w-105")} ref={containerRef}>
             <button
                 type="button"
                 className={cn(
