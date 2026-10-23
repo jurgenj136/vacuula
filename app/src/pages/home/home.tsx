@@ -1,4 +1,3 @@
-import './home.css'
 import { useMascot } from '../../mascot'
 import { LuBell, LuHouse, LuPause, LuPlay, LuSquare } from 'react-icons/lu'
 import { CleaningCategory, CleaningMode, CleaningNavigationMode } from '../../types/neato/gen3/state'
@@ -31,7 +30,7 @@ import { useIsDesktop } from '../../components/layout/useIsDesktop'
 
 // How long the "locate" bell icon keeps animating. The Neato Gen4 firmware
 // queues the find-me sound 5 times back-to-back (2.46 s file + <=0.1 s polling
-// between repeats), so 5 x 2.5 s. Must match `.bell-swing` in home.css
+// between repeats), so 5 x 2.5 s. Must match `--animate-bell-swing` in index.css
 // (animation duration x iteration count) or the class is removed mid-swing.
 const BELL_MS = 5 * 2500;
 
@@ -106,7 +105,6 @@ export default function Home() {
     useEffect(() => {
         if (!promotedFloorplan) return
         Http.getBoundaries(robot.serial, promotedFloorplan.id).then(res => setBoundaries(res.data))
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [promotedFloorplan])
 
     const { data: persistentMaps } = usePersistentMaps()
@@ -114,7 +112,6 @@ export default function Home() {
     useEffect(() => {
         if (robot.type !== RobotType.NeatoGen3 || !persistentMaps) return
         fetchAllGen3Boundaries(robot.serial, persistentMaps)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [robot.serial, persistentMaps])
 
     const [selectedZones, setSelectedZones] = useState<string[]>([])
@@ -246,7 +243,7 @@ export default function Home() {
         ? [labelOf(areaOptions, gen3__cleaningCategory), labelOf(gen3Suction, gen3__cleaningMode), labelOf(gen3Navigation, gen3__navigationMode)]
         : [labelOf(areaOptions, gen3__cleaningCategory), labelOf(gen4Suction, gen4__cleaningMode), labelOf(gen4Navigation, gen4__navigationMode)]
 
-    const bell = <LuBell size={20} aria-hidden="true" className={bellAnimating ? 'bell-swing' : undefined} />
+    const bell = <LuBell size={20} aria-hidden="true" className={bellAnimating ? 'origin-top animate-bell-swing' : undefined} />
     const hasAlerts = robot.type === RobotType.NeatoGen4 ? !!robot.errors?.length : !!(robot.error || robot.alert)
 
     return (
@@ -289,7 +286,7 @@ export default function Home() {
                                 <button
                                     type="button"
                                     onClick={dismissAlert}
-                                    className="pressable focus-ring h-11 shrink-0 cursor-pointer rounded-xl px-3 text-caption font-semibold hover:bg-black/10">
+                                    className="pressable focus-ring h-11 shrink-0 cursor-pointer rounded-xl px-3 text-caption font-semibold hover:bg-current/10">
                                     {t('home.dismissAlert')}
                                 </button>
                             }
@@ -387,8 +384,8 @@ export default function Home() {
                     </Card>
                 )}
 
-                {/* ── Controls ── */}
-                <div className="flex gap-2 lg:col-start-1 lg:row-start-2">
+                {/* ── Controls ── (phone: sticky offsets count from inside <main>'s capsule padding, so the buttons stay just above the capsule; the extra 32px of background runs under its fade) */}
+                <div className="flex gap-2 max-lg:sticky max-lg:-bottom-6 max-lg:z-10 max-lg:-mx-4 max-lg:-mt-3 max-lg:-mb-8 max-lg:bg-linear-to-t max-lg:from-bg max-lg:from-88% max-lg:to-transparent max-lg:px-4 max-lg:pt-3 max-lg:pb-8 lg:col-start-1 lg:row-start-2">
                     <IconButton
                         size="xl"
                         label={t('home.stop')}

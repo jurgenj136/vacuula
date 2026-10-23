@@ -24,7 +24,6 @@ export const Gen4RobotSettings = () => {
     useEffect(() => {
         getCleaningOptions();
         getRobotLanguage();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const settingsDataBinders = {
@@ -40,7 +39,6 @@ export const Gen4RobotSettings = () => {
 
     const setSettings = <Op extends Neato.Gen4.SettingsSetOperation>(operation: Op, update: Neato.Gen4.SettingsMap[Op]) => {
         const b = settingsDataBinders[operation]
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         b.useStateUpdater(update as any) // TODO: Find out how to type this
         GEN4_COMMANDS.setSettings(robot.serial, { operation: operation, values: update }).finally(b.dataFetcher)
     }
@@ -99,7 +97,6 @@ export const Gen3RobotSettings = () => {
 
     useEffect(() => {
         getPreferences();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -109,7 +106,6 @@ export const Gen3RobotSettings = () => {
             return
         }
         GEN3_COMMANDS.setPreferences(robot.serial, preferences);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [preferences])
 
     const updateForm = <T,>(update: UseState<T>, patch: Partial<T>) => {

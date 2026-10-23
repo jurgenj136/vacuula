@@ -29,7 +29,7 @@ export default function RunDetail({ cleaning }: { cleaning: Cleaning }) {
             </div>
 
             <div className="grid grid-cols-3 gap-2">
-                <StatTile label={t('runs.duration')} value={<span className="text-caption">{durationOf(cleaning)}</span>} className="bg-bg" />
+                <StatTile label={t('runs.duration')} value={durationOf(cleaning)} className="bg-bg" />
                 <StatTile label={t('runs.area')} value={formatArea(areaOf(cleaning))} className="bg-bg" />
                 <StatTile label={t('runs.battery')} value={batteryOf(cleaning)} unit="%" className="bg-bg" />
             </div>

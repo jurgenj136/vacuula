@@ -9,8 +9,7 @@
  * Dark + mint are the defaults and are declared on plain :root so the page is
  * correct even before any attribute is set. Every theme block declares the
  * full token set. Components use the Tailwind utilities from src/index.css
- * (bg-surface, text-muted, ...) or, in old .module.scss files, the aliases in
- * src/variables.scss.
+ * (bg-surface, text-muted, ...).
  *
  * The page background of each theme is duplicated in index.html (anti-flash
  * script) and src/theme/index.ts - keep them in sync.
@@ -34,7 +33,6 @@
   --text-muted: #8a93a0;
   --text-dim: #4a535d;
 
-  --success: #3ddc97;
   --warn: #f0b040;
   --warn-bg: #4a3410;
   --warn-text: #f2dfb7;
@@ -48,18 +46,13 @@
   --info-bg: #1a4672;
   --info-text: #cfe5ff;
   --info-icon-bg: #2f7fd6;
-  --violet: #a78bfa;
 
   --overlay: rgba(0, 0, 0, 0.6);
-  --overlay-bg: rgba(15, 17, 19, 0.8);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.5);
 
   --switch-track: #343b41;
   --switch-knob: #8a93a0;
-
-  --battery-text-on-fill: #0f1113;
 }
 
 /* ---------- soft: slate grey dark, easier on the eyes ---------- */
@@ -80,7 +73,6 @@
   --text-muted: #9aa3ad;
   --text-dim: #6b747e;
 
-  --success: #4fd19d;
   --warn: #e6b25a;
   --warn-bg: #4a3a1c;
   --warn-text: #f0dcb0;
@@ -94,18 +86,13 @@
   --info-bg: #1a4672;
   --info-text: #d3e6fa;
   --info-icon-bg: #3d7fc4;
-  --violet: #b39dfa;
 
   --overlay: rgba(0, 0, 0, 0.5);
-  --overlay-bg: rgba(37, 41, 46, 0.82);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.22);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.38);
 
   --switch-track: #4c545d;
   --switch-knob: #b0b7bf;
-
-  --battery-text-on-fill: #25292e;
 }
 
 /* ---------- light ---------- */
@@ -126,7 +113,6 @@
   --text-muted: #5c6670;
   --text-dim: #a5adb5;
 
-  --success: #12a866;
   --warn: #c47a0a;
   --warn-bg: #fdf1d8;
   --warn-text: #6b4306;
@@ -140,18 +126,13 @@
   --info-bg: #60a3e6;
   --info-text: #062a55;
   --info-icon-bg: #2f7fd6;
-  --violet: #7c3aed;
 
   --overlay: rgba(0, 0, 0, 0.35);
-  --overlay-bg: rgba(244, 246, 245, 0.85);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.16);
 
   --switch-track: #c3cac6;
   --switch-knob: #ffffff;
-
-  --battery-text-on-fill: #0f1113;
 }
 
 /* ---------- black: OLED ---------- */
@@ -172,7 +153,6 @@
   --text-muted: #8a93a0;
   --text-dim: #4a535d;
 
-  --success: #3ddc97;
   --warn: #f0b040;
   --warn-bg: #3d2b0d;
   --warn-text: #f2dfb7;
@@ -186,18 +166,13 @@
   --info-bg: #143a60;
   --info-text: #cfe5ff;
   --info-icon-bg: #2f7fd6;
-  --violet: #a78bfa;
 
   --overlay: rgba(0, 0, 0, 0.7);
-  --overlay-bg: rgba(0, 0, 0, 0.82);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.5);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
   --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.7);
 
   --switch-track: #2c3237;
   --switch-knob: #8a93a0;
-
-  --battery-text-on-fill: #000000;
 }
 
 /* ---------- neato: Neato slate dark ---------- */
@@ -218,7 +193,6 @@
   --text-muted: #9aa4b1;
   --text-dim: #5d6774;
 
-  --success: #3ddc97;
   --warn: #f0b040;
   --warn-bg: #4a3410;
   --warn-text: #f2dfb7;
@@ -232,18 +206,13 @@
   --info-bg: #1a4672;
   --info-text: #cfe5ff;
   --info-icon-bg: #2f7fd6;
-  --violet: #a78bfa;
 
   --overlay: rgba(0, 0, 0, 0.55);
-  --overlay-bg: rgba(27, 32, 39, 0.82);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.28);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.36);
   --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.45);
 
   --switch-track: #3d4855;
   --switch-knob: #9aa4b1;
-
-  --battery-text-on-fill: #1b2027;
 }
 
 /* ---------- neato-light: Neato classic light ---------- */
@@ -264,7 +233,6 @@
   --text-muted: #666d77;
   --text-dim: #a3a9b1;
 
-  --success: #12a866;
   --warn: #b86f06;
   --warn-bg: #fdf1d8;
   --warn-text: #6b4306;
@@ -278,18 +246,13 @@
   --info-bg: #dbe9f9;
   --info-text: #062a55;
   --info-icon-bg: #2f7fd6;
-  --violet: #7c3aed;
 
   --overlay: rgba(0, 0, 0, 0.35);
-  --overlay-bg: rgba(244, 245, 247, 0.85);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.16);
 
   --switch-track: #c9ccd1;
   --switch-knob: #ffffff;
-
-  --battery-text-on-fill: #0f1113;
 }
 
 /* ---------- midnight: blue ---------- */
@@ -310,7 +273,6 @@
   --text-muted: #8fa0b5;
   --text-dim: #4d5d72;
 
-  --success: #3ddc97;
   --warn: #f0b040;
   --warn-bg: #45320f;
   --warn-text: #f2dfb7;
@@ -324,18 +286,13 @@
   --info-bg: #17406b;
   --info-text: #cfe5ff;
   --info-icon-bg: #2f7fd6;
-  --violet: #a78bfa;
 
   --overlay: rgba(0, 0, 0, 0.6);
-  --overlay-bg: rgba(11, 18, 27, 0.82);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.5);
 
   --switch-track: #2c3f56;
   --switch-knob: #8fa0b5;
-
-  --battery-text-on-fill: #0b121b;
 }
 
 /* ---------- dusk: violet ---------- */
@@ -356,7 +313,6 @@
   --text-muted: #9c95b0;
   --text-dim: #5a536e;
 
-  --success: #3ddc97;
   --warn: #f0b040;
   --warn-bg: #45320f;
   --warn-text: #f2dfb7;
@@ -370,18 +326,13 @@
   --info-bg: #1a4672;
   --info-text: #cfe5ff;
   --info-icon-bg: #2f7fd6;
-  --violet: #c4b5fd;
 
   --overlay: rgba(0, 0, 0, 0.6);
-  --overlay-bg: rgba(19, 17, 28, 0.82);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.5);
 
   --switch-track: #3b3554;
   --switch-knob: #9c95b0;
-
-  --battery-text-on-fill: #13111c;
 }
 
 /* ---------- contrast: black / white, yellow accent ---------- */
@@ -402,7 +353,6 @@
   --text-muted: #e0e0e0;
   --text-dim: #bdbdbd;
 
-  --success: #5cf2a8;
   --warn: #ffb020;
   --warn-bg: #3a2a00;
   --warn-text: #ffffff;
@@ -416,18 +366,13 @@
   --info-bg: #002a55;
   --info-text: #ffffff;
   --info-icon-bg: #3d8bff;
-  --violet: #c4b5fd;
 
   --overlay: rgba(0, 0, 0, 0.8);
-  --overlay-bg: rgba(0, 0, 0, 0.9);
-  --shadow-sm: none;
   --shadow-md: none;
   --shadow-lg: none;
 
   --switch-track: #4d4d4d;
   --switch-knob: #ffffff;
-
-  --battery-text-on-fill: #000000;
 }
 
 /* ---------- Accent ----------
@@ -503,7 +448,6 @@
   --accent-soft: color-mix(in srgb, var(--accent) 15%, transparent);
   --accent-ring: color-mix(in srgb, var(--accent) 12%, transparent);
   --accent-glow: color-mix(in srgb, var(--accent) 25%, transparent);
-  --accent-surface: color-mix(in srgb, var(--accent) 12%, var(--surface));
   --accent-border: color-mix(in srgb, var(--accent) 45%, var(--surface));
 }
 

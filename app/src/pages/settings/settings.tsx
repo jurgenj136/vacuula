@@ -43,7 +43,6 @@ const Settings = () => {
     const [robotName, setRobotName] = useState(robot.name)
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setRobotName(robot.name)
     }, [robot.name])
 
@@ -56,7 +55,6 @@ const Settings = () => {
         }, 500)
 
         return () => clearTimeout(timer)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [robotName])
 
     const link = (text: string, icon: React.ReactNode, url: string) => (

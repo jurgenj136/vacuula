@@ -103,7 +103,7 @@ export default function Drawer(props: DrawerProps) {
         <div
             className={cn(
                 'absolute inset-x-0 bottom-0 z-[999] flex touch-none flex-col overflow-hidden rounded-t-3xl bg-surface',
-                (props.handle || props.open) && 'border-t border-line-strong shadow-[0_-6px_20px_rgba(0,0,0,0.35)]',
+                (props.handle || props.open) && 'border-t border-line-strong shadow-sheet',
             )}
             style={{
                 height: `${drawerHeight}px`,

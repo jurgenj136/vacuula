@@ -25,7 +25,7 @@ export default function NavCapsule() {
                         {({ isActive }) => (
                             <>
                                 {isActive && (
-                                    <span aria-hidden="true" className="absolute -top-[5px] left-1/2 h-[3px] w-5 -translate-x-1/2 rounded-full bg-accent shadow-[0_0_8px_var(--accent-glow)]" />
+                                    <span aria-hidden="true" className="absolute -top-[5px] left-1/2 h-[3px] w-5 -translate-x-1/2 rounded-full bg-accent shadow-[0_0_8px_var(--accent-glow)] theme-contrast:-top-[10px]" />
                                 )}
                                 <span className="truncate">{t(`nav.${item.key}`)}</span>
                             </>

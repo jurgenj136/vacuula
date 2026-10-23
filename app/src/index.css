@@ -23,9 +23,7 @@
   --color-on-accent: var(--on-accent);
   --color-accent-soft: var(--accent-soft);
   --color-accent-ring: var(--accent-ring);
-  --color-accent-surface: var(--accent-surface);
   --color-accent-border: var(--accent-border);
-  --color-success: var(--success);
   --color-warn: var(--warn);
   --color-warn-bg: var(--warn-bg);
   --color-warn-text: var(--warn-text);
@@ -39,9 +37,7 @@
   --color-info-bg: var(--info-bg);
   --color-info-text: var(--info-text);
   --color-info-icon-bg: var(--info-icon-bg);
-  --color-violet: var(--violet);
   --color-overlay: var(--overlay);
-  --color-overlay-bg: var(--overlay-bg);
   --color-switch-track: var(--switch-track);
   --color-switch-knob: var(--switch-knob);
   --color-white: #ffffff;
@@ -49,6 +45,7 @@
 
   --shadow-raised: var(--shadow-md);
   --shadow-float: var(--shadow-lg);
+  --shadow-sheet: 0 -6px 20px rgba(0, 0, 0, 0.35);
 }
 
 @theme {
@@ -65,7 +62,30 @@
   --text-display--line-height: 38px;
 
   --radius-panel: 20px;
+
+  /* The Neato Gen4 firmware queues the find-me sound 5 times back-to-back
+     (2.46 s file + <=0.1 s polling between repeats), so the bell swings 5 x 2.5 s.
+     Keep in sync with BELL_MS in src/pages/home/home.tsx. Keyframes follow the sound's envelope:
+     2% hard hit (0.05 s), 12% second hit (0.30 s), 35% bell peak (0.85 s),
+     53% end of swell (1.30 s), 85% sound faded (2.10 s), then silence. */
+  --animate-bell-swing: bell-swing 2.5s ease-in-out 5;
+
+  @keyframes bell-swing {
+    0% { transform: rotate(0deg); }
+    2% { transform: rotate(-6deg); }
+    12% { transform: rotate(6deg); }
+    20% { transform: rotate(0deg); }
+    35% { transform: rotate(-14deg); }
+    45% { transform: rotate(12deg); }
+    53% { transform: rotate(-8deg); }
+    65% { transform: rotate(4deg); }
+    75% { transform: rotate(-2deg); }
+    85% { transform: rotate(0deg); }
+    100% { transform: rotate(0deg); }
+  }
 }
+
+@custom-variant theme-contrast (&:where([data-theme="contrast"] *));
 
 @utility focus-ring {
   &:focus-visible {

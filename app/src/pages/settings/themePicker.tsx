@@ -1,4 +1,5 @@
 import { LuCheck } from 'react-icons/lu'
+import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
 import { THEME_MODES, useTheme, type ThemeMode } from '../../theme'
 import { THEME_PREVIEW } from './themePreview'
@@ -22,11 +23,14 @@ export function ThemeSwatch({ mode, className }: { mode: ThemeMode, className?: 
 function ThemeTile({ mode, selected, onSelect }: { mode: ThemeMode, selected: boolean, onSelect: () => void }) {
     const { t } = useTranslation()
     const c = THEME_PREVIEW[mode]
+    const id = useId()
     return (
         <button
             type="button"
             role="radio"
             aria-checked={selected}
+            aria-labelledby={`${id}-name`}
+            aria-describedby={`${id}-hint`}
             onClick={onSelect}
             className="pressable focus-ring flex cursor-pointer flex-col gap-1.5 rounded-2xl p-1 text-left">
             <span
@@ -45,7 +49,10 @@ function ThemeTile({ mode, selected, onSelect }: { mode: ThemeMode, selected: bo
                     </span>
                 )}
             </span>
-            <span className="px-1 text-caption leading-tight font-medium text-fg">{t(`settings.theme_${mode}`)}</span>
+            <span className="flex flex-col gap-0.5 px-1">
+                <span id={`${id}-name`} className="text-caption leading-tight font-medium text-fg">{t(`settings.theme_${mode}`)}</span>
+                <span id={`${id}-hint`} className="text-micro text-muted">{t(`settings.themeHint_${mode}`)}</span>
+            </span>
         </button>
     )
 }
