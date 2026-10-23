@@ -107,7 +107,7 @@ export default function MapCanvas({
             />
 
             {mode === 'boundary-edit' && (
-                <div className="absolute inset-x-0 bottom-6 flex items-center justify-center gap-8">
+                <div className="absolute inset-x-0 bottom-[calc(var(--map-sheet-inset,0px)+1.5rem)] flex items-center justify-center gap-8">
                     <button type="button" aria-label={t('map.undoPoint')} title={t('map.undoPoint')} onClick={undo} className={cn(ACTION, 'size-14 border border-line-strong bg-surface text-fg enabled:hover:bg-surface-hover')}>
                         <LuUndo2 size={22} aria-hidden="true" />
                     </button>

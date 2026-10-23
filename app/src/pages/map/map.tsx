@@ -295,7 +295,7 @@ export default () => {
             )}
 
             {mode === 'maps' && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-muted">
+                <div className="absolute inset-x-0 top-0 bottom-[var(--map-sheet-inset,0px)] flex flex-col items-center justify-center gap-2 text-muted">
                     <LuMap size={28} aria-hidden="true" />
                     <span className="text-body">{t('map.selectMap')}</span>
                 </div>
@@ -494,9 +494,10 @@ export default () => {
     const capsuleSpace = 'calc(88px + env(safe-area-inset-bottom))'
     return (
         <div className="relative isolate -mb-[calc(88px+env(safe-area-inset-bottom))] min-w-0 flex-1 overflow-hidden">
+            {/* The canvas keeps a fixed size and the sheet overlays it: resizing it redraws with a stale viewport. */}
             <div
-                className={cn('absolute inset-x-0 top-0', drawerOpen && mode === 'boundary-edit' && '[&>div]:invisible')}
-                style={{ bottom: drawerOpen ? `${openHeightPercent}dvh` : `calc(148px + env(safe-area-inset-bottom))` }}>
+                className={cn('absolute inset-0', drawerOpen && mode === 'boundary-edit' && '[&>div]:invisible')}
+                style={{ '--map-sheet-inset': drawerOpen ? `${openHeightPercent}dvh` : `calc(148px + env(safe-area-inset-bottom))` } as React.CSSProperties}>
                 {canvasArea}
             </div>
             <div
