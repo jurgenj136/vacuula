@@ -64,7 +64,7 @@ export default function Segmented<T>(props: SegmentedProps<T>) {
                             'pressable focus-ring h-11 min-w-0 rounded-lg px-1 text-caption cursor-pointer',
                             'disabled:cursor-not-allowed disabled:opacity-40',
                             selected
-                                ? 'bg-surface-2 font-semibold text-fg shadow-[inset_0_0_0_1px_var(--accent-border)]'
+                                ? 'bg-surface-2 font-semibold text-fg inset-ring inset-ring-accent-border'
                                 : 'font-medium text-muted enabled:hover:text-fg',
                         )}>
                         {option.label}

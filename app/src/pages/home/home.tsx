@@ -252,7 +252,7 @@ export default function Home() {
         <div className="flex min-h-full w-full flex-col gap-3 self-start px-4 pt-2 pb-4 md:max-w-194 md:gap-4 md:px-6 lg:max-w-5xl lg:gap-5 lg:px-7 lg:py-6">
             {layout === 'desktop' ? (
                 <header className="flex items-center gap-3">
-                    <h1 className="m-0 grow text-2xl font-semibold tracking-[-0.02em]">{t('nav.home')}</h1>
+                    <h1 className="m-0 grow text-2xl font-semibold tracking-display">{t('nav.home')}</h1>
                     <Button style="secondary" text={t('home.locate')} icon={bell} onClick={locate} />
                 </header>
             ) : (
@@ -304,7 +304,7 @@ export default function Home() {
                 <section className="flex flex-1 flex-col items-center justify-center gap-1 py-4 text-center md:flex-none md:flex-row md:justify-start md:gap-5 md:rounded-panel md:border md:border-line md:bg-surface md:p-6 md:text-left lg:col-start-1 lg:row-start-1">
                     <img src={mascot.src} alt={t('home.logoAlt')} className="mb-2 size-26 object-contain md:mb-0 md:size-24" />
                     <div className="flex min-w-0 flex-col gap-1">
-                        <h2 className="m-0 text-2xl font-semibold tracking-[-0.02em]">{t(getRobotStateKey(robot))}</h2>
+                        <h2 className="m-0 text-2xl font-semibold tracking-display">{t(getRobotStateKey(robot))}</h2>
                         <p className="m-0 text-caption text-muted">
                             {docked && `${t('topbar.docked')} · `}
                             {lastHeartbeat ? <TimeAgo date={lastHeartbeat} formatter={timeAgoFormatter} /> : t('common.notAvailable')}

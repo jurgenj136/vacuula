@@ -57,7 +57,7 @@ export default function ColorPicker({ value, onChange, presets = BOUNDARY_PRESET
                         aria-selected={p === current}
                         className={cn(
                             'pressable focus-ring size-11 cursor-pointer rounded-full border-2 border-transparent',
-                            p === current && 'border-fg shadow-[inset_0_0_0_2px_var(--surface)]',
+                            p === current && 'border-fg inset-ring-2 inset-ring-surface',
                         )}
                         style={{ background: p }}
                         onClick={() => onChange(p)}

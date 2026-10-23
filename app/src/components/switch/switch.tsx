@@ -30,7 +30,7 @@ export default function Switch({ checked, onChange, label, disabled, className }
             <span
                 aria-hidden="true"
                 className={cn(
-                    'pointer-events-none absolute top-[3px] left-[3px] size-[22px] rounded-full transition-transform duration-200',
+                    'pointer-events-none absolute top-0.75 left-0.75 size-5.5 rounded-full transition-transform duration-200',
                     checked ? 'translate-x-5 bg-on-accent' : 'bg-switch-knob',
                 )}
             />

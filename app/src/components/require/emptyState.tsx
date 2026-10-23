@@ -13,7 +13,7 @@ interface EmptyStateProps {
 }
 
 const WRAP = 'flex min-h-dvh w-full flex-col items-center justify-center gap-3 bg-bg px-6 pt-[max(48px,env(safe-area-inset-top))] pb-[max(48px,env(safe-area-inset-bottom))] text-center text-fg'
-const TITLE = 'text-xl font-semibold tracking-[-0.01em]'
+const TITLE = 'text-xl font-semibold tracking-heading'
 const SUBTITLE = 'max-w-80 text-caption text-muted'
 
 // Shown instead of the app while there is nothing to control. The robot list

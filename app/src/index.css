@@ -60,6 +60,9 @@
   --text-display: 32px;
   --text-display--line-height: 38px;
 
+  --tracking-heading: -0.01em;
+  --tracking-display: -0.02em;
+
   --radius-panel: 20px;
 
   /* The Neato Gen4 firmware queues the find-me sound 5 times back-to-back

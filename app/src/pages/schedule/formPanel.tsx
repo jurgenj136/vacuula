@@ -22,7 +22,7 @@ export function FormPane({ open, onOpenChange, children }: FormPanelProps) {
         )
     }
     return (
-        <aside className="flex w-[28rem] shrink-0 flex-col overflow-y-auto border-l border-line p-6">
+        <aside className="flex w-md shrink-0 flex-col overflow-y-auto border-l border-line p-6">
             {open ? (
                 <div className="flex flex-col gap-4">
                     <h2 className="m-0 text-xl font-bold text-fg">{t('schedule.addEvent')}</h2>

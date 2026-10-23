@@ -25,7 +25,7 @@ function ThemeTile({ mode, name, selected, onSelect }: { mode: ThemeMode, name: 
     const c = THEME_PREVIEW[mode]
     const id = useId()
     return (
-        <label className="pressable relative flex cursor-pointer flex-col gap-1.5 rounded-2xl p-1 text-left has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent">
+        <label className="pressable relative flex cursor-pointer flex-col gap-1.5 rounded-2xl p-1 text-left has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-accent">
             <input
                 type="radio"
                 name={name}

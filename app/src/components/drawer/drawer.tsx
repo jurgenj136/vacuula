@@ -102,7 +102,7 @@ export default function Drawer(props: DrawerProps) {
     return (
         <div
             className={cn(
-                'absolute inset-x-0 bottom-0 z-[999] flex touch-none flex-col overflow-hidden rounded-t-3xl bg-surface',
+                'absolute inset-x-0 bottom-0 z-999 flex touch-none flex-col overflow-hidden rounded-t-3xl bg-surface',
                 (props.handle || props.open) && 'border-t border-line-strong shadow-sheet',
             )}
             style={{
@@ -131,7 +131,7 @@ export default function Drawer(props: DrawerProps) {
                             <LuArrowLeft size={22} aria-hidden="true" />
                         </button>
                     )}
-                    <div className="px-14 text-lg font-semibold tracking-[-0.01em] text-fg">
+                    <div className="px-14 text-lg font-semibold tracking-heading text-fg">
                         {props.title || t('common.options')}
                     </div>
                 </div>

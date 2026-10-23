@@ -104,7 +104,7 @@ export default function Input<T>(props: InputProps<T>) {
             {props.type === 'dropdown' && (
                 <div className="relative flex">
                     <select
-                        className={`${FIELD} cursor-pointer appearance-none pr-10 [&>option]:bg-surface [&>option]:text-fg`}
+                        className={`${FIELD} cursor-pointer appearance-none pr-10 *:bg-surface *:text-fg`}
                         // Native <select> only carries string values, so we index into
                         // options rather than trying to serialize T directly — this keeps
                         // it working for object values too, not just strings/numbers.

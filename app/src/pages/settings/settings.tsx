@@ -69,7 +69,7 @@ const Settings = () => {
 
     return (
         <div className="flex w-full max-w-5xl self-start flex-col gap-6 px-4 pt-2 pb-6 md:max-w-194 md:px-6 lg:max-w-5xl lg:px-8 lg:pt-8">
-            <h1 className="m-0 text-xl font-semibold tracking-[-0.01em] text-fg lg:text-2xl">{t('nav.settings')}</h1>
+            <h1 className="m-0 text-xl font-semibold tracking-heading text-fg lg:text-2xl">{t('nav.settings')}</h1>
 
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
                 <div className="contents lg:flex lg:min-w-0 lg:flex-1 lg:flex-col lg:gap-6">

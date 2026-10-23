@@ -296,7 +296,7 @@ export default () => {
             )}
 
             {mode === 'maps' && (
-                <div className="absolute inset-x-0 top-0 bottom-[var(--map-sheet-inset,0px)] flex flex-col items-center justify-center gap-2 text-muted">
+                <div className="absolute inset-x-0 top-0 bottom-(--map-sheet-inset,0px) flex flex-col items-center justify-center gap-2 text-muted">
                     <LuMap size={28} aria-hidden="true" />
                     <span className="text-body">{t('map.selectMap')}</span>
                 </div>
@@ -473,7 +473,7 @@ export default () => {
             {showBackButton && (
                 <IconButton variant="ghost" label={t('common.back')} icon={<LuArrowLeft size={20} aria-hidden="true" />} onClick={handleBackBtn} />
             )}
-            <h1 className={cn('m-0 min-w-0 truncate text-lg font-semibold tracking-[-0.01em]', !showBackButton && 'px-1')}>
+            <h1 className={cn('m-0 min-w-0 truncate text-lg font-semibold tracking-heading', !showBackButton && 'px-1')}>
                 {mode === 'boundary-edit' ? t('map.editBoundary') : getTitle()}
             </h1>
         </div>

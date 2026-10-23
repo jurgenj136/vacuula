@@ -52,13 +52,13 @@ export default function NavRail() {
             className={({ isActive }) => cn(
                 'focus-ring flex h-15 w-16 flex-col items-center justify-center gap-1.25 rounded-xl text-xs no-underline transition-colors',
                 isActive
-                    ? 'bg-raised font-semibold text-fg shadow-[inset_0_0_0_1px_var(--raised-ring)]'
+                    ? 'bg-raised font-semibold text-fg inset-ring inset-ring-raised-ring'
                     : 'font-medium text-muted hover:bg-surface-hover hover:text-fg',
             )}>
             {({ isActive }) => (
                 <>
                     <item.icon size={20} aria-hidden="true" className={isActive ? 'text-accent-text' : undefined} />
-                    <span className="max-w-full truncate tracking-[-0.01em]">{t(`nav.${item.key}`)}</span>
+                    <span className="max-w-full truncate tracking-heading">{t(`nav.${item.key}`)}</span>
                 </>
             )}
         </NavLink>

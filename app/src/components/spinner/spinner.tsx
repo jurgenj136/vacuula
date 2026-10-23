@@ -21,7 +21,7 @@ const SIZES = {
 export default function Spinner({ message, size = 'small', position = 'fixed' }: SpinnerProps) {
     const large = size === 'large'
     return (
-        <div className={cn('z-[1000] flex flex-col items-center justify-center', POSITIONS[position], SIZES[size])}>
+        <div className={cn('z-1000 flex flex-col items-center justify-center', POSITIONS[position], SIZES[size])}>
             <div className={cn('aspect-square animate-spin rounded-full border-accent-ring border-t-accent', large ? 'size-20 border-4' : 'size-full border-2')} />
             {message && <p className={cn('m-0 font-medium whitespace-nowrap text-accent-text', large ? 'mt-6 text-body' : 'mt-2 text-xs')}>{message}</p>}
         </div>

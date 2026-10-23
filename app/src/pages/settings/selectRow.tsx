@@ -18,7 +18,7 @@ export function SelectRow<T>({ label, options, value, onChange }: SelectRowProps
                 aria-label={label}
                 value={index}
                 onChange={(e) => onChange(options[Number(e.target.value)].value)}
-                className="absolute inset-0 size-full cursor-pointer opacity-0 [&>option]:bg-surface [&>option]:text-fg">
+                className="absolute inset-0 size-full cursor-pointer opacity-0 *:bg-surface *:text-fg">
                 {options.map((option, i) => (
                     <option key={i} value={i}>{option.label}</option>
                 ))}

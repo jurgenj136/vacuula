@@ -30,7 +30,7 @@ export function ItemRow({ label, description, leading, onClick, children }: Item
                 <button
                     type="button"
                     onClick={onClick}
-                    className="focus-ring flex min-w-0 grow cursor-pointer flex-col items-start gap-0.5 rounded-lg text-left after:absolute after:inset-0 after:rounded-2xl after:content-['']">
+                    className="focus-ring flex min-w-0 grow cursor-pointer flex-col items-start gap-0.5 rounded-lg text-left after:absolute after:inset-0 after:rounded-2xl">
                     {text}
                 </button>
             ) : (
@@ -62,7 +62,7 @@ export function Swatch({ boundary }: { boundary: NoGoLine | Zone }) {
     }
     return (
         <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center rounded-lg" style={{ background: withAlpha(boundary.color, 0.15) }}>
-            <span className="h-[3px] w-4 -rotate-20 rounded-full" style={{ background: color }} />
+            <span className="h-0.75 w-4 -rotate-20 rounded-full" style={{ background: color }} />
         </span>
     )
 }

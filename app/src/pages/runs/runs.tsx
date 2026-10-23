@@ -59,7 +59,7 @@ export default () => {
                 'md:w-80 md:shrink-0 md:overflow-y-auto md:border-r md:border-line md:px-6 md:pt-4 lg:w-105 lg:p-6',
                 drawerOpen && !twoPanes && 'overflow-hidden',
             )}>
-                <h1 className="m-0 text-2xl font-semibold tracking-[-0.02em] text-fg">{t('nav.runs')}</h1>
+                <h1 className="m-0 text-2xl font-semibold tracking-display text-fg">{t('nav.runs')}</h1>
 
                 {groups.map(group => (
                     <section key={group.day} className="flex flex-col gap-2">
@@ -111,7 +111,7 @@ export default () => {
                 <div className="min-w-0 grow overflow-y-auto p-6 max-lg:pt-4">
                     {selectedCleaning ? (
                         <>
-                            <h2 className="m-0 mb-3 text-xl font-semibold tracking-[-0.01em] text-fg">{new Date(startOf(selectedCleaning)).toLocaleString()}</h2>
+                            <h2 className="m-0 mb-3 text-xl font-semibold tracking-heading text-fg">{new Date(startOf(selectedCleaning)).toLocaleString()}</h2>
                             <RunDetail cleaning={selectedCleaning} />
                         </>
                     ) : (

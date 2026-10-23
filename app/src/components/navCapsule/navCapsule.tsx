@@ -16,15 +16,15 @@ export default function NavCapsule() {
                         to={item.to}
                         end={item.to === '/'}
                         className={({ isActive }) => cn(
-                            'focus-ring relative flex min-w-0 items-center justify-center rounded-full px-2 text-caption tracking-[-0.01em] whitespace-nowrap no-underline transition-colors',
+                            'focus-ring relative flex min-w-0 items-center justify-center rounded-full px-2 text-caption tracking-heading whitespace-nowrap no-underline transition-colors',
                             isActive
-                                ? 'bg-raised font-semibold text-fg shadow-[inset_0_0_0_1px_var(--raised-ring)]'
+                                ? 'bg-raised font-semibold text-fg inset-ring inset-ring-raised-ring'
                                 : 'font-medium text-muted hover:text-fg',
                         )}>
                         {({ isActive }) => (
                             <>
                                 {isActive && (
-                                    <span aria-hidden="true" className="absolute -top-[5px] left-1/2 h-[3px] w-5 -translate-x-1/2 rounded-full bg-accent shadow-[0_0_8px_var(--accent-glow)] theme-contrast:-top-[10px]" />
+                                    <span aria-hidden="true" className="absolute -top-1.25 left-1/2 h-0.75 w-5 -translate-x-1/2 rounded-full bg-accent shadow-[0_0_8px_var(--accent-glow)] theme-contrast:-top-2.5" />
                                 )}
                                 <span className="truncate">{t(`nav.${item.key}`)}</span>
                             </>
