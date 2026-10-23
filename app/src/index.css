@@ -3,7 +3,6 @@
 @import "@fontsource-variable/geist-mono";
 @import "./theme/theme.css";
 
-/* Theme tokens (src/theme/theme.css) as Tailwind utilities: bg-surface, text-muted, border-line, ... */
 @theme inline {
   --color-*: initial;
   --color-bg: var(--bg);

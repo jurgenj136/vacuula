@@ -4,7 +4,6 @@ import { cn } from '../../utils/cn'
 
 const WEEK: DayKey[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
 
-// One dot per weekday that has at least one active event
 export default function WeekStrip({ activeDays }: { activeDays: Set<DayKey> }) {
     const { t } = useTranslation()
     return (

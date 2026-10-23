@@ -8,9 +8,7 @@ interface AlertCardProps {
     tone: AlertTone
     title: ReactNode
     message?: ReactNode
-    /** replaces the default tone icon */
     icon?: ReactNode
-    /** trailing action, e.g. a dismiss button */
     action?: ReactNode
     className?: string
 }

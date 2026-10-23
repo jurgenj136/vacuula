@@ -8,7 +8,6 @@ interface SelectRowProps<T> {
     onChange: (value: T) => void
 }
 
-// Row showing the current value; a native select on top of it opens the picker
 export function SelectRow<T>({ label, options, value, onChange }: SelectRowProps<T>) {
     const index = options.findIndex(o => o.value === value)
     return (

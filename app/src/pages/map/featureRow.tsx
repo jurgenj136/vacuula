@@ -8,12 +8,10 @@ interface ItemRowProps {
     label: ReactNode
     description?: ReactNode
     leading?: ReactNode
-    /** makes the whole card a button; trailing controls stay separately clickable */
     onClick?: () => void
     children?: ReactNode
 }
 
-// Card row: leading swatch/icon, name + description, trailing control.
 // The name's grandparent is the card, so tests can find a row by its name.
 export function ItemRow({ label, description, leading, onClick, children }: ItemRowProps) {
     const text = (
@@ -51,7 +49,6 @@ export function IconTile({ children }: { children: ReactNode }) {
     )
 }
 
-// Zone: tinted square in the boundary colour; line: a short stroke
 export function Swatch({ boundary }: { boundary: NoGoLine | Zone }) {
     const color = normalizeHex(boundary.color) ?? undefined
     if (boundary.type === 'polygon') {

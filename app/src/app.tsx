@@ -27,9 +27,7 @@ const Pages = () => (
     </RequireRobot>
 )
 
-// < 1024px: header (robot switcher + page actions), scrolling content, floating nav capsule.
-// 768-1023px: the same, centred. >= 1024px: sidebar + content, no header or capsule.
-// The content column is the positioning frame for drawers and overlays.
+// Phone/tablet: header + floating nav capsule; >= 1024px: sidebar. The content column anchors drawers/overlays.
 function Shell() {
     const isDesktop = useIsDesktop()
     const [headerSlot, setHeaderSlot] = useState<HTMLElement | null>(null)

@@ -9,7 +9,6 @@ import { RobotType } from '../types'
 
 const SCENARIO_KEY = 'vacuula.mockScenario'
 
-// `pnpm dev:mock`, pick a scenario with ?scenario=<name> (remembered for the tab)
 export async function startMocking() {
     const requested = new URLSearchParams(location.search).get('scenario')
     if (requested) sessionStorage.setItem(SCENARIO_KEY, requested)

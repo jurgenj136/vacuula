@@ -82,7 +82,6 @@ export function RobotStatusBadges() {
     )
 }
 
-// second line in the sidebar switcher: "Idle · 97%"
 export function RobotStatusLine() {
     const { t } = useTranslation()
     const { robot } = useRobot()

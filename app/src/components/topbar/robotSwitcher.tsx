@@ -8,9 +8,7 @@ import Badge from '../badge/badge'
 
 interface RobotSwitcherProps {
     icon?: ReactNode
-    /** trailing slot (header) */
     children?: ReactNode
-    /** second line under the name (sidebar) */
     subtitle?: ReactNode
     variant?: 'header' | 'sidebar'
 }

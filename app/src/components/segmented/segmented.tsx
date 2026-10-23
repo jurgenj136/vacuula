@@ -9,7 +9,6 @@ export interface SegmentedOption<T> {
 
 interface BaseProps<T> {
     options: SegmentedOption<T>[]
-    /** accessible name of the group */
     ariaLabel?: string
     disabled?: boolean
     className?: string
@@ -29,7 +28,6 @@ interface MultipleProps<T> extends BaseProps<T> {
 
 export type SegmentedProps<T> = SingleProps<T> | MultipleProps<T>
 
-// Equal-width options in a recessed track; selected = raised surface + accent ring
 export default function Segmented<T>(props: SegmentedProps<T>) {
     const isSelected = (value: T) => props.multiple ? props.value.includes(value) : props.value === value
 

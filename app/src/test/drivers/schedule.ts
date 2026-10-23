@@ -21,7 +21,6 @@ const scheduleSwitch = () => screen.getByRole('checkbox', { name: t('schedule.en
 export const scheduleEnabled = () => scheduleSwitch().checked
 export const toggleSchedule = (user: User) => user.click(scheduleSwitch())
 
-// events are identified by their start time
 export const eventTimes = () => screen.queryAllByText(/^\d{2}:\d{2}$/).map(el => el.textContent)
 const eventSwitch = (time: string) => screen.getByRole('checkbox', { name: t('schedule.eventSwitch', { time }) }) as HTMLInputElement
 export const eventEnabled = (time: string) => eventSwitch(time).checked

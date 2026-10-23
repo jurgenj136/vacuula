@@ -6,7 +6,6 @@ export type BadgeTone = 'accent' | 'warn' | 'err' | 'info' | 'neutral'
 interface BadgeProps {
     tone?: BadgeTone
     children: ReactNode
-    /** numbers: Geist Mono, tabular */
     mono?: boolean
     className?: string
     title?: string
@@ -20,7 +19,6 @@ const TONES: Record<BadgeTone, string> = {
     neutral: 'bg-surface-2 text-muted',
 }
 
-// Status pill: "Completed", "Offline", "97%"
 export default function Badge({ tone = 'neutral', children, mono, className, title }: BadgeProps) {
     return (
         <span

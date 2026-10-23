@@ -6,7 +6,6 @@ interface IconButtonProps {
     icon: ReactNode
     onClick?: () => void
     disabled?: boolean
-    /** md 44px, lg 52px, xl 56px */
     size?: 'md' | 'lg' | 'xl'
     variant?: 'secondary' | 'ghost' | 'primary' | 'tonal'
     pressed?: boolean

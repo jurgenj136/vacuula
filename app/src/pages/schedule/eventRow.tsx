@@ -11,7 +11,6 @@ interface EventRowProps {
     children: ReactNode
 }
 
-// Time in mono + day, summary underneath, trailing control. With onClick the text part is a button.
 export default function EventRow({ time, day, summary, selected, dimmed, onClick, children }: EventRowProps) {
     const text = (
         <>

@@ -6,7 +6,6 @@ export type User = UserEvent
 
 export const t = (key: string, options?: Record<string, unknown>) => i18n.t(key as never, options) as string
 
-// visible to the user: not hidden by display/visibility anywhere up the tree
 export function isShown(element: Element | null) {
     for (let el = element; el; el = el.parentElement) {
         const style = getComputedStyle(el)

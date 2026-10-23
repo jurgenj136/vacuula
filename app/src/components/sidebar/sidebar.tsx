@@ -6,7 +6,6 @@ import { cn } from '../../utils/cn'
 import { NAV_ITEMS } from '../navCapsule/navItems'
 import Topbar from '../topbar/topbar'
 
-// Desktop (>= 1024px) navigation column: logo, robot switcher, nav, server version
 export default function Sidebar() {
     const { t } = useTranslation()
     const { serverInfo } = useApp()

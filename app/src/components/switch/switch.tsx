@@ -3,13 +3,11 @@ import { cn } from '../../utils/cn'
 interface SwitchProps {
     checked: boolean
     onChange: (checked: boolean) => void
-    /** accessible name when there is no visible label around it */
     label?: string
     disabled?: boolean
     className?: string
 }
 
-// 48x28 track, 22px knob. A real checkbox underneath, so labels and keyboard work.
 export default function Switch({ checked, onChange, label, disabled, className }: SwitchProps) {
     return (
         <span className={cn('relative inline-flex h-7 w-12 shrink-0', className)}>

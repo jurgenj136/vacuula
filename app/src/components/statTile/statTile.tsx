@@ -8,7 +8,6 @@ interface StatTileProps {
     className?: string
 }
 
-// Small figure tile: muted label over a Geist Mono value; long values wrap instead of truncating
 export default function StatTile({ label, value, unit, className }: StatTileProps) {
     return (
         <div className={cn('flex min-w-0 flex-col gap-1 rounded-2xl border border-line bg-surface p-3', className)}>

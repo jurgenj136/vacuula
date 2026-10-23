@@ -22,7 +22,6 @@ export const navigationOptions: (user: User) => Promise<string[]> = async () => 
 export const selectSuction = (user: User, mode: Suction) => selectIn(user, 'home.suction', t(`modes.${mode}`))
 export const selectNavigation = (user: User, mode: Navigation) => selectIn(user, 'home.navigation', t(`modes.${mode}`))
 
-// the area options are always visible in the setup card
 export const openAreaPicker: (user: User) => Promise<void> = async () => {
     if (!setup()) throw new Error('cleaning setup not shown')
 }
@@ -53,7 +52,6 @@ export async function chooseArea(user: User, area: Area, { spot, zones, avoidNog
     }
 }
 
-// zones are offered for the map area
 export async function zoneOptions(user: User) {
     const before = within(group('home.area')).getAllByRole('button').find(b => b.getAttribute('aria-pressed') === 'true')
     await selectIn(user, 'home.area', t('home.map'))
@@ -65,7 +63,6 @@ export async function zoneOptions(user: User) {
 
 export const mapAreaHintShown = () => textShown(t('home.mapModeHint'))
 
-// stop, primary action, base
 const primary = () => screen.getByRole('button', { name: t('home.stop') }).nextElementSibling as HTMLButtonElement
 export const primaryAction = (): 'start' | 'pause' | 'resume' =>
     (Object.keys(PRIMARY) as (keyof typeof PRIMARY)[]).find(k => primary().textContent === t(PRIMARY[k])) ?? 'start'
@@ -85,7 +82,6 @@ export const isBaseEnabled = () => !(screen.getByRole('button', { name: t('home.
 
 export const statusText = async (key: string) => (await screen.findAllByText(t(`state.${key}`)))[0]
 
-// alerts are identified by their translated message
 export const alertShown = (message: string) => textShown(message)
 export const dismissAlert = async (user: User) => {
     const button = screen.getAllByRole('button', { name: t('home.dismissAlert') }).find(isShown)

@@ -1,6 +1,6 @@
 import type { ThemeMode } from '../../theme'
 
-// Mini preview colours per theme (bg, surface, accent). Keep in sync with src/theme/theme.css.
+// Keep in sync with src/theme/theme.css.
 export const THEME_PREVIEW: Record<ThemeMode, { bg: string, surface: string, accent: string }> = {
     dark: { bg: '#0f1113', surface: '#181c1f', accent: '#3ddc97' },
     soft: { bg: '#25292e', surface: '#2c3137', accent: '#4fd19d' },

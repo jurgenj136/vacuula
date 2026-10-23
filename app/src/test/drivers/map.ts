@@ -3,7 +3,6 @@ import { checkbox, field, row, t, textShown, type User } from './common'
 
 export const ready = () => screen.findByText(t('map.newMap'))
 
-// ── maps list ──
 export const mapEnabled = (name: string) => checkbox(row(name)).checked
 export const toggleMapEnabled = (user: User, name: string) => user.click(checkbox(row(name)))
 export const promoteMap = (user: User, name: string) => user.click(within(row(name)).getByRole('button', { name: t('map.promote') }))
@@ -20,7 +19,6 @@ export async function openMap(user: User, name: string) {
     await screen.findByRole('button', { name: t('map.addFeature') })
 }
 
-// ── one map ──
 export const mapStatus = () => [t('common.enabled'), t('common.disabled')].find(textShown)
 export const boundaryShown = (name: string) => textShown(name)
 export const boundaryToggleAvailable = (name: string) => within(row(name)).queryByRole('checkbox') !== null
@@ -50,7 +48,6 @@ export async function stopUsingAsFloormap(user: User) {
     await user.click(screen.getByRole('button', { name: t('map.stopUsingAsFloormap') }))
 }
 
-// ── one boundary ──
 export const openBoundary = (user: User, name: string) => user.click(screen.getByText(name, { exact: true }))
 export async function deleteBoundary(user: User, name: string) {
     await openBoundary(user, name)

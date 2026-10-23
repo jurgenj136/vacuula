@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { cn } from '../../utils/cn'
 import { NAV_ITEMS } from './navItems'
 
-// Floating bottom navigation (phone/tablet). Sits over the page bottom with a fade behind it.
 export default function NavCapsule() {
     const { t } = useTranslation()
     return (

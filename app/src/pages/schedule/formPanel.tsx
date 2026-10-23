@@ -10,7 +10,6 @@ interface FormPanelProps {
     children: ReactNode
 }
 
-// Phone: bottom drawer. Desktop: right pane, with a placeholder while closed.
 export function FormPane({ open, onOpenChange, children }: FormPanelProps) {
     const { t } = useTranslation()
     const isDesktop = useIsDesktop()

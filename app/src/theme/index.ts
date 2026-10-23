@@ -1,9 +1,5 @@
 import { useCallback, useSyncExternalStore } from 'react'
 
-// Runtime theme, persisted in localStorage:
-//   theme        -> data-theme  on <html>  (one of THEME_MODES)
-//   match system -> when on, data-theme follows prefers-color-scheme (light / dark)
-//   accent       -> data-accent on <html>  (one of ACCENTS)
 // The tokens themselves live in ./theme.css; index.html applies the stored
 // values before any CSS loads so there is no flash of the wrong background.
 
@@ -83,7 +79,6 @@ const session = {
     accent: readAccent(),
 }
 
-/** The theme the user picked (ignores "match system"). */
 export function getTheme(): ThemeMode {
     return session.theme
 }
@@ -92,7 +87,6 @@ export function getMatchSystem(): boolean {
     return session.matchSystem
 }
 
-/** The theme on screen: the system's light/dark when "match system" is on, else the picked one. */
 export function getResolvedTheme(): ThemeMode {
     if (!getMatchSystem()) return getTheme()
     const query = systemQuery()
@@ -134,7 +128,6 @@ function watchSystem(on: boolean) {
     watched?.addEventListener('change', onSystemChange)
 }
 
-/** Picking a theme turns "match system" off. */
 export function setTheme(mode: ThemeMode) {
     session.theme = mode
     session.matchSystem = false
@@ -170,9 +163,7 @@ export function useTheme() {
     const setMatch = useCallback((on: boolean) => setMatchSystem(on), [])
     const setAccentCb = useCallback((id: string) => setAccent(id), [])
     return {
-        /** theme on screen */
         theme,
-        /** theme picked by the user, shown again when "match system" is turned off */
         selectedTheme,
         setTheme: set,
         matchSystem,

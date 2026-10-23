@@ -1,7 +1,6 @@
 import { RobotType, type Neato } from '../types'
 import type { Gen3State } from '../test/fixtures/gen3'
 
-// payloads of the /api/robot/:serial/connect event stream
 export const gen3StateEvent = (serial: string, state: Gen3State) => ({
     serial, ts: Date.now(), type: RobotType.NeatoGen3, data: { type: 'state', data: state },
 })

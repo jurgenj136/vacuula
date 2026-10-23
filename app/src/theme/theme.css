@@ -1,18 +1,7 @@
 /*
- * Vacuula design tokens (runtime theme).
- *
- * Two attributes on <html>:
- *   data-theme  = one of THEME_MODES in src/theme/index.ts -> surfaces, text,
- *                 borders, status colours and the theme's own accent
- *   data-accent = "mint" -> accent axis for themes that do not bring their own
- *
- * Dark + mint are the defaults and are declared on plain :root so the page is
- * correct even before any attribute is set. Every theme block declares the
- * full token set. Components use the Tailwind utilities from src/index.css
- * (bg-surface, text-muted, ...).
- *
- * The page background of each theme is duplicated in index.html (anti-flash
- * script) and src/theme/index.ts - keep them in sync.
+ * Vacuula design tokens. data-theme picks a theme block (THEME_MODES in src/theme/index.ts);
+ * data-accent picks the accent for themes without their own.
+ * Page backgrounds are duplicated in index.html (anti-flash script) and src/theme/index.ts - keep in sync.
  */
 
 /* ---------- dark (default) ---------- */
@@ -123,7 +112,7 @@
   --err-icon-bg: #e05252;
   --err-soft: rgba(209, 63, 63, 0.12);
   --info: #0a458d;
-  --info-bg: #60a3e6;
+  --info-bg: #dbe9f9;
   --info-text: #062a55;
   --info-icon-bg: #2f7fd6;
 

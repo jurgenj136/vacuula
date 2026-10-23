@@ -6,7 +6,6 @@ interface BatteryProps {
     isCharging?: boolean
 }
 
-// Battery level pill: bolt while charging, colour by level
 export default function Battery({ percentage, isCharging = false }: BatteryProps) {
     if (percentage === undefined || !Number.isFinite(percentage)) {
         return <Badge mono>—</Badge>

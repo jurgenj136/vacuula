@@ -9,7 +9,6 @@ export const ready = () => waitFor(() => {
 
 export const noRunsShown = () => textShown(t('runs.noRuns'))
 
-// "<started by> cleaning | <date>", newest first
 export const entries = () => screen.queryAllByText(ENTRY).map(el => el.textContent)
 export const openRun = (user: User, index: number) => user.click(screen.getAllByText(ENTRY)[index])
 

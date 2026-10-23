@@ -84,7 +84,6 @@ describe('Theme store', () => {
         system.set(true)
         expect(html()).toHaveAttribute('data-theme', 'dark')
         expect(theme.getResolvedTheme()).toBe('dark')
-        // the picked theme is kept for when match system is turned off
         expect(theme.getTheme()).toBe('neato')
 
         theme.setMatchSystem(false)

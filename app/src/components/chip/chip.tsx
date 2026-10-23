@@ -7,12 +7,10 @@ interface ChipProps {
     selected?: boolean
     onClick?: () => void
     disabled?: boolean
-    /** leading icon; a selected chip shows a check instead */
     icon?: ReactNode
     className?: string
 }
 
-// Selectable pill (zones, filters). Toggle state is exposed with aria-pressed.
 export default function Chip({ label, selected = false, onClick, disabled, icon, className }: ChipProps) {
     return (
         <button

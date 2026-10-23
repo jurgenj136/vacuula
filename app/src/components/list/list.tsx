@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 import { cn } from '../../utils/cn'
 
-// 12px uppercase heading above a group
 export function SectionHeading({ children, className }: { children: ReactNode, className?: string }) {
     return (
         <h2 className={cn('m-0 px-1 text-xs font-semibold tracking-[0.04em] text-muted uppercase', className)}>
@@ -10,7 +9,6 @@ export function SectionHeading({ children, className }: { children: ReactNode, c
     )
 }
 
-// Grouped card; rows inside are divided by a hairline
 export function ListGroup({ children, className }: { children: ReactNode, className?: string }) {
     return (
         <div className={cn('flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface', className)}>
@@ -22,11 +20,8 @@ export function ListGroup({ children, className }: { children: ReactNode, classN
 interface ListRowProps {
     label: ReactNode
     description?: ReactNode
-    /** leading icon */
     icon?: ReactNode
-    /** trailing control or value */
     children?: ReactNode
-    /** makes the whole row a button */
     onClick?: () => void
     disabled?: boolean
     className?: string

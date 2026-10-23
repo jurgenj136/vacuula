@@ -287,7 +287,6 @@ export default function Home() {
 
             <div className="flex flex-1 flex-col gap-3 lg:grid lg:flex-none lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:items-start lg:gap-5">
 
-                {/* ── Status ── */}
                 <section className="flex flex-1 flex-col items-center justify-center gap-1 py-4 text-center lg:col-start-1 lg:row-start-1 lg:flex-row lg:justify-start lg:gap-5 lg:rounded-panel lg:border lg:border-line lg:bg-surface lg:p-6 lg:text-left">
                     <img src={mascot.src} alt={t('home.logoAlt')} className="mb-2 size-26 object-contain lg:mb-0 lg:size-24" />
                     <div className="flex min-w-0 flex-col gap-1">
@@ -299,7 +298,6 @@ export default function Home() {
                     </div>
                 </section>
 
-                {/* ── Setup ── */}
                 <Card aria-label={t('home.setup')} className="flex flex-col gap-3 lg:col-start-2 lg:row-span-2 lg:row-start-1">
                     <SetupGroup label={t('home.area')}>
                         <Segmented ariaLabel={t('home.area')} options={areaOptions} value={gen3__cleaningCategory} onChange={gen3__setCleaningCategory} />
@@ -363,8 +361,8 @@ export default function Home() {
                     )}
                 </Card>
 
-                {/* ── Controls ── (phone: sticky offsets count from inside <main>'s capsule padding, so the buttons stay just above the capsule; the extra 32px of background runs under its fade) */}
-                <div className="flex gap-2 max-lg:sticky max-lg:-bottom-6 max-lg:z-10 max-lg:-mx-4 max-lg:-mt-3 max-lg:-mb-8 max-lg:bg-linear-to-t max-lg:from-bg max-lg:from-88% max-lg:to-transparent max-lg:px-4 max-lg:pt-3 max-lg:pb-8 lg:col-start-1 lg:row-start-2">
+                {/* Phone: sticky offsets count from inside <main>'s capsule padding, so the buttons sit just above the capsule */}
+                <div className="flex gap-2 max-lg:sticky max-lg:-bottom-6 max-lg:z-10 max-lg:-mx-4 max-lg:-mt-3 max-lg:-mb-8 max-lg:bg-bg max-lg:before:pointer-events-none max-lg:before:absolute max-lg:before:inset-x-0 max-lg:before:bottom-full max-lg:before:h-6 max-lg:before:bg-linear-to-t max-lg:before:from-bg max-lg:before:to-transparent max-lg:px-4 max-lg:pt-3 max-lg:pb-8 lg:col-start-1 lg:row-start-2">
                     <IconButton
                         size="xl"
                         label={t('home.stop')}

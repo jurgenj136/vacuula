@@ -490,8 +490,7 @@ export default () => {
         )
     }
 
-    // The page runs under the nav capsule so the sheet reaches the screen edge;
-    // a closed sheet is lifted above the capsule so its handle stays reachable.
+    // The page runs under the nav capsule; a closed sheet is lifted above it so its handle stays reachable.
     const capsuleSpace = 'calc(88px + env(safe-area-inset-bottom))'
     return (
         <div className="relative isolate -mb-[calc(88px+env(safe-area-inset-bottom))] min-w-0 flex-1 overflow-hidden">

@@ -81,7 +81,6 @@ describe('Settings - Gen4', () => {
     })
 
     test('factory reset waits until the robot settings have loaded', async () => {
-        // robot language never answers
         server.use(http.post(`/api/robot/${SERIALS.gen4}/command`, async ({ request }) => {
             const body = await request.clone().json() as { ability?: string }
             if (body.ability === 'settings.robot_language') return new Promise<never>(() => {})
