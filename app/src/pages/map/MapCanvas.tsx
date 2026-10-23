@@ -53,7 +53,8 @@ export default function MapCanvas({
     })
 
     const addPointAtCrosshair = () => {
-        const coords = getCrosshairWorldCoords(canvasRef, offset, zoom, mapSize!)
+        if (!mapSize) return
+        const coords = getCrosshairWorldCoords(canvasRef, offset, zoom, mapSize)
         setCurrentLinePoints(prev => [...prev, coords])
     }
 
@@ -75,7 +76,7 @@ export default function MapCanvas({
     const onTouchMove = (e: React.TouchEvent) => {
         canvasHandlers.onTouchMove(e)
         if (currentLinePoints.length > 1 && mapSize) {
-            const coords = getCrosshairWorldCoords(canvasRef, offset, zoom, mapSize!)
+            const coords = getCrosshairWorldCoords(canvasRef, offset, zoom, mapSize)
             const [fx, fy] = currentLinePoints[0]
             const distance = Math.sqrt((coords[0] - fx) ** 2 + (coords[1] - fy) ** 2)
             setShowCloseAsPolygon(distance < DRAWING.CLOSE_THRESHOLD)
@@ -111,7 +112,7 @@ export default function MapCanvas({
                     <button type="button" aria-label={t('map.undoPoint')} title={t('map.undoPoint')} onClick={undo} className={cn(ACTION, 'size-14 border border-line-strong bg-surface text-fg enabled:hover:bg-surface-hover')}>
                         <LuUndo2 size={22} aria-hidden="true" />
                     </button>
-                    <button type="button" aria-label={t('map.addPoint')} title={t('map.addPoint')} onClick={addPointAtCrosshair} disabled={closedAsPolygon} className={cn(ACTION, 'size-20 bg-accent text-on-accent enabled:hover:bg-accent-hover')}>
+                    <button type="button" aria-label={t('map.addPoint')} title={t('map.addPoint')} onClick={addPointAtCrosshair} disabled={closedAsPolygon || !mapSize} className={cn(ACTION, 'size-20 bg-accent text-on-accent enabled:hover:bg-accent-hover')}>
                         <LuPlus size={36} strokeWidth={2.5} aria-hidden="true" />
                     </button>
                     <button type="button" aria-label={t('map.closeShape')} title={t('map.closeShape')} onClick={closeAsPolygon} disabled={!(currentLinePoints.length > 2 && !closedAsPolygon)} className={cn(ACTION, 'size-14 border border-line-strong bg-surface text-fg enabled:hover:bg-surface-hover')}>
