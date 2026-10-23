@@ -31,6 +31,15 @@ interface UseMapOptions {
     backgroundToken?: string
 }
 
+function heightAboveSheet(container: HTMLElement, height: number) {
+    const probe = document.createElement('div')
+    probe.style.cssText = 'position:absolute;visibility:hidden;height:var(--map-sheet-inset,0px)'
+    container.appendChild(probe)
+    const inset = probe.getBoundingClientRect().height
+    probe.remove()
+    return height > inset ? height - inset : height
+}
+
 export function useMap({
     mapId,
     runId,
@@ -138,8 +147,9 @@ export function useMap({
             canvas.height = height
 
             if (fitOnLoad && cellsRef.current && mapSize && !userInteractedRef.current) {
+                const fitHeight = heightAboveSheet(parent, height)
                 const fit = calcFitZoomAndOffset(
-                    cellsRef.current, mapSize, width, height,
+                    cellsRef.current, mapSize, width, fitHeight,
                     DRAWING.MIN_ZOOM, DRAWING.MAX_ZOOM
                 )
                 if (fit) {
@@ -147,7 +157,7 @@ export function useMap({
                     setOffset(fit.offset)
                     return
                 }
-                centerView(mapSize.width, mapSize.height, 4, width, height)
+                centerView(mapSize.width, mapSize.height, 4, width, fitHeight)
                 return
             }
             draw()
@@ -170,7 +180,7 @@ export function useMap({
         const parent = canvas?.parentElement
         if (!canvas || !parent || !cellsRef.current || !mapSize) return
         const { width, height } = parent.getBoundingClientRect()
-        const fit = calcFitZoomAndOffset(cellsRef.current, mapSize, width, height, DRAWING.MIN_ZOOM, DRAWING.MAX_ZOOM)
+        const fit = calcFitZoomAndOffset(cellsRef.current, mapSize, width, heightAboveSheet(parent, height), DRAWING.MIN_ZOOM, DRAWING.MAX_ZOOM)
         if (fit) {
             setZoom(fit.zoom)
             setOffset(fit.offset)
