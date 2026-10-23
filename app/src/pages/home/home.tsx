@@ -18,7 +18,7 @@ import type { NoGoLine, Zone } from '../../components/map/types'
 import { usePersistentMaps } from '../../loaders/resources'
 import { fetchAllGen3Boundaries, getCachedZones } from '../../loaders/gen3Boundaries'
 import { isDocked, isGen4D10 } from '../../components/topbar/robotInfo'
-import { getGen3CleaningMode, getGen3NavigationMode, getGen4CleaningMode, getGen4NavigationMode } from '../../utils/modes'
+import { getGen3CleaningMode, getGen3NavigationMode, getStoredGen4CleaningMode, resolveGen4CleaningMode, getGen4NavigationMode } from '../../utils/modes'
 import AlertCard, { type AlertTone } from '../../components/alert/alert'
 import Button from '../../components/button/button'
 import IconButton from '../../components/iconButton/iconButton'
@@ -85,8 +85,10 @@ export default function Home() {
     const [gen3__navigationMode, gen3__setNavigationMode] = useState<CleaningNavigationMode>(getGen3NavigationMode())
     const [gen3__cleaningCategory, gen3__setCleaningCategory] = useState<CleaningCategory>(isDocked(robot) ? CleaningCategory.MAP : CleaningCategory.HOUSE)
 
-    const [gen4__cleaningMode, gen4__setCleaningMode] = useState<Neato.Gen4.CleaningMode>(getGen4CleaningMode())
+    const [gen4__cleaningMode, gen4__setCleaningMode] = useState<Neato.Gen4.CleaningMode>(getStoredGen4CleaningMode())
     const [gen4__navigationMode, gen4__setNavigationMode] = useState<Neato.Gen4.CleaningNavigationMode>(getGen4NavigationMode())
+
+    const gen4__effectiveCleaningMode = resolveGen4CleaningMode(robot, gen4__cleaningMode)
 
     useEffect(() => {
         localStorage.setItem('vacuula.gen3.cleaningMode', gen3__cleaningMode.toString())
@@ -168,11 +170,11 @@ export default function Home() {
         } else if (robot.type === RobotType.NeatoGen4) {
             // stuff is technically for gen3, but will piggyback of it for now, later make its own separate things? TODO
             if (gen3__cleaningCategory === CleaningCategory.HOUSE || !promotedFloorplan) {
-                GEN4_COMMANDS.startCleaning(robot.serial, gen4__cleaningMode, gen4__navigationMode)
+                GEN4_COMMANDS.startCleaning(robot.serial, gen4__effectiveCleaningMode, gen4__navigationMode)
                 return
             }
 
-            GEN4_COMMANDS.startCleaning(robot.serial, gen4__cleaningMode, gen4__navigationMode, promotedFloorplan?.id, nogoEnabled, selectedZones)
+            GEN4_COMMANDS.startCleaning(robot.serial, gen4__effectiveCleaningMode, gen4__navigationMode, promotedFloorplan?.id, nogoEnabled, selectedZones)
         }
     }
 
@@ -328,7 +330,7 @@ export default function Home() {
                     ) : (
                         <div className={MODES_ROW}>
                             <SetupGroup label={t('home.suction')}>
-                                <Segmented ariaLabel={t('home.suction')} options={gen4Suction} value={gen4__cleaningMode} onChange={gen4__setCleaningMode} />
+                                <Segmented ariaLabel={t('home.suction')} options={gen4Suction} value={gen4__effectiveCleaningMode} onChange={gen4__setCleaningMode} />
                             </SetupGroup>
                             <SetupGroup label={t('home.navigation')}>
                                 <Segmented ariaLabel={t('home.navigation')} options={gen4Navigation} value={gen4__navigationMode} onChange={gen4__setNavigationMode} />

@@ -270,7 +270,7 @@ export default () => {
         }
         const promotedFloorplan = await getPromotedFloorplan();
         if (!promotedFloorplan) return // TODO: ERROR (will do when i do gen3)
-        GEN4_COMMANDS.startCleaning(robot.serial, getGen4CleaningMode(), getGen4NavigationMode(), promotedFloorplan.id, true, [zone.id])
+        GEN4_COMMANDS.startCleaning(robot.serial, getGen4CleaningMode(robot), getGen4NavigationMode(), promotedFloorplan.id, true, [zone.id])
     }
 
 
@@ -349,7 +349,7 @@ export default () => {
                             !isDocked(robot) && 'pointer-events-none opacity-40',
                         )}
                         onClick={() => robot.type === RobotType.NeatoGen4
-                            ? GEN4_COMMANDS.startCleaning(robot.serial, getGen4CleaningMode(), getGen4NavigationMode())
+                            ? GEN4_COMMANDS.startCleaning(robot.serial, getGen4CleaningMode(robot), getGen4NavigationMode())
                             : GEN3_COMMANDS.startPersistentMapExploration(robot.serial)}>
                         <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-on-accent">
                             <LuPlus size={18} strokeWidth={2.5} />
