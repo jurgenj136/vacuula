@@ -228,7 +228,7 @@
         "themeHint_soft": "Mint",
         "themeHint_light": "Mint",
         "themeHint_black": "Mint",
-        "themeHint_neato": "Slate",
+        "themeHint_neato": "Orange",
         "themeHint_neato-light": "Orange",
         "themeHint_midnight": "Blue",
         "themeHint_dusk": "Violet",
@@ -256,7 +256,7 @@
         "retry": "Try again"
     },
     "hasOutdatedRobot": {
-        "title": "You have an robot that is outdated",
+        "title": "You have a robot that is outdated",
         "subtitle": "You are running server version {{serverVersion}} and this requires installer version {{minInstallerVersion}} or higher. Please rerun the installer for the following robots with the latest version.",
         "retry": "Try again"
     },

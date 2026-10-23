@@ -228,7 +228,7 @@
         "themeHint_soft": "Menta",
         "themeHint_light": "Menta",
         "themeHint_black": "Menta",
-        "themeHint_neato": "Ardósia",
+        "themeHint_neato": "Laranja",
         "themeHint_neato-light": "Laranja",
         "themeHint_midnight": "Azul",
         "themeHint_dusk": "Violeta",
@@ -253,6 +253,11 @@
         "title": "Não foi possível ligar ao servidor",
         "subtitle": "A aplicação não conseguiu ligar ao servidor Vacuula! Confirme que o servidor está a funcionar e que é acessível a partir deste dispositivo.",
         "mdnsDisclaimer": "Se estiver a usar mDNS (a abrir o site através de vacuula.local), o dispositivo pode demorar algum tempo a obter o IP do servidor. Se o problema persistir, tente reiniciar o browser.",
+        "retry": "Tentar novamente"
+    },
+    "hasOutdatedRobot": {
+        "title": "Tem um robô desatualizado",
+        "subtitle": "Está a usar a versão {{serverVersion}} do servidor, que requer a versão {{minInstallerVersion}} ou superior do instalador. Volte a executar a versão mais recente do instalador para os seguintes robôs.",
         "retry": "Tentar novamente"
     },
     "robotErrorCode": {
