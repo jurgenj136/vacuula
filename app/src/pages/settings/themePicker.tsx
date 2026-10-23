@@ -20,19 +20,22 @@ export function ThemeSwatch({ mode, className }: { mode: ThemeMode, className?: 
     )
 }
 
-function ThemeTile({ mode, selected, onSelect }: { mode: ThemeMode, selected: boolean, onSelect: () => void }) {
+function ThemeTile({ mode, name, selected, onSelect }: { mode: ThemeMode, name: string, selected: boolean, onSelect: () => void }) {
     const { t } = useTranslation()
     const c = THEME_PREVIEW[mode]
     const id = useId()
     return (
-        <button
-            type="button"
-            role="radio"
-            aria-checked={selected}
-            aria-labelledby={`${id}-name`}
-            aria-describedby={`${id}-hint`}
-            onClick={onSelect}
-            className="pressable focus-ring flex cursor-pointer flex-col gap-1.5 rounded-2xl p-1 text-left">
+        <label className="pressable relative flex cursor-pointer flex-col gap-1.5 rounded-2xl p-1 text-left has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent">
+            <input
+                type="radio"
+                name={name}
+                value={mode}
+                checked={selected}
+                onChange={onSelect}
+                aria-labelledby={`${id}-name`}
+                aria-describedby={`${id}-hint`}
+                className="sr-only"
+            />
             <span
                 aria-hidden="true"
                 className={cn(
@@ -53,7 +56,7 @@ function ThemeTile({ mode, selected, onSelect }: { mode: ThemeMode, selected: bo
                 <span id={`${id}-name`} className="text-caption leading-tight font-medium text-fg">{t(`settings.theme_${mode}`)}</span>
                 <span id={`${id}-hint`} className="text-micro text-muted">{t(`settings.themeHint_${mode}`)}</span>
             </span>
-        </button>
+        </label>
     )
 }
 
@@ -70,10 +73,11 @@ export function MatchSystemRow() {
 export function ThemeTiles({ columns }: { columns: string }) {
     const { t } = useTranslation()
     const { selectedTheme, matchSystem, setTheme } = useTheme()
+    const name = useId()
     return (
         <div role="radiogroup" aria-label={t('settings.theme')} className={cn('grid gap-2', columns)}>
             {THEME_MODES.map(mode => (
-                <ThemeTile key={mode} mode={mode} selected={!matchSystem && selectedTheme === mode} onSelect={() => setTheme(mode)} />
+                <ThemeTile key={mode} mode={mode} name={name} selected={!matchSystem && selectedTheme === mode} onSelect={() => setTheme(mode)} />
             ))}
         </div>
     )

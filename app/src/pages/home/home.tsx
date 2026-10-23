@@ -8,7 +8,7 @@ import { GEN3_COMMANDS } from '../../http/gen3'
 import { Neato, RobotType } from '../../types'
 import { GEN4_COMMANDS } from '../../http/gen4'
 import { useRobot } from '../../context/useRobot'
-import { BasicState, getRobotStateKey, resolveRobotState } from '../../utils/state'
+import { getRobotStateKey } from '../../utils/state'
 import { useTranslation } from 'react-i18next'
 import { useTimeAgoFormatter } from '../../i18n/timeago'
 import { useUnits } from '../../units'
@@ -40,11 +40,6 @@ const SEVERITY_TONES: Record<Neato.Gen4.ErrorSeverity, AlertTone> = {
     [Neato.Gen4.ErrorSeverity.ERROR]: 'error',
     [Neato.Gen4.ErrorSeverity.CRITICAL]: 'error',
 }
-
-// states in which the setup collapses into a summary of the current run
-const BUSY_STATES = [BasicState.CLEANING, BasicState.CLEANING_STANDBY, BasicState.PAUSED, BasicState.DOCKING, BasicState.ERROR]
-
-const labelOf = <T,>(options: SegmentedOption<T>[], value: T) => options.find(o => o.value === value)?.label
 
 function SetupGroup({ label, children }: { label: string, children: ReactNode }) {
     return (
@@ -195,7 +190,6 @@ export default function Home() {
         )
 
     const docked = isDocked(robot)
-    const busy = BUSY_STATES.includes(resolveRobotState(robot))
 
     const areaOptions: SegmentedOption<CleaningCategory>[] = [
         { value: CleaningCategory.HOUSE, label: t('home.house') },
@@ -238,10 +232,6 @@ export default function Home() {
         : (gen3__cleaningCategory !== CleaningCategory.HOUSE && promotedFloorplan ? selectedZones.length : 0)
     const startLabel = robot.type === RobotType.NeatoGen3 && gen3__cleaningCategory === CleaningCategory.SPOT ? t('home.cleanSpot')
         : zoneCount > 0 ? t('home.cleanZones', { count: zoneCount }) : t('home.startCleaning')
-
-    const summary = robot.type === RobotType.NeatoGen3
-        ? [labelOf(areaOptions, gen3__cleaningCategory), labelOf(gen3Suction, gen3__cleaningMode), labelOf(gen3Navigation, gen3__navigationMode)]
-        : [labelOf(areaOptions, gen3__cleaningCategory), labelOf(gen4Suction, gen4__cleaningMode), labelOf(gen4Navigation, gen4__navigationMode)]
 
     const bell = <LuBell size={20} aria-hidden="true" className={bellAnimating ? 'origin-top animate-bell-swing' : undefined} />
     const hasAlerts = robot.type === RobotType.NeatoGen4 ? !!robot.errors?.length : !!(robot.error || robot.alert)
@@ -310,79 +300,68 @@ export default function Home() {
                 </section>
 
                 {/* ── Setup ── */}
-                {busy ? (
-                    <Card aria-label={t('home.thisRun')} className="flex flex-col gap-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
-                        <span className="text-xs font-medium text-muted">{t('home.thisRun')}</span>
-                        <div className="flex flex-wrap gap-2">
-                            {summary.map((label, i) => (
-                                <span key={i} className="flex h-8 items-center rounded-full bg-surface-2 px-3 text-caption font-medium">{label}</span>
-                            ))}
+                <Card aria-label={t('home.setup')} className="flex flex-col gap-3 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+                    <SetupGroup label={t('home.area')}>
+                        <Segmented ariaLabel={t('home.area')} options={areaOptions} value={gen3__cleaningCategory} onChange={gen3__setCleaningCategory} />
+                        {!docked && <p className="m-0 text-xs text-muted">{t('home.mapModeHint')}</p>}
+                    </SetupGroup>
+
+                    {robot.type === RobotType.NeatoGen3 ? (
+                        <>
+                            <SetupGroup label={t('home.suction')}>
+                                <Segmented ariaLabel={t('home.suction')} options={gen3Suction} value={gen3__cleaningMode} onChange={gen3__setCleaningMode} />
+                            </SetupGroup>
+                            <SetupGroup label={t('home.navigation')}>
+                                <Segmented ariaLabel={t('home.navigation')} options={gen3Navigation} value={gen3__navigationMode} onChange={gen3__setNavigationMode} />
+                            </SetupGroup>
+                        </>
+                    ) : (
+                        <>
+                            <SetupGroup label={t('home.suction')}>
+                                <Segmented ariaLabel={t('home.suction')} options={gen4Suction} value={gen4__cleaningMode} onChange={gen4__setCleaningMode} />
+                            </SetupGroup>
+                            <SetupGroup label={t('home.navigation')}>
+                                <Segmented ariaLabel={t('home.navigation')} options={gen4Navigation} value={gen4__navigationMode} onChange={gen4__setNavigationMode} />
+                            </SetupGroup>
+                        </>
+                    )}
+
+                    {(cleaningZones.length > 0 || gen3Zones.length > 0 || nogoShown) && (
+                        <div className="flex flex-col gap-2 border-t border-line pt-3">
+                            {(cleaningZones.length > 0 || gen3Zones.length > 0) && (
+                                <>
+                                    <span className="text-xs font-medium text-muted">{t('home.zonesHint')}</span>
+                                    <div role="group" aria-label={t('schedule.selectZones')} className="flex flex-wrap gap-2">
+                                        {cleaningZones.map(zone => (
+                                            <Chip key={zone.value} label={zone.label} selected={selectedZones.includes(zone.value)} onClick={() => toggleZone(zone.value)} />
+                                        ))}
+                                        {gen3Zones.map(zone => (
+                                            <Chip
+                                                key={zone.value}
+                                                label={zone.label}
+                                                selected={selectedZones[0] === zone.value}
+                                                onClick={() => selectedZones[0] === zone.value ? setSelectedZones([]) : setSelectedZones([zone.value])}
+                                            />
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                            {nogoShown && (
+                                <label className="flex min-h-11 cursor-pointer items-center gap-3 text-body">
+                                    <span className="grow">{t('schedule.useNogoLayer')}</span>
+                                    <Switch checked={nogoEnabled} onChange={setNogoEnabled} />
+                                </label>
+                            )}
                         </div>
-                    </Card>
-                ) : (
-                    <Card aria-label={t('home.setup')} className="flex flex-col gap-3 lg:col-start-2 lg:row-span-2 lg:row-start-1">
-                        <SetupGroup label={t('home.area')}>
-                            <Segmented ariaLabel={t('home.area')} options={areaOptions} value={gen3__cleaningCategory} onChange={gen3__setCleaningCategory} />
-                            {!docked && <p className="m-0 text-xs text-muted">{t('home.mapModeHint')}</p>}
-                        </SetupGroup>
+                    )}
 
-                        {robot.type === RobotType.NeatoGen3 ? (
-                            <>
-                                <SetupGroup label={t('home.suction')}>
-                                    <Segmented ariaLabel={t('home.suction')} options={gen3Suction} value={gen3__cleaningMode} onChange={gen3__setCleaningMode} />
-                                </SetupGroup>
-                                <SetupGroup label={t('home.navigation')}>
-                                    <Segmented ariaLabel={t('home.navigation')} options={gen3Navigation} value={gen3__navigationMode} onChange={gen3__setNavigationMode} />
-                                </SetupGroup>
-                            </>
-                        ) : (
-                            <>
-                                <SetupGroup label={t('home.suction')}>
-                                    <Segmented ariaLabel={t('home.suction')} options={gen4Suction} value={gen4__cleaningMode} onChange={gen4__setCleaningMode} />
-                                </SetupGroup>
-                                <SetupGroup label={t('home.navigation')}>
-                                    <Segmented ariaLabel={t('home.navigation')} options={gen4Navigation} value={gen4__navigationMode} onChange={gen4__setNavigationMode} />
-                                </SetupGroup>
-                            </>
-                        )}
-
-                        {(cleaningZones.length > 0 || gen3Zones.length > 0 || nogoShown) && (
-                            <div className="flex flex-col gap-2 border-t border-line pt-3">
-                                {(cleaningZones.length > 0 || gen3Zones.length > 0) && (
-                                    <>
-                                        <span className="text-xs font-medium text-muted">{t('home.zonesHint')}</span>
-                                        <div role="group" aria-label={t('schedule.selectZones')} className="flex flex-wrap gap-2">
-                                            {cleaningZones.map(zone => (
-                                                <Chip key={zone.value} label={zone.label} selected={selectedZones.includes(zone.value)} onClick={() => toggleZone(zone.value)} />
-                                            ))}
-                                            {gen3Zones.map(zone => (
-                                                <Chip
-                                                    key={zone.value}
-                                                    label={zone.label}
-                                                    selected={selectedZones[0] === zone.value}
-                                                    onClick={() => selectedZones[0] === zone.value ? setSelectedZones([]) : setSelectedZones([zone.value])}
-                                                />
-                                            ))}
-                                        </div>
-                                    </>
-                                )}
-                                {nogoShown && (
-                                    <label className="flex min-h-11 cursor-pointer items-center gap-3 text-body">
-                                        <span className="grow">{t('schedule.useNogoLayer')}</span>
-                                        <Switch checked={nogoEnabled} onChange={setNogoEnabled} />
-                                    </label>
-                                )}
-                            </div>
-                        )}
-
-                        {gen3__cleaningCategory === CleaningCategory.SPOT && (
-                            <div className="grid grid-cols-2 gap-4 border-t border-line pt-3">
-                                <SpotSlider label={t('home.width')} value={spotWidth} onChange={setSpotWidth} />
-                                <SpotSlider label={t('home.height')} value={spotHeight} onChange={setSpotHeight} />
-                            </div>
-                        )}
-                    </Card>
-                )}
+                    {gen3__cleaningCategory === CleaningCategory.SPOT && (
+                        <div className="grid grid-cols-2 gap-4 border-t border-line pt-3">
+                            <SpotSlider label={t('home.width')} value={spotWidth} onChange={setSpotWidth} />
+                            <SpotSlider label={t('home.height')} value={spotHeight} onChange={setSpotHeight} />
+                        </div>
+                    )}
+                </Card>
 
                 {/* ── Controls ── (phone: sticky offsets count from inside <main>'s capsule padding, so the buttons stay just above the capsule; the extra 32px of background runs under its fade) */}
                 <div className="flex gap-2 max-lg:sticky max-lg:-bottom-6 max-lg:z-10 max-lg:-mx-4 max-lg:-mt-3 max-lg:-mb-8 max-lg:bg-linear-to-t max-lg:from-bg max-lg:from-88% max-lg:to-transparent max-lg:px-4 max-lg:pt-3 max-lg:pb-8 lg:col-start-1 lg:row-start-2">

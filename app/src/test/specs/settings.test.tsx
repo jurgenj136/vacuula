@@ -1,6 +1,7 @@
-import { describe, expect, test, vi } from 'vitest'
+import { describe, expect, onTestFinished, test, vi } from 'vitest'
 import { renderApp } from '../render'
-import { command, post } from '../server'
+import { http } from 'msw'
+import { command, post, server } from '../server'
 import { SERIALS, type RobotKey } from '../fixtures/robots'
 import * as settings from '../drivers/settings'
 
@@ -77,6 +78,19 @@ describe('Settings - Gen4', () => {
         await expect.poll(() => settings.factoryResetLabel()).toBe('Click to start')
         await settings.tapFactoryReset(user, 4)
         await requests.expectNoWrites()
+    })
+
+    test('factory reset waits until the robot settings have loaded', async () => {
+        // robot language never answers
+        server.use(http.post(`/api/robot/${SERIALS.gen4}/command`, async ({ request }) => {
+            const body = await request.clone().json() as { ability?: string }
+            if (body.ability === 'settings.robot_language') return new Promise<never>(() => {})
+        }))
+        onTestFinished(() => server.resetHandlers())
+        const { requests } = renderApp({ robot: 'gen4', page: 'settings' })
+        await requests.expectSent(gen4({ ability: 'settings.cleaning_options' }))
+        await expect.poll(() => settings.serialShown('GPC2A1B2C3D4')).toBe(true)
+        expect(settings.factoryResetAvailable()).toBe(false)
     })
 })
 

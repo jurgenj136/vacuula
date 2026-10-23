@@ -58,6 +58,12 @@ describe('Map - Gen4', () => {
         expect(map.canExplore()).toBe(false)
     })
 
+    test('exploring cannot be started from the keyboard while undocked', async () => {
+        const { user, requests } = await open('gen4', db => { db.gen4.states[SERIALS.gen4] = gen4States.idleUndocked })
+        await map.exploreNewMapWithKeyboard(user)
+        await requests.expectNoWrites()
+    })
+
     test('toggle a no-go line saves all boundaries and re-promotes the floorplan', async () => {
         const { user, requests } = await openGround()
         await map.toggleBoundary(user, 'Front door')

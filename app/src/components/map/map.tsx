@@ -54,10 +54,6 @@ export default function Map({ mapId, runId }: MapProps) {
         redrawKey: extraDraw,
     })
 
-    if (!persistantMapData && error) {
-        return <p className="m-0 px-4 py-6 text-center text-caption text-muted">{t('map.noMapData')}</p>
-    }
-
     return (
         <>
             <div className="relative h-1/2 w-full">
@@ -70,7 +66,9 @@ export default function Map({ mapId, runId }: MapProps) {
                         touchAction: 'none'
                     }}
                 />
-
+                {!persistantMapData && !!error && (
+                    <p className="absolute inset-0 m-0 flex items-center justify-center bg-bg px-4 py-6 text-center text-caption text-muted">{t('map.noMapData')}</p>
+                )}
             </div>
             {robot.type === RobotType.NeatoGen4 && !persistantMapData?.in_maps_list && (
                 <div className="p-4">

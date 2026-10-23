@@ -66,14 +66,30 @@ const writeStorage = (key: string, value: string) => {
 const systemQuery = () =>
     typeof window !== 'undefined' && window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : undefined
 
-/** The theme the user picked (ignores "match system"). */
-export function getTheme(): ThemeMode {
+const readTheme = (): ThemeMode => {
     const stored = readStorage(THEME_STORAGE_KEY)
     return isThemeMode(stored) ? stored : DEFAULT_THEME
 }
 
+const readAccent = (): string => {
+    const stored = readStorage(ACCENT_STORAGE_KEY)
+    return ACCENTS.some(a => a.id === stored) ? (stored as string) : DEFAULT_ACCENT
+}
+
+// session state, read from storage once; setters update it even when persisting fails
+const session = {
+    theme: readTheme(),
+    matchSystem: readStorage(MATCH_SYSTEM_STORAGE_KEY) === 'true',
+    accent: readAccent(),
+}
+
+/** The theme the user picked (ignores "match system"). */
+export function getTheme(): ThemeMode {
+    return session.theme
+}
+
 export function getMatchSystem(): boolean {
-    return readStorage(MATCH_SYSTEM_STORAGE_KEY) === 'true'
+    return session.matchSystem
 }
 
 /** The theme on screen: the system's light/dark when "match system" is on, else the picked one. */
@@ -84,8 +100,7 @@ export function getResolvedTheme(): ThemeMode {
 }
 
 export function getAccent(): string {
-    const stored = readStorage(ACCENT_STORAGE_KEY)
-    return ACCENTS.some(a => a.id === stored) ? (stored as string) : DEFAULT_ACCENT
+    return session.accent
 }
 
 /** Writes the current theme/accent to <html> (attributes, background, colour-scheme, theme-color). */
@@ -121,6 +136,8 @@ function watchSystem(on: boolean) {
 
 /** Picking a theme turns "match system" off. */
 export function setTheme(mode: ThemeMode) {
+    session.theme = mode
+    session.matchSystem = false
     writeStorage(THEME_STORAGE_KEY, mode)
     writeStorage(MATCH_SYSTEM_STORAGE_KEY, 'false')
     watchSystem(false)
@@ -129,6 +146,7 @@ export function setTheme(mode: ThemeMode) {
 }
 
 export function setMatchSystem(on: boolean) {
+    session.matchSystem = on
     writeStorage(MATCH_SYSTEM_STORAGE_KEY, String(on))
     watchSystem(on)
     applyTheme()
@@ -137,6 +155,7 @@ export function setMatchSystem(on: boolean) {
 
 export function setAccent(accent: string) {
     if (!ACCENTS.some(a => a.id === accent)) return
+    session.accent = accent
     writeStorage(ACCENT_STORAGE_KEY, accent)
     applyTheme(getResolvedTheme(), accent)
     notify()

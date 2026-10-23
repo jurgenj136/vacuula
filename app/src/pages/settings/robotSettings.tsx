@@ -10,6 +10,7 @@ import Segmented from '../../components/segmented/segmented'
 import type { UseState } from '../../components/map/types'
 import { SelectRow } from './selectRow'
 import { Section } from './section'
+import { FactoryReset } from './factoryReset'
 
 export const Gen4RobotSettings = () => {
     const { t } = useTranslation()
@@ -46,23 +47,28 @@ export const Gen4RobotSettings = () => {
     if (!robot || !cleaningOptions || !robotLanguage) return; // TODO: loading UI
 
     return (
-        <Section heading={t('settings.robotSettings')} className="order-2 lg:order-none">
-            <ListGroup>
-                <ListRow label={t('settings.forceFloorplan')}>
-                    <Switch
-                        label={t('settings.forceFloorplan')}
-                        checked={cleaningOptions.force_floorplan}
-                        onChange={(value) => setSettings(Neato.Gen4.SettingsCleaningOptionsOperation.SET, { ...cleaningOptions, force_floorplan: value })}
+        <>
+            <Section heading={t('settings.robotSettings')} className="order-2 lg:order-none">
+                <ListGroup>
+                    <ListRow label={t('settings.forceFloorplan')}>
+                        <Switch
+                            label={t('settings.forceFloorplan')}
+                            checked={cleaningOptions.force_floorplan}
+                            onChange={(value) => setSettings(Neato.Gen4.SettingsCleaningOptionsOperation.SET, { ...cleaningOptions, force_floorplan: value })}
+                        />
+                    </ListRow>
+                    <SelectRow
+                        label={t('settings.robotLanguage')}
+                        options={robotLanguage.available_languages.map(lang => ({ value: lang, label: lang }))}
+                        value={robotLanguage.language}
+                        onChange={(language) => setSettings(Neato.Gen4.SettingsRobotLanguageOperation.SET, { ...robotLanguage, language })}
                     />
-                </ListRow>
-                <SelectRow
-                    label={t('settings.robotLanguage')}
-                    options={robotLanguage.available_languages.map(lang => ({ value: lang, label: lang }))}
-                    value={robotLanguage.language}
-                    onChange={(language) => setSettings(Neato.Gen4.SettingsRobotLanguageOperation.SET, { ...robotLanguage, language })}
-                />
-            </ListGroup>
-        </Section>
+                </ListGroup>
+            </Section>
+            <Section heading={t('settings.dangerZone')} className="order-4 lg:order-none">
+                <FactoryReset serial={robot.serial} />
+            </Section>
+        </>
     )
 }
 

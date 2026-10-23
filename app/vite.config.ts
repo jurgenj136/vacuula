@@ -5,9 +5,9 @@ import tailwindcss from '@tailwindcss/vite'
 import { msw } from 'msw/vite'
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ command, mode }) => ({
     // `pnpm dev:mock` serves the MSW worker script; it never reaches a build
-    plugins: [react(), tailwindcss(), ...(mode === 'mock' ? [msw({ mode: 'worker-only' })] : [])],
+    plugins: [react(), tailwindcss(), ...(command === 'serve' && mode === 'mock' ? [msw({ mode: 'worker-only' })] : [])],
     base: "./",
     server: {
         proxy: {

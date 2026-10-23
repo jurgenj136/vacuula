@@ -342,6 +342,7 @@ export default () => {
                     )}
                     <button
                         type="button"
+                        disabled={!isDocked(robot)}
                         className={cn(
                             'pressable focus-ring flex min-h-16 w-full cursor-pointer items-center gap-3 rounded-2xl border border-accent-border bg-accent-soft px-3 py-2.5 text-left',
                             !isDocked(robot) && 'pointer-events-none opacity-40',

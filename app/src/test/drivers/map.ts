@@ -10,6 +10,10 @@ export const promoteMap = (user: User, name: string) => user.click(within(row(na
 export const demoteMap = (user: User, name: string) => user.click(within(row(name)).getByRole('button', { name: t('map.demote') }))
 export const canExplore = () => textShown(t('map.exploreNewMap'))
 export const exploreNewMap = (user: User) => user.click(screen.getByText(t('map.newMap')))
+export async function exploreNewMapWithKeyboard(user: User) {
+    screen.getByText(t('map.newMap')).closest('button')?.focus()
+    await user.keyboard('{Enter} ')
+}
 
 export async function openMap(user: User, name: string) {
     await user.click(screen.getByText(name, { exact: true }))

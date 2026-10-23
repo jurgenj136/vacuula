@@ -109,4 +109,25 @@ describe('Theme store', () => {
         expect(theme.getMatchSystem()).toBe(false)
         expect(html()).toHaveAttribute('data-theme', 'contrast')
     })
+
+    test('applies the picked theme even when storage writes fail', async () => {
+        mockSystemScheme(true)
+        const theme = await loadTheme()
+        const setItem = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('QuotaExceededError') })
+        try {
+            theme.setTheme('dusk')
+            expect(theme.getTheme()).toBe('dusk')
+            expect(html()).toHaveAttribute('data-theme', 'dusk')
+
+            theme.setMatchSystem(true)
+            expect(theme.getMatchSystem()).toBe(true)
+            expect(html()).toHaveAttribute('data-theme', 'dark')
+
+            theme.setMatchSystem(false)
+            expect(html()).toHaveAttribute('data-theme', 'dusk')
+            expect(localStorage.getItem('vacuula.theme')).toBeNull()
+        } finally {
+            setItem.mockRestore()
+        }
+    })
 })

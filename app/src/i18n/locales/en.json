@@ -103,7 +103,6 @@
         "suction": "Suction",
         "navigation": "Navigation",
         "zonesHint": "Zones · none selected cleans the whole map",
-        "thisRun": "This run",
         "cleanSpot": "Clean spot",
         "cleanZones_one": "Clean {{count}} zone",
         "cleanZones_other": "Clean {{count}} zones"

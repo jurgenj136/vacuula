@@ -18,7 +18,6 @@ import { UNITS, useUnits, type Units } from '../../units'
 import { MASCOTS, useMascot } from '../../mascot'
 import { useIsDesktop } from '../../components/layout/useIsDesktop'
 import { Gen3RobotSettings, Gen4RobotSettings } from './robotSettings'
-import { FactoryReset } from './factoryReset'
 import { MatchSystemRow, ThemeSwatch, ThemeTiles } from './themePicker'
 import { SelectRow } from './selectRow'
 import { Section } from './section'
@@ -91,12 +90,6 @@ const Settings = () => {
 
                     {robot.type === RobotType.NeatoGen4 && <Gen4RobotSettings />}
                     {robot.type === RobotType.NeatoGen3 && <Gen3RobotSettings />}
-
-                    {robot.type === RobotType.NeatoGen4 && (
-                        <Section heading={t('settings.dangerZone')} className="order-4 lg:order-none">
-                            <FactoryReset serial={robot.serial} />
-                        </Section>
-                    )}
                 </div>
 
                 <div className="contents lg:flex lg:min-w-0 lg:flex-1 lg:flex-col lg:gap-6">
