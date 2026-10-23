@@ -68,3 +68,5 @@ export const modeOptions = () => within(field(t('common.mode'))).getAllByRole('b
 
 export const floorplanOptionShown = () => screen.queryByText(t('schedule.usePromoted')) !== null
 export const zoneOptions = () => within(field(t('schedule.selectZones'))).getAllByRole('button').map(b => b.textContent)
+
+export const saveButton = () => screen.getByRole('button', { name: t('common.save') }) as HTMLButtonElement

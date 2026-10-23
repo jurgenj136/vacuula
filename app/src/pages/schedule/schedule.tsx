@@ -78,6 +78,8 @@ export default () => {
 
     if (!schedule) return
 
+    const canSave = scheduleForm.day !== -1 && scheduleForm.mode !== CleaningMode.INVALID && scheduleForm.startTime !== ''
+
     const activeDays = new Set(schedule.enabled ? schedule.events?.map(e => dayKey(e.day)) : [])
 
     return (
@@ -163,7 +165,7 @@ export default () => {
                         onChange={(boundaryId) => boundaryId && updateForm(SetScheduleForm, { boundaryId })}
                     />
 
-                    <Button text={t('common.save')} style='primary' onClick={() => {
+                    <Button text={t('common.save')} style='primary' disabled={!canSave} onClick={() => {
                         setDrawerOpen(false)
                         GEN3_COMMANDS.setSchedule(robot.serial, [scheduleForm, ...schedule.events]).finally(() => getSchedule())
                     }} />
