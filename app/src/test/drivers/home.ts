@@ -1,51 +1,34 @@
 import { fireEvent, screen, within } from '@testing-library/react'
-import { checkbox, field, isShown, t, textShown, type User } from './common'
+import { isShown, t, textShown, type User } from './common'
 
 export type Suction = 'eco' | 'normal' | 'turbo' | 'max' | 'auto'
 export type Navigation = 'normal' | 'extraCare' | 'deep' | 'gentle'
 export type Area = 'map' | 'house' | 'spot'
 
-const PRIMARY = { start: 'home.startCleaning', pause: 'home.pauseCleaning', resume: 'home.resumeCleaning' }
+const PRIMARY = { pause: 'home.pauseCleaning', resume: 'home.resumeCleaning' }
 
 export const ready = () => screen.findByRole('button', { name: t('home.locate') })
 
-// Locate, area, navigation, suction - in that order
-const modeButtons = () => within(screen.getByRole('button', { name: t('home.locate') }).parentElement!).getAllByRole('button')
-const label = (button: HTMLElement) => button.getAttribute('aria-label')
+const setup = () => screen.queryByRole('region', { name: t('home.setup') })
+const group = (key: string) => within(setup()!).getByRole('group', { name: t(key) })
+const enabledLabels = (container: HTMLElement) =>
+    within(container).getAllByRole('button').filter(b => !(b as HTMLButtonElement).disabled).map(b => b.textContent ?? '')
+const selectIn = (user: User, key: string, option: string) => user.click(within(group(key)).getByRole('button', { name: option }))
 
-// the mode buttons cycle on tap: walk the whole cycle once to collect every option
-async function cycleOptions(user: User, index: number, labels: Record<string, string>) {
-    const seen: string[] = []
-    for (let i = 0; i < 10; i++) {
-        const current = label(modeButtons()[index])!
-        if (seen.includes(current)) break
-        seen.push(current)
-        await user.click(modeButtons()[index])
-    }
-    return seen.map(l => Object.keys(labels).find(id => labels[id] === l) ?? l)
+const modeIds = (ids: string[], labels: string[]) => labels.map(l => ids.find(id => t(`modes.${id}`) === l) ?? l)
+
+export const suctionOptions: (user: User) => Promise<string[]> = async () => modeIds(['eco', 'normal', 'turbo', 'max', 'auto'], enabledLabels(group('home.suction')))
+export const navigationOptions: (user: User) => Promise<string[]> = async () => modeIds(['normal', 'extraCare', 'deep', 'gentle'], enabledLabels(group('home.navigation')))
+export const selectSuction = (user: User, mode: Suction) => selectIn(user, 'home.suction', t(`modes.${mode}`))
+export const selectNavigation = (user: User, mode: Navigation) => selectIn(user, 'home.navigation', t(`modes.${mode}`))
+
+// the area options are always visible in the setup card
+export const openAreaPicker: (user: User) => Promise<void> = async () => {
+    if (!setup()) throw new Error('cleaning setup not shown')
 }
 
-async function cycleTo(user: User, index: number, target: string) {
-    for (let i = 0; i < 10 && label(modeButtons()[index]) !== target; i++) await user.click(modeButtons()[index])
-    if (label(modeButtons()[index]) !== target) throw new Error(`option "${target}" not reachable`)
-}
-
-const modeLabels = (ids: string[]) => Object.fromEntries(ids.map(id => [id, t(`modes.${id}`)]))
-const suctionLabels = () => modeLabels(['eco', 'normal', 'turbo', 'max', 'auto'])
-const navigationLabels = () => modeLabels(['normal', 'extraCare', 'deep', 'gentle'])
-
-export const suctionOptions = (user: User) => cycleOptions(user, 3, suctionLabels())
-export const navigationOptions = (user: User) => cycleOptions(user, 2, navigationLabels())
-export const selectSuction = (user: User, mode: Suction) => cycleTo(user, 3, t(`modes.${mode}`))
-export const selectNavigation = (user: User, mode: Navigation) => cycleTo(user, 2, t(`modes.${mode}`))
-
-export const openAreaPicker = (user: User) => user.click(modeButtons()[1])
-const closeAreaPicker = (user: User) => user.click(screen.getByRole('button', { name: t('common.ok') }))
-
-export async function areaOptions(user: User): Promise<Area[]> {
-    await openAreaPicker(user)
-    const labels = within(field(t('common.mode'))).getAllByRole('button').map(b => b.textContent)
-    await closeAreaPicker(user)
+export const areaOptions: (user: User) => Promise<Area[]> = async () => {
+    const labels = enabledLabels(group('home.area'))
     return (['map', 'house', 'spot'] as const).filter(id => labels.includes(t(`home.${id}`)))
 }
 
@@ -56,38 +39,41 @@ interface AreaOptions {
 }
 
 export async function chooseArea(user: User, area: Area, { spot, zones, avoidNogo }: AreaOptions = {}) {
-    await openAreaPicker(user)
-    await user.click(within(field(t('common.mode'))).getByRole('button', { name: t(`home.${area}`) }))
+    await selectIn(user, 'home.area', t(`home.${area}`))
     if (spot) {
-        const [height, width] = screen.getAllByRole('slider')
-        fireEvent.change(height, { target: { value: String(spot.height) } })
-        fireEvent.change(width, { target: { value: String(spot.width) } })
+        fireEvent.change(screen.getByRole('slider', { name: t('home.height') }), { target: { value: String(spot.height) } })
+        fireEvent.change(screen.getByRole('slider', { name: t('home.width') }), { target: { value: String(spot.width) } })
     }
     if (avoidNogo !== undefined) {
-        const toggle = checkbox(field(t('schedule.useNogoLayer')))
+        const toggle = screen.getByRole('checkbox', { name: t('schedule.useNogoLayer') }) as HTMLInputElement
         if (toggle.checked !== avoidNogo) await user.click(toggle)
     }
     for (const zone of zones ?? []) {
-        await user.click(within(field(t('schedule.selectZones'))).getByRole('button', { name: new RegExp(`${zone}$`) }))
+        await user.click(within(screen.getByRole('group', { name: t('schedule.selectZones') })).getByRole('button', { name: new RegExp(`${zone}$`) }))
     }
-    await closeAreaPicker(user)
 }
 
+// zones are offered for the map area
 export async function zoneOptions(user: User) {
-    await openAreaPicker(user)
-    const zones = screen.queryAllByText(t('schedule.selectZones')).length
-        ? within(field(t('schedule.selectZones'))).getAllByRole('button').map(b => b.textContent)
-        : []
-    await closeAreaPicker(user)
-    return zones
+    const before = within(group('home.area')).getAllByRole('button').find(b => b.getAttribute('aria-pressed') === 'true')
+    await selectIn(user, 'home.area', t('home.map'))
+    const zones = screen.queryByRole('group', { name: t('schedule.selectZones') })
+    const labels = zones ? within(zones).getAllByRole('button').map(b => b.textContent) : []
+    if (before) await user.click(before)
+    return labels
 }
 
 export const mapAreaHintShown = () => textShown(t('home.mapModeHint'))
 
-const primary = () => screen.getByRole('button', { name: new RegExp(`^(${Object.values(PRIMARY).map(k => t(k)).join('|')})$`) })
-export const primaryAction = () => (Object.keys(PRIMARY) as (keyof typeof PRIMARY)[]).find(k => label(primary()) === t(PRIMARY[k]))
+// stop, primary action, base
+const primary = () => screen.getByRole('button', { name: t('home.stop') }).nextElementSibling as HTMLButtonElement
+export const primaryAction = (): 'start' | 'pause' | 'resume' =>
+    (Object.keys(PRIMARY) as (keyof typeof PRIMARY)[]).find(k => primary().textContent === t(PRIMARY[k])) ?? 'start'
 
-export const pressStart = (user: User) => user.click(screen.getByRole('button', { name: t('home.startCleaning') }))
+export async function pressStart(user: User) {
+    if (primaryAction() !== 'start') throw new Error('start is not offered')
+    await user.click(primary())
+}
 export const pressPause = (user: User) => user.click(screen.getByRole('button', { name: t('home.pauseCleaning') }))
 export const pressResume = (user: User) => user.click(screen.getByRole('button', { name: t('home.resumeCleaning') }))
 export const pressStop = (user: User) => user.click(screen.getByRole('button', { name: t('home.stop') }))

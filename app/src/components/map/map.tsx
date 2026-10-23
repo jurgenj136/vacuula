@@ -1,4 +1,3 @@
-import styles from './map.module.scss'
 import { useMap } from './useMap'
 import { useRobot } from '../../context/useRobot'
 import { RobotType } from '../../types'
@@ -37,7 +36,7 @@ function basePoseFromMapData(data: VacuulaMapData) {
 export default function Map({ mapId, runId }: MapProps) {
     const { t } = useTranslation()
     const { robot } = useRobot()
-    const { data: persistantMapData, refresh: refreshPersistantMapData } = usePersistentMap(mapId);
+    const { data: persistantMapData, error, refresh: refreshPersistantMapData } = usePersistentMap(mapId);
 
     const [dockReady, setDockReady] = useState(false)
     useEffect(() => { onDockImageReady(() => setDockReady(true)) }, [])
@@ -55,12 +54,16 @@ export default function Map({ mapId, runId }: MapProps) {
         redrawKey: extraDraw,
     })
 
+    if (!persistantMapData && error) {
+        return <p className="m-0 px-4 py-6 text-center text-caption text-muted">{t('map.noMapData')}</p>
+    }
+
     return (
         <>
-            <div className={styles.container}>
+            <div className="relative h-1/2 w-full">
                 <canvas
                     ref={canvasRef}
-                    className={styles.canvas}
+                    className="block size-full bg-bg"
                     {...canvasHandlers}
                     style={{
                         cursor: isDragging ? 'grabbing' : 'grab',
@@ -70,8 +73,8 @@ export default function Map({ mapId, runId }: MapProps) {
 
             </div>
             {robot.type === RobotType.NeatoGen4 && !persistantMapData?.in_maps_list && (
-                <div style={{ padding: '1.5rem' }}>
-                    <Button text={t('map.useAsFloormap')} style='success' onClick={() => { Http.postUseMapAsFloorPlan(robot.serial, mapId).then(refreshPersistantMapData) }} />
+                <div className="p-4">
+                    <Button text={t('map.useAsFloormap')} style='tonal' onClick={() => { Http.postUseMapAsFloorPlan(robot.serial, mapId).then(refreshPersistantMapData) }} />
                 </div>
             )}
         </>

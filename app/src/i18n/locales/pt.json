@@ -102,7 +102,16 @@
         "modeSpotInfo": "Limpa uma área específica definida pela altura e largura.",
         "mapModeHint": "O modo de limpeza Mapa está disponível quando o robot está na base.",
         "height": "Altura",
-        "width": "Largura"
+        "width": "Largura",
+        "setup": "Configuração da limpeza",
+        "area": "Área",
+        "suction": "Sucção",
+        "navigation": "Navegação",
+        "zonesHint": "Zonas · sem seleção limpa o mapa inteiro",
+        "thisRun": "Esta limpeza",
+        "cleanSpot": "Limpeza localizada",
+        "cleanZones_one": "Limpar {{count}} zona",
+        "cleanZones_other": "Limpar {{count}} zonas"
     },
     "runs": {
         "entryTitle": "Limpeza {{startedBy}} | {{date}}",
@@ -117,13 +126,32 @@
         "pickedUp_one": "Levantado {{count}} vez",
         "pickedUp_other": "Levantado {{count}} vezes",
         "durationLong": "{{hours}}h {{minutes}}min {{seconds}}s",
-        "durationShort": "{{minutes}}min {{seconds}}s"
+        "durationShort": "{{minutes}}min {{seconds}}s",
+        "completed": "Concluída",
+        "notCompleted": "Não concluída",
+        "segments": "Segmentos",
+        "selectRun": "Selecione uma limpeza para ver os detalhes"
     },
     "schedule": {
         "schedule": "Agendamento",
         "newSchedule": "Novo agendamento",
         "addOneMore": "Adicionar mais um agendamento",
         "noSchedules": "Ainda não tem agendamentos, porque não adicionar um?",
+        "new": "Novo",
+        "enabled": "Executar agendamento",
+        "eventSwitch": "Ativar agendamento às {{time}}",
+        "deleteEvent": "Eliminar agendamento das {{time}}",
+        "formPlaceholder": "Selecione um agendamento para o editar ou adicione um novo.",
+        "week": "Resumo da semana",
+        "dayShort": {
+            "monday": "Seg",
+            "tuesday": "Ter",
+            "wednesday": "Qua",
+            "thursday": "Qui",
+            "friday": "Sex",
+            "saturday": "Sáb",
+            "sunday": "Dom"
+        },
         "addEvent": "Adicionar evento",
         "gen3Summary": "Dia: {{day}} | Modo: {{mode}}",
         "gen3SummaryZone": "Zona: {{zone}}",
@@ -169,7 +197,15 @@
         "drawHint": "Desenhar uma linha cria uma linha No-Go; usar o botão de polígono para ligar o cursor ao primeiro ponto cria uma zona ou zona No-Go.",
         "promote": "Usar mapa",
         "demote": "Parar de usar mapa",
-        "gen4UpdateBugHint": "NOTA: a modificação de mapas, zonas ou linhas pode desativar os agendamentos. Isto ocorre no firmware do robot, mas já estamos à procura de uma solução"
+        "gen4UpdateBugHint": "NOTA: a modificação de mapas, zonas ou linhas pode desativar os agendamentos. Isto ocorre no firmware do robot, mas já estamos à procura de uma solução",
+        "features": "Zonas e linhas",
+        "floorPlan": "Planta",
+        "undoPoint": "Desfazer",
+        "addPoint": "Adicionar ponto",
+        "closeShape": "Fechar forma",
+        "presetColors": "Cores predefinidas",
+        "hexColor": "Cor hexadecimal",
+        "noMapData": "Não há mapa disponível para esta limpeza"
     },
     "settings": {
         "serial": "N.º de série: {{serial}}",
@@ -210,7 +246,10 @@
         "downloadCert": "Descarregar certificado",
         "giveFeedback": "Deixar feedback",
         "downloadLogs": "Descarregar logs",
-        "comingSoon": "Muito mais em breve - fique atento!"
+        "comingSoon": "Muito mais em breve - fique atento!",
+        "robot": "Robô",
+        "dangerZone": "Zona de perigo",
+        "about": "Acerca e apoio"
     },
     "serverUnreachable": {
         "title": "Não foi possível ligar ao servidor",

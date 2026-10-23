@@ -1,5 +1,5 @@
 import { screen, within } from '@testing-library/react'
-import { checkbox, chooseOption, field, row, t, type User } from './common'
+import { chooseOption, field, t, type User } from './common'
 
 type Day = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'
 type Mode = 'eco' | 'normal' | 'turbo' | 'max' | 'auto'
@@ -15,25 +15,27 @@ export interface EventForm {
     avoidNogo?: boolean
 }
 
-export const ready = () => screen.findByText(t('schedule.newSchedule'))
+export const ready = () => screen.findByRole('button', { name: t('schedule.new') })
 
-export const scheduleEnabled = () => checkbox(row(t('schedule.schedule'))).checked
-export const toggleSchedule = (user: User) => user.click(checkbox(row(t('schedule.schedule'))))
+const scheduleSwitch = () => screen.getByRole('checkbox', { name: t('schedule.enabled') }) as HTMLInputElement
+export const scheduleEnabled = () => scheduleSwitch().checked
+export const toggleSchedule = (user: User) => user.click(scheduleSwitch())
 
 // events are identified by their start time
 export const eventTimes = () => screen.queryAllByText(/^\d{2}:\d{2}$/).map(el => el.textContent)
-export const eventEnabled = (time: string) => checkbox(row(time)).checked
-export const toggleEvent = (user: User, time: string) => user.click(checkbox(row(time)))
-export const deleteEvent = (user: User, time: string) => user.click(row(time).querySelector('svg')!)
+const eventSwitch = (time: string) => screen.getByRole('checkbox', { name: t('schedule.eventSwitch', { time }) }) as HTMLInputElement
+export const eventEnabled = (time: string) => eventSwitch(time).checked
+export const toggleEvent = (user: User, time: string) => user.click(eventSwitch(time))
+export const deleteEvent = (user: User, time: string) => user.click(screen.getByRole('button', { name: t('schedule.deleteEvent', { time }) }))
 export const openEvent = (user: User, time: string) => user.click(screen.getByText(time, { exact: true }))
-export const openNewEvent = (user: User) => user.click(screen.getByText(t('schedule.newSchedule')))
+export const openNewEvent = (user: User) => user.click(screen.getByRole('button', { name: t('schedule.new') }))
 
 const timeInput = () => screen.getAllByText(new RegExp(`^${t('common.time')}`))
     .map(el => el.parentElement!.querySelector('input'))
     .find(input => input !== null)!
 
 async function setSwitch(user: User, label: string, on: boolean) {
-    const toggle = checkbox(field(label))
+    const toggle = screen.getByRole('checkbox', { name: label }) as HTMLInputElement
     if (toggle.checked !== on) await user.click(toggle)
 }
 

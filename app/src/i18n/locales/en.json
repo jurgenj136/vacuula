@@ -102,7 +102,16 @@
         "modeSpotInfo": "Cleans a specific area defined by height and width.",
         "mapModeHint": "Map cleaning mode is available when robot is docked.",
         "height": "Height",
-        "width": "Width"
+        "width": "Width",
+        "setup": "Cleaning setup",
+        "area": "Area",
+        "suction": "Suction",
+        "navigation": "Navigation",
+        "zonesHint": "Zones · none selected cleans the whole map",
+        "thisRun": "This run",
+        "cleanSpot": "Clean spot",
+        "cleanZones_one": "Clean {{count}} zone",
+        "cleanZones_other": "Clean {{count}} zones"
     },
     "runs": {
         "entryTitle": "{{startedBy}} cleaning | {{date}}",
@@ -117,13 +126,32 @@
         "pickedUp_one": "picked up {{count}} time",
         "pickedUp_other": "picked up {{count}} times",
         "durationLong": "{{hours}}h {{minutes}}min {{seconds}}sec",
-        "durationShort": "{{minutes}}min {{seconds}}sec"
+        "durationShort": "{{minutes}}min {{seconds}}sec",
+        "completed": "Completed",
+        "notCompleted": "Not completed",
+        "segments": "Segments",
+        "selectRun": "Select a run to see its details"
     },
     "schedule": {
         "schedule": "Schedule",
         "newSchedule": "New schedule",
         "addOneMore": "Add one more schedule",
         "noSchedules": "You don't have any schedules yet, why not add one?",
+        "new": "New",
+        "enabled": "Run schedule",
+        "eventSwitch": "Enable schedule at {{time}}",
+        "deleteEvent": "Delete schedule at {{time}}",
+        "formPlaceholder": "Select a schedule to edit it, or add a new one.",
+        "week": "Week overview",
+        "dayShort": {
+            "monday": "Mo",
+            "tuesday": "Tu",
+            "wednesday": "We",
+            "thursday": "Th",
+            "friday": "Fr",
+            "saturday": "Sa",
+            "sunday": "Su"
+        },
         "addEvent": "Add event",
         "gen3Summary": "Runs on: {{day}} | Mode: {{mode}}",
         "gen3SummaryZone": "Zone: {{zone}}",
@@ -169,7 +197,15 @@
         "drawHint": "Drawing a line makes a no-go line; using the polygon button to connect the cursor with the first point makes a zone.",
         "promote": "Use map",
         "demote": "Stop using map",
-        "gen4UpdateBugHint": "NOTE: modifying maps, zones, or lines may disable affected schedules. This is something that happens on the robot firmware, and we are looking into a workaround"
+        "gen4UpdateBugHint": "NOTE: modifying maps, zones, or lines may disable affected schedules. This is something that happens on the robot firmware, and we are looking into a workaround",
+        "features": "Zones and lines",
+        "floorPlan": "Floor plan",
+        "undoPoint": "Undo",
+        "addPoint": "Add point",
+        "closeShape": "Close shape",
+        "presetColors": "Preset colours",
+        "hexColor": "Hex colour",
+        "noMapData": "No map available for this run"
     },
     "settings": {
         "serial": "Serial nr: {{serial}}",
@@ -210,7 +246,10 @@
         "downloadCert": "Download cert",
         "giveFeedback": "Give feedback",
         "downloadLogs": "Download logs",
-        "comingSoon": "Lots more coming soon - stay tuned!"
+        "comingSoon": "Lots more coming soon - stay tuned!",
+        "robot": "Robot",
+        "dangerZone": "Danger zone",
+        "about": "About & support"
     },
     "serverUnreachable": {
         "title": "Could not connect to the server",

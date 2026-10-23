@@ -1,0 +1,23 @@
+/* The Neato Gen4 firmware queues the find-me sound 5 times back-to-back
+   (2.46 s file + <=0.1 s polling between repeats), so the bell swings 5 x 2.5 s.
+   Keep in sync with BELL_MS in home.tsx. Keyframes follow the sound's envelope:
+    2% hard hit (0.05 s), 12% second hit (0.30 s), 35% bell peak (0.85 s),
+   53% end of swell (1.30 s), 85% sound faded (2.10 s), then silence. */
+@keyframes bell-swing {
+    0%   { transform: rotate(0deg); }
+    2%   { transform: rotate(-6deg); }
+    12%  { transform: rotate(6deg); }
+    20%  { transform: rotate(0deg); }
+    35%  { transform: rotate(-14deg); }
+    45%  { transform: rotate(12deg); }
+    53%  { transform: rotate(-8deg); }
+    65%  { transform: rotate(4deg); }
+    75%  { transform: rotate(-2deg); }
+    85%  { transform: rotate(0deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.bell-swing {
+    animation: bell-swing 2.5s ease-in-out 5;
+    transform-origin: top center;
+}

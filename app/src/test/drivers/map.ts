@@ -82,9 +82,8 @@ export async function editBoundary(user: User, name: string, form: BoundaryForm)
 export async function drawBoundary(user: User, { points, closed, ...form }: BoundaryForm & { points: number, closed?: boolean }) {
     await user.click(screen.getByRole('button', { name: t('map.addFeature') }))
     await user.click(screen.getByRole('button', { name: t('map.drawBoundary') }))
-    const action = (name: string) => document.querySelector(`[class*="_${name}_"]`)!
-    for (let i = 0; i < points; i++) await user.click(action('add'))
-    if (closed) await user.click(action('closePolygon'))
+    for (let i = 0; i < points; i++) await user.click(screen.getByRole('button', { name: t('map.addPoint') }))
+    if (closed) await user.click(screen.getByRole('button', { name: t('map.closeShape') }))
     else await user.click(screen.getByText(t('map.dragUpToFinish')))
     await fillBoundary(user, form)
 }

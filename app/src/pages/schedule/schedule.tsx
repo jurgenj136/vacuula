@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
-import styles from './schedule.module.scss'
-import Drawer from '../../components/drawer/drawer'
 
 import type { GetSchedule, ScheduleEvent } from './types'
-import { FaTrash } from 'react-icons/fa'
+import { LuTrash2 } from 'react-icons/lu'
 import Input from '../../components/input/input'
 import Button from '../../components/button/button'
 import { GEN3_COMMANDS } from '../../http/gen3'
@@ -12,6 +10,13 @@ import { useRobot } from '../../context/useRobot'
 import { RobotDay } from '../../types/neato/gen3/api'
 import { RobotType } from '../../types'
 import Scheudle_gen4 from './scheudle_gen4'
+import ScheduleHeader from './header'
+import WeekStrip from './weekStrip'
+import EventRow from './eventRow'
+import { FormPane } from './formPanel'
+import Switch from '../../components/switch/switch'
+import IconButton from '../../components/iconButton/iconButton'
+import { ListGroup, ListRow } from '../../components/list/list'
 import { useTranslation } from 'react-i18next'
 import { dayKey } from '../../i18n/days'
 import { usePersistentMaps } from '../../loaders/resources'
@@ -29,7 +34,6 @@ export default () => {
     const [schedule, setSchedule] = useState<GetSchedule>()
     const [drawerOpen, setDrawerOpen] = useState(false)
 
-    const offset = serverInfo.utc_offset_minutes ?? 0
     const { data: persistentMaps } = usePersistentMaps()
 
     useEffect(() => {
@@ -74,60 +78,48 @@ export default () => {
 
     if (!schedule) return
 
+    const activeDays = new Set(schedule.enabled ? schedule.events?.map(e => dayKey(e.day)) : [])
+
     return (
-        <div className={styles.container}>
+        <div className="flex w-full lg:overflow-hidden">
+            <div className="flex min-w-0 flex-1 flex-col gap-4 p-4 lg:overflow-y-auto lg:p-6">
+                <ScheduleHeader subtitle={serverInfo?.timezone} onNew={() => setDrawerOpen(true)} />
 
-            <div className={styles.featureList}>
-                <div className={`${styles.item} ${styles.staticItem}`}>
-                    <div className={styles.info}>
-                        <span>{t('schedule.schedule')}</span>
-                        {serverInfo && (
-                            <span className={styles.type}>{serverInfo.timezone}</span>
-                        )}
-                    </div>
-                    <Input type="switch" skipSection={true} value={schedule.enabled} onChange={() => {
-                        let cmd = GEN3_COMMANDS.enableSchedule;
-                        if (schedule.enabled) cmd = GEN3_COMMANDS.disableSchedule;
-                        cmd(robot.serial).then(() => getSchedule());
-                    }} />
-                </div>
+                <ListGroup>
+                    <ListRow label={t('schedule.enabled')}>
+                        <Switch label={t('schedule.enabled')} checked={schedule.enabled} onChange={() => {
+                            let cmd = GEN3_COMMANDS.enableSchedule;
+                            if (schedule.enabled) cmd = GEN3_COMMANDS.disableSchedule;
+                            cmd(robot.serial).then(() => getSchedule());
+                        }} />
+                    </ListRow>
+                </ListGroup>
 
-                <hr style={{ width: '90%' }} />
+                <WeekStrip activeDays={activeDays} />
 
-                <div className={`${styles.item} ${styles.actionItem}`} onClick={() => setDrawerOpen(true)}>
-                    <div className={styles.info}>
-                        <span>{t('schedule.newSchedule')}</span>
-                        <span className={styles.type}>{t('schedule.addOneMore')}</span>
-                    </div>
-                </div>
-
-                {schedule.events?.map((item, i) => {
-                    return (
-                        <div key={i} className={styles.item}>
-                            <div className={styles.info}>
-                                <span>{item.startTime}</span>
-                                <span className={styles.type}>
-                                    {t('schedule.gen3Summary', { day: t(`days.${dayKey(item.day)}`), mode: CleaningMode[item.mode] })}
-                                    {item.boundary && ` | ${t('schedule.gen3SummaryZone', { zone: item.boundary.name })}`}
-                                </span>
-                            </div>
-                            <FaTrash onClick={() => removeEvent(i)} />
-                        </div>
-                    )
-                })}
+                <ul className="m-0 flex list-none flex-col gap-3 p-0">
+                    {schedule.events?.map((item, i) => {
+                        const time = item.startTime
+                        const mode = t(`modes.${CleaningMode[item.mode].toLowerCase()}` as 'modes.eco', { defaultValue: CleaningMode[item.mode] })
+                        return (
+                            <EventRow
+                                key={i}
+                                time={time}
+                                day={t(`days.${dayKey(item.day)}`)}
+                                summary={[mode, item.boundary && t('schedule.gen3SummaryZone', { zone: item.boundary.name })].filter(Boolean).join(' · ')}
+                                dimmed={!schedule.enabled}
+                            >
+                                <IconButton variant="ghost" label={t('schedule.deleteEvent', { time })} icon={<LuTrash2 size={18} aria-hidden="true" />} onClick={() => removeEvent(i)} />
+                            </EventRow>
+                        )
+                    })}
+                </ul>
                 {schedule.events?.length === 0 && (
-                    <span style={{ textAlign: 'center' }}>{t('schedule.noSchedules')}</span>
+                    <p className="m-0 text-center text-body text-muted">{t('schedule.noSchedules')}</p>
                 )}
             </div>
-            <Drawer
-                open={drawerOpen}
-                handle={false}
-                onOpenChange={setDrawerOpen}
-                openHeightPercent={70}
-                title={t('schedule.addEvent')}
-            >
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <FormPane open={drawerOpen} onOpenChange={setDrawerOpen}>
+                <div className="flex flex-col gap-4">
                     <Input
                         type="select"
                         label={t('common.day')}
@@ -171,14 +163,12 @@ export default () => {
                         onChange={(boundaryId) => boundaryId && updateForm(SetScheduleForm, { boundaryId })}
                     />
 
-                    <Button text={t('common.save')} style='success' onClick={() => {
+                    <Button text={t('common.save')} style='primary' onClick={() => {
                         setDrawerOpen(false)
                         GEN3_COMMANDS.setSchedule(robot.serial, [scheduleForm, ...schedule.events]).finally(() => getSchedule())
                     }} />
                 </div>
-
-            </Drawer>
-
+            </FormPane>
         </div>
     )
 }

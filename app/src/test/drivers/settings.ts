@@ -19,10 +19,10 @@ export const toggleForceFloorplan = (user: User) => user.click(checkbox(row(t('s
 export const forceFloorplanOn = () => checkbox(row(t('settings.forceFloorplan'))).checked
 
 export const selectRobotLanguage = (user: User, language: string) =>
-    user.selectOptions(within(field(t('settings.robotLanguage'))).getByRole('combobox'), language)
+    user.selectOptions(screen.getByRole('combobox', { name: t('settings.robotLanguage') }), language)
 
 export const factoryResetAvailable = () => screen.queryByText(t('settings.factoryReset')) !== null
-const factoryResetButton = () => within(field(t('settings.factoryReset'))).getByRole('button')
+const factoryResetButton = () => within(screen.getByRole('group', { name: t('settings.factoryReset') })).getByRole('button')
 export const factoryResetLabel = () => factoryResetButton().textContent
 export async function tapFactoryReset(user: User, times: number) {
     for (let i = 0; i < times; i++) await user.click(factoryResetButton())
@@ -33,5 +33,7 @@ export const setBinReminder = (user: User, minutes: number) => chooseOption(user
 export const setFilterReminder = (user: User, months: number) => chooseOption(user, t('settings.filterReminder'), String(months))
 export const setBrushReminder = (user: User, months: number) => chooseOption(user, t('settings.brushReminder'), String(months))
 
-export const selectTheme = (user: User, theme: 'dark' | 'soft' | 'light') =>
-    user.selectOptions(within(field(t('settings.theme'))).getByRole('combobox'), t(`settings.theme_${theme}`))
+export async function selectTheme(user: User, theme: 'dark' | 'soft' | 'light') {
+    await user.click(screen.getByRole('button', { name: new RegExp(`^${t('settings.theme')}`) }))
+    await user.click(await screen.findByRole('radio', { name: t(`settings.theme_${theme}`) }))
+}

@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react'
-import styles from './schedule.module.scss'
-import Drawer from '../../components/drawer/drawer'
 
+import ScheduleHeader from './header'
+import WeekStrip from './weekStrip'
+import EventRow from './eventRow'
+import { FormPane } from './formPanel'
+import { ListGroup, ListRow } from '../../components/list/list'
+import Switch from '../../components/switch/switch'
 import Input from '../../components/input/input'
 import Button from '../../components/button/button'
 import { Http } from '../../http'
@@ -117,54 +121,42 @@ export default () => {
 
     if (!schedule) return
 
+    const activeDays = new Set(schedule.events?.filter(e => e.enabled).flatMap(e => e.days.map(dayKey)))
+
     return (
-        <div className={styles.container}>
+        <div className="flex w-full lg:overflow-hidden">
+            <div className="flex min-w-0 flex-1 flex-col gap-4 p-4 lg:overflow-y-auto lg:p-6">
+                <ScheduleHeader subtitle={serverInfo && `${serverInfo.timezone} (${formatUtcOffset(offset)})`} onNew={() => openCleanForm()} />
 
-            <div className={styles.featureList}>
+                <WeekStrip activeDays={activeDays} />
 
-                <div className={`${styles.item} ${styles.staticItem}`}>
-                    <div className={styles.info}>
-                        <span>{t('schedule.schedule')}</span>
-                        {serverInfo && (
-                            <span className={styles.type}>{serverInfo.timezone} ({formatUtcOffset(offset)})</span>
-                        )}
-                    </div>
-                </div>
-
-                <hr style={{ width: '90%' }} />
-
-                <div className={`${styles.item} ${styles.actionItem}`} onClick={() => openCleanForm()}>
-                    <div className={styles.info}>
-                        <span>{t('schedule.newSchedule')}</span>
-                        <span className={styles.type}>{t('schedule.addOneMore')}</span>
-                    </div>
-                </div>
-
-                {schedule.events?.map((item, i) => (
-                    <div key={i} className={styles.item} onClick={() => setFormFromEvent(item)}>
-                        <div className={styles.info}>
-                            <span>{item.time}</span>
-                            <span className={styles.type}>{t('schedule.gen4Summary', { when: getDayText(item.days, t), mode: item.command.runs[0].settings.mode, navigation: item.command.runs[0].settings.navigation_mode })}</span>
-                        </div>
-                        <Input type="switch" skipSection={true} value={item.enabled} onChange={() => {
-                            item.enabled = !item.enabled;
-                            GEN4_COMMANDS.updateOrAddSchduledEvent(robot.serial, item).then(() => getSchedule())
-                        }} />
-                    </div>
-                ))}
+                <ul className="m-0 flex list-none flex-col gap-3 p-0">
+                    {schedule.events?.map((item, i) => {
+                        const { mode, navigation_mode } = item.command.runs[0].settings
+                        return (
+                            <EventRow
+                                key={i}
+                                time={item.time}
+                                day={getDayText(item.days, t)}
+                                summary={[mode, navigation_mode].map(m => t(`modes.${m}` as 'modes.eco', { defaultValue: m })).join(' · ')}
+                                selected={drawerOpen && !!item.id && item.id === scheduleForm.id}
+                                dimmed={!item.enabled}
+                                onClick={() => setFormFromEvent(item)}
+                            >
+                                <Switch label={t('schedule.eventSwitch', { time: item.time })} checked={item.enabled} onChange={() => {
+                                    item.enabled = !item.enabled;
+                                    GEN4_COMMANDS.updateOrAddSchduledEvent(robot.serial, item).then(() => getSchedule())
+                                }} />
+                            </EventRow>
+                        )
+                    })}
+                </ul>
                 {schedule.events?.length === 0 && (
-                    <span style={{ textAlign: 'center' }}>{t('schedule.noSchedules')}</span>
+                    <p className="m-0 text-center text-body text-muted">{t('schedule.noSchedules')}</p>
                 )}
             </div>
-            <Drawer
-                open={drawerOpen}
-                handle={false}
-                onOpenChange={setDrawerOpen}
-                openHeightPercent={70}
-                title={t('schedule.addEvent')}
-            >
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <FormPane open={drawerOpen} onOpenChange={setDrawerOpen}>
+                <div className="flex flex-col gap-4">
                     <Input
                         type="multi-select"
                         label={t('common.day')}
@@ -217,22 +209,19 @@ export default () => {
 
                     {promotedFloorplan && (
                         <>
-                            <Input
-                                type="switch"
-                                label={t('schedule.usePromoted')}
-                                value={usePromotedFloorplan}
-                                onChange={setUsePromotedFloorplan}
-                            />
+                            <ListGroup>
+                                <ListRow label={t('schedule.usePromoted')}>
+                                    <Switch label={t('schedule.usePromoted')} checked={usePromotedFloorplan} onChange={setUsePromotedFloorplan} />
+                                </ListRow>
+                                {usePromotedFloorplan && (
+                                    <ListRow label={t('schedule.useNogoLayer')}>
+                                        <Switch label={t('schedule.useNogoLayer')} checked={nogoEnabled} onChange={setNogoEnabled} />
+                                    </ListRow>
+                                )}
+                            </ListGroup>
 
                             {usePromotedFloorplan && (
                                 <>
-                                    <Input
-                                        type="switch"
-                                        label={t('schedule.useNogoLayer')}
-                                        value={nogoEnabled}
-                                        onChange={setNogoEnabled}
-                                    />
-
                                     {boundaries.filter(b => b.type === 'polygon' && b.function === 'cleaning').length > 0 && (
                                         <>
                                             <Input
@@ -250,7 +239,7 @@ export default () => {
                         </>
                     )}
 
-                    <Button text={t('common.save')} style='success' onClick={() => {
+                    <Button text={t('common.save')} style='primary' onClick={() => {
                         if (!scheduleFormNavigationMode || !scheduleFormCleaningMode) return;
 
                         const settings = {
@@ -278,12 +267,10 @@ export default () => {
                     }} />
 
                     {scheduleForm.id && (
-                        <Button text={t('common.delete')} style='fail' onClick={() => removeEvent(scheduleForm.id!)} /> // Allowed here because check on row above
+                        <Button text={t('common.delete')} style='danger' onClick={() => removeEvent(scheduleForm.id!)} /> // Allowed here because check on row above
                     )}
                 </div>
-
-            </Drawer>
-
+            </FormPane>
         </div>
     )
 }
