@@ -1,11 +1,19 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import styles from './robotSwitcher.module.scss'
-import { TbChevronDown } from 'react-icons/tb'
+import { LuCheck, LuChevronDown } from 'react-icons/lu'
 import { useApp } from '../../context/useApp'
 import { useRobots } from '../../context/useRobots'
 import { useTranslation } from 'react-i18next'
+import { cn } from '../../utils/cn'
+import Badge from '../badge/badge'
 
-export default function RobotSwitcher({ icon, children }: { icon?: ReactNode, children?: ReactNode }) {
+interface RobotSwitcherProps {
+    icon?: ReactNode
+    children?: ReactNode
+    subtitle?: ReactNode
+    variant?: 'header' | 'sidebar'
+}
+
+export default function RobotSwitcher({ icon, children, subtitle, variant = 'header' }: RobotSwitcherProps) {
     const { t } = useTranslation()
     const { robot, selectRobot } = useApp()
     const { robots } = useRobots()
@@ -26,49 +34,67 @@ export default function RobotSwitcher({ icon, children }: { icon?: ReactNode, ch
 
     const entries = Object.entries(robots)
     const selected = robot ? robots[robot.serial] : undefined
+    const sidebar = variant === 'sidebar'
 
     return (
-        <div className={styles.container} ref={containerRef}>
+        <div className={cn("relative min-w-0", sidebar ? "w-full" : "flex-1 md:max-w-105")} ref={containerRef}>
             <button
-                className={styles.trigger}
+                type="button"
+                className={cn(
+                    'pressable focus-ring flex w-full cursor-pointer items-center bg-surface text-left text-fg hover:bg-surface-hover',
+                    sidebar
+                        ? 'gap-2.5 rounded-2xl border border-line px-3 py-2.5'
+                        : 'h-13 gap-3 rounded-2xl border border-line-strong px-4',
+                )}
                 onClick={() => setIsOpen(o => !o)}
                 aria-label={t('topbar.selectRobot')}
                 aria-expanded={isOpen}
             >
                 {icon}
-                <span className={styles.name}>{selected?.name ?? t('topbar.selectARobot')}</span>
+                <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <span className={cn('truncate font-medium', sidebar ? 'text-sm' : 'text-body')}>
+                        {selected?.name ?? t('topbar.selectARobot')}
+                    </span>
+                    {subtitle}
+                </span>
                 {children}
-                <TbChevronDown
-                    size={14}
-                    className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`}
+                <LuChevronDown
+                    size={16}
+                    className={cn('shrink-0 text-muted transition-transform', isOpen && 'rotate-180')}
                     aria-hidden="true"
                 />
             </button>
 
             {isOpen && (
-                <div className={styles.dropdown} role="listbox">
-                    {entries.map(([serial, info]) => (
-                        <button
-                            key={serial}
-                            role="option"
-                            aria-selected={serial === robot?.serial}
-                            disabled={!info.connected}
-                            className={[
-                                styles.dropdownItem,
-                                serial === robot?.serial ? styles.dropdownItemActive : '',
-                                !info.connected ? styles.dropdownItemOffline : '',
-                            ].join(' ')}
-                            onClick={() => {
-                                if (!info.connected) return;
-                                selectRobot(serial)
-                                setIsOpen(false)
-                            }}
-                        >
-                            <span className={styles.dropdownName}>{info.name}</span>
-                            {!info.connected && <span className={styles.offlineTag}>{t('common.offline')}</span>}
-                            {serial === robot?.serial && <span className={styles.dropdownCheck}>✓</span>}
-                        </button>
-                    ))}
+                <div
+                    className="absolute inset-x-0 top-full z-40 mt-2 overflow-hidden rounded-2xl border border-line-strong bg-surface shadow-float"
+                    role="listbox">
+                    {entries.map(([serial, info]) => {
+                        const active = serial === robot?.serial
+                        return (
+                            <button
+                                key={serial}
+                                type="button"
+                                role="option"
+                                aria-selected={active}
+                                disabled={!info.connected}
+                                className={cn(
+                                    'focus-ring flex min-h-13 w-full items-center gap-3 border-b border-line px-4 text-left text-body last:border-b-0',
+                                    info.connected ? 'cursor-pointer hover:bg-surface-hover' : 'cursor-not-allowed text-muted',
+                                    active ? 'font-semibold text-fg' : 'font-medium',
+                                )}
+                                onClick={() => {
+                                    if (!info.connected) return;
+                                    selectRobot(serial)
+                                    setIsOpen(false)
+                                }}
+                            >
+                                <span className="min-w-0 flex-1 truncate">{info.name}</span>
+                                {!info.connected && <Badge tone="err">{t('common.offline')}</Badge>}
+                                {active && <LuCheck size={18} strokeWidth={2.5} className="shrink-0 text-accent-text" aria-hidden="true" />}
+                            </button>
+                        )
+                    })}
                 </div>
             )}
         </div>

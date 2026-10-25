@@ -3,9 +3,9 @@
     "common": {
         "save": "Guardar",
         "cancel": "Cancelar",
+        "back": "Voltar",
         "delete": "Eliminar",
         "edit": "Editar",
-        "ok": "OK",
         "name": "Nome",
         "type": "Tipo",
         "mode": "Modo",
@@ -16,8 +16,20 @@
         "offline": "Offline",
         "options": "Opções",
         "notAvailable": "N/D",
-        "loading": "A carregar",
-        "sendingCommand": "A enviar comando..."
+        "loading": "A carregar"
+    },
+    "feedback": {
+        "start": "{{name}} está a limpar",
+        "stop": "{{name}} parou",
+        "pause": "{{name}} está em pausa",
+        "resume": "{{name}} está a limpar",
+        "base": "{{name}} está a regressar à base",
+        "locate": "{{name}} está a tocar um som",
+        "explore": "{{name}} está a explorar um novo mapa",
+        "unreachable": "Não foi possível contactar {{name}}",
+        "saveFailed": "Não foi possível guardar as alterações",
+        "retry": "Tentar novamente",
+        "dismiss": "Fechar"
     },
     "modes": {
         "auto": "Auto",
@@ -55,6 +67,17 @@
         "creatingUploadingMap": "A criar o mapa",
         "suspendedExploration": "Exploração suspensa"
     },
+    "nav": {
+        "main": "Principal",
+        "home": "Início",
+        "runs": "Limpezas",
+        "map": "Mapa",
+        "schedule": "Agenda",
+        "settings": "Definições",
+        "expand": "Expandir menu",
+        "collapse": "Recolher menu",
+        "collapseShort": "Recolher"
+    },
     "topbar": {
         "selectRobot": "Selecionar robot",
         "selectARobot": "Selecione um robot",
@@ -87,13 +110,23 @@
         "pauseCleaning": "Pausar limpeza",
         "resumeCleaning": "Retomar limpeza",
         "startCleaning": "Iniciar limpeza",
-        "selectMode": "Selecionar modo",
-        "modeMapInfo": "Limpa zonas específicas definidas no mapa.",
-        "modeHouseInfo": "Limpa toda a área possível, ignorando zonas e linhas No-Go.",
-        "modeSpotInfo": "Limpa uma área específica definida pela altura e largura.",
         "mapModeHint": "O modo de limpeza Mapa está disponível quando o robot está na base.",
         "height": "Altura",
-        "width": "Largura"
+        "width": "Largura",
+        "setup": "Configuração da limpeza",
+        "area": "Área",
+        "suction": "Sucção",
+        "navigation": "Navegação",
+        "zonesHint": "Zonas · sem seleção limpa o mapa inteiro",
+        "cleanSpot": "Limpeza localizada",
+        "cleanZones_one": "Limpar {{count}} zona",
+        "cleanZones_other": "Limpar {{count}} zonas",
+        "btnExplain": {
+            "locate": "Robô perdido?",
+            "mode": "Modo",
+            "navigation": "Navegação",
+            "cleaning": "Limpeza"
+        }
     },
     "runs": {
         "entryTitle": "Limpeza {{startedBy}} | {{date}}",
@@ -108,17 +141,32 @@
         "pickedUp_one": "Levantado {{count}} vez",
         "pickedUp_other": "Levantado {{count}} vezes",
         "durationLong": "{{hours}}h {{minutes}}min {{seconds}}s",
-        "durationShort": "{{minutes}}min {{seconds}}s"
+        "durationShort": "{{minutes}}min {{seconds}}s",
+        "completed": "Concluída",
+        "notCompleted": "Não concluída",
+        "segments": "Segmentos",
+        "selectRun": "Selecione uma limpeza para ver os detalhes"
     },
     "schedule": {
         "schedule": "Agendamento",
-        "newSchedule": "Novo agendamento",
-        "addOneMore": "Adicionar mais um agendamento",
         "noSchedules": "Ainda não tem agendamentos, porque não adicionar um?",
+        "new": "Novo",
+        "enabled": "Executar agendamento",
+        "eventSwitch": "Ativar agendamento às {{time}}",
+        "deleteEvent": "Eliminar agendamento das {{time}}",
+        "formPlaceholder": "Selecione um agendamento para o editar ou adicione um novo.",
+        "week": "Resumo da semana",
+        "dayShort": {
+            "monday": "Seg",
+            "tuesday": "Ter",
+            "wednesday": "Qua",
+            "thursday": "Qui",
+            "friday": "Sex",
+            "saturday": "Sáb",
+            "sunday": "Dom"
+        },
         "addEvent": "Adicionar evento",
-        "gen3Summary": "Dia: {{day}} | Modo: {{mode}}",
         "gen3SummaryZone": "Zona: {{zone}}",
-        "gen4Summary": "Agendado {{when}} | Modo {{mode}} | Navegação {{navigation}}",
         "everyday": "Todos os dias",
         "weekends": "Aos fins de semana",
         "weekdays": "Nos dias úteis",
@@ -151,7 +199,6 @@
         "noGo": "No-Go",
         "cleaning": "Zona",
         "cleanZone": "Limpar zona",
-        "addSchedule": "Adicionar agendamento",
         "zoneType": "Tipo de zona",
         "color": "Cor",
         "drawBoundary": "Desenhar limite",
@@ -160,11 +207,21 @@
         "drawHint": "Desenhar uma linha cria uma linha No-Go; usar o botão de polígono para ligar o cursor ao primeiro ponto cria uma zona ou zona No-Go.",
         "promote": "Usar mapa",
         "demote": "Parar de usar mapa",
-        "gen4UpdateBugHint": "NOTA: a modificação de mapas, zonas ou linhas pode desativar os agendamentos. Isto ocorre no firmware do robot, mas já estamos à procura de uma solução"
+        "gen4UpdateBugHint": "NOTA: a modificação de mapas, zonas ou linhas pode desativar os agendamentos. Isto ocorre no firmware do robot, mas já estamos à procura de uma solução",
+        "features": "Zonas e linhas",
+        "floorPlan": "Planta",
+        "undoPoint": "Desfazer",
+        "addPoint": "Adicionar ponto",
+        "closeShape": "Fechar forma",
+        "presetColors": "Cores predefinidas",
+        "hexColor": "Cor hexadecimal",
+        "noMapData": "Não há mapa disponível para esta limpeza"
     },
     "settings": {
         "serial": "N.º de série: {{serial}}",
         "birthday": "Data de fabrico: {{date}}",
+        "batteryCycles": "Ciclos da bateria: {{cycles}}",
+        "robotModel": "Modelo: {{model}}",
         "robotSettings": "Definições do robot",
         "forceFloorplan": "Forçar mapa",
         "robotLanguage": "Idioma",
@@ -184,6 +241,29 @@
         "theme_dark": "Escuro",
         "theme_soft": "Escuro (suave)",
         "theme_light": "Claro",
+        "theme_black": "Preto (OLED)",
+        "theme_neato": "Neato",
+        "theme_neato-light": "Neato (claro clássico)",
+        "theme_midnight": "Meia-noite",
+        "theme_dusk": "Crepúsculo",
+        "theme_contrast": "Alto contraste",
+        "themeHint_dark": "Menta",
+        "themeHint_soft": "Menta",
+        "themeHint_light": "Menta",
+        "themeHint_black": "Menta",
+        "themeHint_neato": "Laranja",
+        "themeHint_neato-light": "Laranja",
+        "themeHint_midnight": "Azul",
+        "themeHint_dusk": "Violeta",
+        "themeHint_contrast": "Amarelo",
+        "matchSystem": "Acompanhar o sistema",
+        "matchSystemInfo": "Usa o tema Claro de dia e o Escuro à noite",
+        "mapShapeSelect": "Forma dos pontos do mapa",
+        "mapShape": {
+            "circle": "Círculo",
+            "square": "Quadrado",
+            "heart": "Coração"
+        },
         "units": "Unidades",
         "units_metric": "Métrico (m², cm)",
         "units_imperial": "Imperial (ft², ft)",
@@ -193,12 +273,20 @@
         "downloadCert": "Descarregar certificado",
         "giveFeedback": "Deixar feedback",
         "downloadLogs": "Descarregar logs",
-        "comingSoon": "Muito mais em breve - fique atento!"
+        "comingSoon": "Muito mais em breve - fique atento!",
+        "robot": "Robô",
+        "dangerZone": "Zona de perigo",
+        "about": "Acerca e apoio"
     },
     "serverUnreachable": {
         "title": "Não foi possível ligar ao servidor",
         "subtitle": "A aplicação não conseguiu ligar ao servidor Vacuula! Confirme que o servidor está a funcionar e que é acessível a partir deste dispositivo.",
         "mdnsDisclaimer": "Se estiver a usar mDNS (a abrir o site através de vacuula.local), o dispositivo pode demorar algum tempo a obter o IP do servidor. Se o problema persistir, tente reiniciar o browser.",
+        "retry": "Tentar novamente"
+    },
+    "hasOutdatedRobot": {
+        "title": "Tem um robô desatualizado",
+        "subtitle": "Está a usar a versão {{serverVersion}} do servidor, que requer a versão {{minInstallerVersion}} ou superior do instalador. Volte a executar a versão mais recente do instalador para os seguintes robôs.",
         "retry": "Tentar novamente"
     },
     "robotErrorCode": {

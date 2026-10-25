@@ -1,32 +1,48 @@
-import styles from './settings.module.scss'
-import { useEffect, useRef, useState } from 'react'
-import Input from '../../components/input/input'
-import { Neato, RobotType } from '../../types'
-import { GEN4_COMMANDS } from '../../http/gen4'
-import { useRobot } from '../../context/useRobot'
-import Button from '../../components/button/button'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { LuChevronRight } from 'react-icons/lu'
 import { FaDiscord, FaGithub } from 'react-icons/fa'
 import { SiBuymeacoffee, SiKofi } from 'react-icons/si'
-import { GEN3_COMMANDS } from '../../http/gen3'
-import { useTranslation } from 'react-i18next'
-import { APP_LANGUAGES, DEFAULT_LANGUAGE } from '../../i18n/languages'
-import { THEME_MODES, useTheme, type ThemeMode } from '../../theme'
-import { UNITS, useUnits, type Units } from '../../units'
-import { MASCOTS, useMascot } from '../../mascot'
 import { GrCertificate } from 'react-icons/gr'
 import { VscFeedback } from 'react-icons/vsc'
 import { FaFileLines } from 'react-icons/fa6'
-import type { UseState } from '../../components/map/types'
+import { Neato, RobotType } from '../../types'
+import { GEN3_COMMANDS } from '../../http/gen3'
+import { useRobot } from '../../context/useRobot'
+import Input from '../../components/input/input'
+import Button from '../../components/button/button'
+import Drawer from '../../components/drawer/drawer'
+import { ListGroup, ListRow } from '../../components/list/list'
+import { APP_LANGUAGES, DEFAULT_LANGUAGE } from '../../i18n/languages'
+import { useTheme } from '../../theme'
+import { UNITS, useUnits, type Units } from '../../units'
+import { MASCOTS, useMascot } from '../../mascot'
+import { useIsDesktop } from '../../components/layout/useLayout'
+import { Gen3RobotSettings, Gen4RobotSettings } from './robotSettings'
+import { MatchSystemRow, ThemeSwatch, ThemeTiles } from './themePicker'
+import { SelectRow } from './selectRow'
+import { Section } from './section'
+import { loadSelectedMapShape, saveSelectedMapShape, MAPSHAPES } from './mapshapes'
 
-export default () => {
+const LINKS = [
+    { icon: <FaGithub size={18} />, text: 'Github', url: 'https://github.com/vacuula' },
+    { icon: <FaDiscord size={18} />, text: 'Discord', url: 'https://discord.gg/PAgwhWvyD8' },
+    { icon: <SiKofi size={18} />, text: 'Ko-fi', url: 'https://ko-fi.com/V7V61PBIY6' },
+    { icon: <SiBuymeacoffee size={18} />, text: 'Buy Me a Coffee', url: 'https://www.buymeacoffee.com/philip2809' },
+]
+
+const Settings = () => {
     const { t, i18n } = useTranslation()
-    const { theme, setTheme } = useTheme()
+    const { theme } = useTheme()
     const { units, setUnits } = useUnits()
     const { mascot, setMascot } = useMascot()
+    const isDesktop = useIsDesktop()
+    const [themeSheetOpen, setThemeSheetOpen] = useState(false)
 
     const { robot, updateRobotName, serverInfo } = useRobot()
 
     const [robotName, setRobotName] = useState(robot.name)
+    const [selectedMapShape, setSelectedMapShape] = useState(loadSelectedMapShape())
 
     useEffect(() => {
         setRobotName(robot.name)
@@ -43,304 +59,137 @@ export default () => {
         return () => clearTimeout(timer)
     }, [robotName])
 
+    useEffect(() => {
+        saveSelectedMapShape(selectedMapShape)
+    }, [selectedMapShape])
 
+    const link = (text: string, icon: React.ReactNode, url: string) => (
+        <Button key={text} icon={icon as React.JSX.Element} text={text} style='secondary' className="justify-start" onClick={() => window.open(url)} />
+    )
 
     return (
-        <div className={styles.container}>
+        <div className="flex w-full max-w-5xl self-start flex-col gap-6 px-4 pt-2 pb-6 md:max-w-194 md:px-6 lg:max-w-5xl lg:px-8 lg:pt-8">
+            <h1 className="m-0 text-xl font-semibold tracking-heading text-fg lg:text-2xl">{t('nav.settings')}</h1>
 
-            <div className={styles.featureList}>
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+                <div className="contents lg:flex lg:min-w-0 lg:flex-1 lg:flex-col lg:gap-6">
+                    <Section heading={t('settings.robot')} className="order-1 lg:order-none">
+                        <div className="flex flex-col gap-1 rounded-2xl border border-line bg-surface p-4">
+                            <Input
+                                type="text"
+                                label={t('common.name')}
+                                value={robotName}
+                                onChange={setRobotName}
+                                extraInfo={(
+                                    <>
+                                        <span className="font-mono">{t('settings.serial', { serial: 'label_serial' in robot ? robot.label_serial : robot.serial })}</span>
+                                        {robot.type === RobotType.NeatoGen3 && <Gen3RobotDetails />}
+                                    </>
+                                )}
+                            />
+                        </div>
+                    </Section>
 
-                <Input
-                    type="text"
-                    label={t('common.name')}
-                    value={robotName}
-                    onChange={setRobotName}
-                    extraInfo={(
-                        <>
-                            <span>{t('settings.serial', { serial: 'label_serial' in robot ? robot.label_serial : robot.serial })}</span>
-                            {robot.type === RobotType.NeatoGen3 && (
-                                <>
-                                    <br />
-                                    <span>{t('settings.birthday', { date: manufacturingCodeToDate(robot.serial.split('-')[0])?.toLocaleDateString(i18n.language) ?? '' })}</span>
-                                </>
+                    {robot.type === RobotType.NeatoGen4 && <Gen4RobotSettings />}
+                    {robot.type === RobotType.NeatoGen3 && <Gen3RobotSettings />}
+                </div>
+
+                <div className="contents lg:flex lg:min-w-0 lg:flex-1 lg:flex-col lg:gap-6">
+                    <Section heading={t('settings.appSettings')} className="order-3 lg:order-none">
+                        <ListGroup>
+                            {isDesktop ? (
+                                <div className="flex flex-col gap-3 px-4 py-3">
+                                    <div className="text-body text-fg">{t('settings.theme')}</div>
+                                    <ThemeTiles columns="grid-cols-5" />
+                                </div>
+                            ) : (
+                                <ListRow label={t('settings.theme')} onClick={() => setThemeSheetOpen(true)}>
+                                    <ThemeSwatch mode={theme} className="h-7 w-11" />
+                                    <span className="text-body text-muted">{t(`settings.theme_${theme}`)}</span>
+                                    <LuChevronRight size={18} className="shrink-0 text-dim" aria-hidden="true" />
+                                </ListRow>
                             )}
-                        </>
-                    )}
-                />
+                            {isDesktop && <MatchSystemRow />}
+                            <SelectRow
+                                label={t('settings.appLanguage')}
+                                options={APP_LANGUAGES.map(lang => ({ value: lang.code, label: lang.label }))}
+                                value={i18n.resolvedLanguage ?? DEFAULT_LANGUAGE}
+                                onChange={(code) => i18n.changeLanguage(code)}
+                            />
+                            <SelectRow
+                                label={t('settings.mapShapeSelect')}
+                                options={MAPSHAPES.map(shape => ({ value: shape.value, label: t(shape.label) }))}
+                                value={selectedMapShape}
+                                onChange={setSelectedMapShape}
+                            />
+                            <SelectRow
+                                label={t('settings.units')}
+                                options={UNITS.map(u => ({ value: u, label: t(`settings.units_${u}`) }))}
+                                value={units}
+                                onChange={(u) => setUnits(u as Units)}
+                            />
+                            <SelectRow
+                                label={t('settings.mascot')}
+                                options={MASCOTS.map(m => ({ value: m.id, label: t(`settings.mascot_${m.id}`) }))}
+                                value={mascot.id}
+                                onChange={(id) => setMascot(id)}
+                            />
+                        </ListGroup>
+                    </Section>
 
+                    <Section heading={`${t('settings.about')} · Vacuula ${serverInfo.version}`} className="order-5 lg:order-none">
+                        <div className="grid grid-cols-2 gap-2">
+                            {LINKS.map(l => link(l.text, l.icon, l.url))}
+                            {link(t('settings.giveFeedback'), <VscFeedback size={18} />, 'https://feedback.vacuula.phma.dev/')}
+                            {link(t('settings.downloadCert'), <GrCertificate size={18} />, '/api/cert')}
+                            {link(t('settings.downloadLogs'), <FaFileLines size={18} />, '/api/log/full?download=true')}
+                        </div>
+                        <p className="m-0 px-1 text-xs text-muted">{t('settings.comingSoon')}</p>
+                    </Section>
+                </div>
             </div>
 
-            <hr style={{ width: '95%' }} />
-
-            <div className={styles.featureList}>
-                <b>{t('settings.robotSettings')}</b>
-                {robot.type === RobotType.NeatoGen4 && <Gen4RobotSettings />}
-                {robot.type === RobotType.NeatoGen3 && <Gen3RobotSettings />}
-            </div>
-
-            <hr style={{ width: '95%' }} />
-
-            <div className={styles.featureList}>
-                <b>{t('settings.appSettings')}</b>
-                <Input
-                    type="dropdown"
-                    label={t('settings.appLanguage')}
-                    options={APP_LANGUAGES.map(lang => ({ value: lang.code, label: lang.label }))}
-                    value={i18n.resolvedLanguage ?? DEFAULT_LANGUAGE}
-                    onChange={(code) => i18n.changeLanguage(code)}
-                />
-                <Input
-                    type="dropdown"
-                    label={t('settings.theme')}
-                    options={THEME_MODES.map(mode => ({ value: mode, label: t(`settings.theme_${mode}`) }))}
-                    value={theme}
-                    onChange={(mode) => setTheme(mode as ThemeMode)}
-                />
-                <Input
-                    type="dropdown"
-                    label={t('settings.units')}
-                    options={UNITS.map(u => ({ value: u, label: t(`settings.units_${u}`) }))}
-                    value={units}
-                    onChange={(u) => setUnits(u as Units)}
-                />
-                <Input
-                    type="dropdown"
-                    label={t('settings.mascot')}
-                    options={MASCOTS.map(m => ({ value: m.id, label: t(`settings.mascot_${m.id}`) }))}
-                    value={mascot.id}
-                    onChange={(id) => setMascot(id)}
-                />
-            </div>
-
-            <hr style={{ width: '95%' }} />
-
-            <div className={styles.featureList}>
-
-                <Input
-                    type="custom"
-                    label="Vacuula"
-                    extraInfo={(
-                        <>
-                            <span>Vacuula {serverInfo.version}</span>
-                            <br />
-                            <span>{t('settings.comingSoon')}</span>
-                        </>
-                    )}>
-                    <div className={styles.vacuulaInfo}>
-                        <Button icon={<FaGithub size={20} />} text='Github' style='secondary' onClick={() => window.open('https://github.com/vacuula')} />
-                        <Button icon={<FaDiscord size={20} />} text='Discord' style='secondary' onClick={() => window.open('https://discord.gg/PAgwhWvyD8')} />
-
-                        <Button icon={<SiKofi size={20} />} text='Ko-fi' style='secondary' onClick={() => window.open('https://ko-fi.com/V7V61PBIY6')} />
-                        <Button icon={<SiBuymeacoffee size={20} />} text='Buy Me a Coffee' style='secondary' onClick={() => window.open('https://www.buymeacoffee.com/philip2809')} />
-
-                        <Button icon={<GrCertificate size={20} />} text={t('settings.downloadCert')} style='secondary' onClick={() => window.open("/api/cert")}/>
-                        <Button icon={<VscFeedback size={20} />} text={t('settings.giveFeedback')} style='secondary' onClick={() => window.open("https://feedback.vacuula.phma.dev/")}/>
-                        
-                        <Button icon={<FaFileLines size={20} />} text={t('settings.downloadLogs')} style='secondary' onClick={() => window.open("/api/log/full?download=true")}/>
+            {!isDesktop && (
+                <Drawer open={themeSheetOpen} handle={false} onOpenChange={setThemeSheetOpen} openHeightPercent={75} title={t('settings.theme')}>
+                    <div className="flex flex-col gap-4 pb-2">
+                        <ListGroup><MatchSystemRow /></ListGroup>
+                        <ThemeTiles columns="grid-cols-3" />
                     </div>
-                </Input>
-
-
-
-            </div>
+                </Drawer>
+            )}
         </div>
-
     )
 }
 
+export default Settings
 
-
-const Gen4RobotSettings = () => {
+const Gen3RobotDetails = () => {
     const { t } = useTranslation()
     const { robot } = useRobot()
 
-    const [cleaningOptions, setCleaningOptions] = useState<Neato.Gen4.SettingsCleaningOptions>()
-    const [robotLanguage, setRobotLanguage] = useState<Neato.Gen4.SettingsRobotLanguage>()
+    const [robotGeneralInfo, setRobotGeneralInfo] = useState<Neato.Gen3.GetGeneralInfo>()
 
     useEffect(() => {
-        getCleaningOptions();
-        getRobotLanguage();
-    }, []);
-
-    const getCleaningOptions = () => GEN4_COMMANDS.getSettings(robot.serial, { operation: Neato.Gen4.SettingsCleaningOptionsOperation.GET }).then(d => setCleaningOptions(d.data.body))
-    const getRobotLanguage = () => GEN4_COMMANDS.getSettings(robot.serial, { operation: Neato.Gen4.SettingsRobotLanguageOperation.GET }).then(d => setRobotLanguage(d.data.body))
-
-    const settingsDataBinders = {
-        [Neato.Gen4.SettingsCleaningOptionsOperation.SET]: {
-            useStateUpdater: setCleaningOptions,
-            dataFetcher: getCleaningOptions
-        },
-        [Neato.Gen4.SettingsRobotLanguageOperation.SET]: {
-            useStateUpdater: setRobotLanguage,
-            dataFetcher: getRobotLanguage
-        }
-    }
-
-    const setSettings = <Op extends Neato.Gen4.SettingsSetOperation>(operation: Op, update: Neato.Gen4.SettingsMap[Op]) => {
-        const b = settingsDataBinders[operation]
-        b.useStateUpdater(update as any) // TODO: Find out how to type this
-        GEN4_COMMANDS.setSettings(robot.serial, { operation: operation, values: update }).finally(b.dataFetcher)
-    }
-
-    if (!robot || !cleaningOptions || !robotLanguage) return; // TODO: loading UI
+        GEN3_COMMANDS.getGeneralInfo(robot.serial).then(res => {
+            setRobotGeneralInfo(res.data.data)
+        })
+    },[robot.serial])
 
     return (
         <>
-            <div className={styles.item} style={{ background: 'var(--accent-soft)' }}>
-                <div className={styles.info}>
-                    <span>{t('settings.forceFloorplan')}</span>
-                </div>
-                <Input type="switch" skipSection={true} value={cleaningOptions.force_floorplan} onChange={(value) => {
-                    setSettings(Neato.Gen4.SettingsCleaningOptionsOperation.SET, { ...cleaningOptions, force_floorplan: value })
-                }} />
-            </div>
-
-            <Input
-                type="dropdown"
-                label={t('settings.robotLanguage')}
-                options={robotLanguage.available_languages.map(lang => ({ value: lang, label: lang }))}
-                value={robotLanguage.language}
-                onChange={(language) => setSettings(Neato.Gen4.SettingsRobotLanguageOperation.SET, { ...robotLanguage, language })}
-            />
-
-            <Input
-                type="custom"
-                label={t('settings.factoryReset')}
-                extraInfo={t('settings.factoryResetInfo')}>
-                <FactoryResetButton serial={robot.serial} />
-            </Input>
+            <br />
+            <span className="font-mono">{t('settings.birthday', { date: manufacturingCodeToDate(robot.serial.split('-')[0])?.toLocaleDateString() ?? '' })}</span>
+            {robotGeneralInfo && (
+                <>
+                    <br />
+                    <span className="font-mono">{t('settings.batteryCycles', { cycles: robotGeneralInfo.battery.totalCharges })}</span>
+                    <br />
+                    <span className="font-mono">{t('settings.robotModel', { model: robotGeneralInfo.model })}</span>
+                </>
+            )}
         </>
     )
 }
-
-
-const Gen3RobotSettings = () => {
-    const { t } = useTranslation()
-    const { robot } = useRobot()
-
-    const [preferences, setPreferences] = useState<Neato.Gen3.Preferences | undefined>(undefined)
-    const isInitialLoad = useRef(true)
-
-
-    useEffect(() => {
-        getPreferences();
-    }, []);
-
-    const getPreferences = () => GEN3_COMMANDS.getPreferences(robot.serial).then(res => {
-        setPreferences(res.data.data);
-    });
-
-    useEffect(() => {
-        if (!preferences) return;
-        if (isInitialLoad.current) {
-            isInitialLoad.current = false
-            return
-        }
-        GEN3_COMMANDS.setPreferences(robot.serial, preferences);
-    }, [preferences])
-
-    const updateForm = <T,>(update: UseState<T>, patch: Partial<T>) => {
-        update(prev => ({
-            ...prev,
-            ...patch
-        }));
-    }
-
-    if (!preferences) return // TODO: loading ui
-
-    return (
-        <>
-            <div className={styles.item} style={{ background: 'var(--accent-soft)' }}>
-                <div className={styles.info}>
-                    <span>{t('settings.robotSounds')}</span>
-                </div>
-                <Input type="switch" skipSection={true} value={preferences.robotSounds} onChange={(robotSounds) => {
-                    updateForm(setPreferences, { robotSounds })
-                }} />
-            </div>
-
-            <Input
-                type="select"
-                label={t('settings.binReminder')}
-                options={[30, 60, 90, 120, 150].map(i => ({ value: i, label: i.toString() }))} // 30-150 is ok
-                value={preferences.dirtbinAlertReminderInterval}
-                onChange={(dirtbinAlertReminderInterval) => updateForm(setPreferences, { dirtbinAlertReminderInterval })}
-            />
-
-            <Input
-                type="select"
-                label={t('settings.filterReminder')}
-                options={[1, 1.5, 2, 2.5, 3].map(i => ({ value: (i * 30 * 24 * 60), label: i.toString() }))} // 43200-129600 is ok (1-3 month)
-                value={preferences.filterChangeReminderInterval}
-                onChange={(filterChangeReminderInterval) => updateForm(setPreferences, { filterChangeReminderInterval })}
-            />
-
-            <Input
-                type="select"
-                label={t('settings.brushReminder')}
-                options={[4, 5, 6, 7, 8].map(i => ({ value: (i * 30 * 24 * 60), label: i.toString() }))} // 172800-345600 is ok (4-8 month)
-                value={preferences.brushChangeReminderInterval}
-                onChange={(brushChangeReminderInterval) => updateForm(setPreferences, { brushChangeReminderInterval })}
-            />
-        </>
-    )
-}
-
-
-const FACTORY_RESET_TAPS_REQUIRED = 5
-const FACTORY_RESET_TAP_TIMEOUT_MS = 3000 // pause this long between taps and the count resets
-
-interface FactoryResetButtonProps {
-    serial: string
-}
-
-const FactoryResetButton = ({ serial }: FactoryResetButtonProps) => {
-    const { t } = useTranslation()
-    const [tapCount, setTapCount] = useState(0)
-    const [isResetting, setIsResetting] = useState(false)
-    const idleResetRef = useRef<ReturnType<typeof setTimeout>>(0)
-
-    useEffect(() => () => clearTimeout(idleResetRef.current), [])
-
-    const scheduleIdleReset = () => {
-        clearTimeout(idleResetRef.current)
-        idleResetRef.current = setTimeout(() => setTapCount(0), FACTORY_RESET_TAP_TIMEOUT_MS)
-    }
-
-    const handleClick = () => {
-        if (isResetting) return // ignore taps while a reset is already in flight
-
-        const nextCount = tapCount + 1
-
-        if (nextCount >= FACTORY_RESET_TAPS_REQUIRED) {
-            clearTimeout(idleResetRef.current)
-            setIsResetting(true)
-            GEN4_COMMANDS.factoryReset(serial)
-                .catch(err => console.error('Factory reset failed', err))
-                .finally(() => {
-                    setIsResetting(false)
-                    setTapCount(0)
-                })
-            return
-        }
-
-        setTapCount(nextCount)
-        scheduleIdleReset()
-    }
-
-    const remaining = FACTORY_RESET_TAPS_REQUIRED - tapCount
-    const text = isResetting
-        ? t('settings.resetting')
-        : tapCount === 0
-            ? t('settings.clickToStart')
-            : t('settings.tapToConfirm', { count: remaining })
-
-    return <Button text={text} style='fail' onClick={handleClick} disabled={isResetting} />
-}
-
-
-
-
 
 function manufacturingCodeToDate(code: string) {
     if (!/^[A-Z]{3}\d{5}$/.test(code)) {

@@ -1,4 +1,3 @@
-import styles from './map.module.scss'
 import { useMap } from './useMap'
 import { useRobot } from '../../context/useRobot'
 import { RobotType } from '../../types'
@@ -10,6 +9,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { drawBase, onDockImageReady } from './drawingFunctions'
 import type { ExtraDrawFn } from './useMap'
 import type { VacuulaMapData } from './types'
+import { useFeedback } from '../../feedback/useFeedback'
 
 interface MapProps {
     mapId: string
@@ -27,7 +27,7 @@ function basePoseFromMapData(data: VacuulaMapData) {
     return {
         pose: {
             x: ((base[0] - md.origin_x) / resolution) / img[0],
-            y: ((base[1] - md.origin_y) / resolution) / img[1],
+            y: 1 - ((base[1] - md.origin_y) / resolution) / img[1],
             dir: base[2] ?? 0,
         },
         resolution,
@@ -37,7 +37,8 @@ function basePoseFromMapData(data: VacuulaMapData) {
 export default function Map({ mapId, runId }: MapProps) {
     const { t } = useTranslation()
     const { robot } = useRobot()
-    const { data: persistantMapData, refresh: refreshPersistantMapData } = usePersistentMap(mapId);
+    const feedback = useFeedback()
+    const { data: persistantMapData, error, refresh: refreshPersistantMapData } = usePersistentMap(mapId);
 
     const [dockReady, setDockReady] = useState(false)
     useEffect(() => { onDockImageReady(() => setDockReady(true)) }, [])
@@ -57,21 +58,23 @@ export default function Map({ mapId, runId }: MapProps) {
 
     return (
         <>
-            <div className={styles.container}>
+            <div className="relative h-1/2 w-full">
                 <canvas
                     ref={canvasRef}
-                    className={styles.canvas}
+                    className="block size-full bg-bg"
                     {...canvasHandlers}
                     style={{
                         cursor: isDragging ? 'grabbing' : 'grab',
                         touchAction: 'none'
                     }}
                 />
-
+                {!persistantMapData && !!error && (
+                    <p className="absolute inset-0 m-0 flex items-center justify-center bg-bg px-4 py-6 text-center text-caption text-muted">{t('map.noMapData')}</p>
+                )}
             </div>
             {robot.type === RobotType.NeatoGen4 && !persistantMapData?.in_maps_list && (
-                <div style={{ padding: '1.5rem' }}>
-                    <Button text={t('map.useAsFloormap')} style='success' onClick={() => { Http.postUseMapAsFloorPlan(robot.serial, mapId).then(refreshPersistantMapData) }} />
+                <div className="p-4">
+                    <Button text={t('map.useAsFloormap')} style='tonal' onClick={() => feedback.write(() => Http.postUseMapAsFloorPlan(robot.serial, mapId).then(refreshPersistantMapData))} />
                 </div>
             )}
         </>

@@ -1,11 +1,11 @@
 {
-    "String-version": "2",
+    "String-version": "3",
     "common": {
         "save": "Save",
         "cancel": "Cancel",
+        "back": "Back",
         "delete": "Delete",
         "edit": "Edit",
-        "ok": "OK",
         "name": "Name",
         "type": "Type",
         "mode": "Mode",
@@ -16,8 +16,20 @@
         "offline": "Offline",
         "options": "Options",
         "notAvailable": "N/A",
-        "loading": "Loading",
-        "sendingCommand": "Sending command..."
+        "loading": "Loading"
+    },
+    "feedback": {
+        "start": "{{name}} is cleaning",
+        "stop": "{{name}} stopped",
+        "pause": "{{name}} paused",
+        "resume": "{{name}} is cleaning",
+        "base": "{{name}} is heading to base",
+        "locate": "{{name}} is playing a sound",
+        "explore": "{{name}} is exploring a new map",
+        "unreachable": "Couldn't reach {{name}}",
+        "saveFailed": "Couldn't save changes",
+        "retry": "Retry",
+        "dismiss": "Dismiss"
     },
     "modes": {
         "auto": "Auto",
@@ -55,6 +67,17 @@
         "creatingUploadingMap": "Creating map",
         "suspendedExploration": "Exploration suspended"
     },
+    "nav": {
+        "main": "Main",
+        "home": "Home",
+        "runs": "Runs",
+        "map": "Map",
+        "schedule": "Schedule",
+        "settings": "Settings",
+        "expand": "Expand menu",
+        "collapse": "Collapse menu",
+        "collapseShort": "Collapse"
+    },
     "topbar": {
         "selectRobot": "Select robot",
         "selectARobot": "Select a robot",
@@ -87,13 +110,23 @@
         "pauseCleaning": "Pause cleaning",
         "resumeCleaning": "Resume cleaning",
         "startCleaning": "Start cleaning",
-        "selectMode": "Select Mode",
-        "modeMapInfo": "Cleans specific zones defined on the map.",
-        "modeHouseInfo": "Cleans the entire area it can, ignoring zones and no-go lines.",
-        "modeSpotInfo": "Cleans a specific area defined by height and width.",
         "mapModeHint": "Map cleaning mode is available when robot is docked.",
         "height": "Height",
-        "width": "Width"
+        "width": "Width",
+        "setup": "Cleaning setup",
+        "area": "Area",
+        "suction": "Suction",
+        "navigation": "Navigation",
+        "zonesHint": "Zones · none selected cleans the whole map",
+        "cleanSpot": "Clean spot",
+        "cleanZones_one": "Clean {{count}} zone",
+        "cleanZones_other": "Clean {{count}} zones",
+        "btnExplain": {
+            "locate": "Lost robot?",
+            "mode": "Mode",
+            "navigation": "Navigation",
+            "cleaning": "Cleaning"
+        }
     },
     "runs": {
         "entryTitle": "{{startedBy}} cleaning | {{date}}",
@@ -108,17 +141,32 @@
         "pickedUp_one": "picked up {{count}} time",
         "pickedUp_other": "picked up {{count}} times",
         "durationLong": "{{hours}}h {{minutes}}min {{seconds}}sec",
-        "durationShort": "{{minutes}}min {{seconds}}sec"
+        "durationShort": "{{minutes}}min {{seconds}}sec",
+        "completed": "Completed",
+        "notCompleted": "Not completed",
+        "segments": "Segments",
+        "selectRun": "Select a run to see its details"
     },
     "schedule": {
         "schedule": "Schedule",
-        "newSchedule": "New schedule",
-        "addOneMore": "Add one more schedule",
         "noSchedules": "You don't have any schedules yet, why not add one?",
+        "new": "New",
+        "enabled": "Run schedule",
+        "eventSwitch": "Enable schedule at {{time}}",
+        "deleteEvent": "Delete schedule at {{time}}",
+        "formPlaceholder": "Select a schedule to edit it, or add a new one.",
+        "week": "Week overview",
+        "dayShort": {
+            "monday": "Mo",
+            "tuesday": "Tu",
+            "wednesday": "We",
+            "thursday": "Th",
+            "friday": "Fr",
+            "saturday": "Sa",
+            "sunday": "Su"
+        },
         "addEvent": "Add event",
-        "gen3Summary": "Runs on: {{day}} | Mode: {{mode}}",
         "gen3SummaryZone": "Zone: {{zone}}",
-        "gen4Summary": "Runs {{when}} | {{mode}} mode | {{navigation}} navigation",
         "everyday": "every day",
         "weekends": "on weekends",
         "weekdays": "on weekdays",
@@ -151,7 +199,6 @@
         "noGo": "No-Go",
         "cleaning": "Cleaning",
         "cleanZone": "Clean zone",
-        "addSchedule": "Add schedule",
         "zoneType": "Zone type",
         "color": "Color",
         "drawBoundary": "Draw boundary",
@@ -160,11 +207,21 @@
         "drawHint": "Drawing a line makes a no-go line; using the polygon button to connect the cursor with the first point makes a zone.",
         "promote": "Use map",
         "demote": "Stop using map",
-        "gen4UpdateBugHint": "NOTE: modifying maps, zones, or lines may disable affected schedules. This is something that happens on the robot firmware, and we are looking into a workaround"
+        "gen4UpdateBugHint": "NOTE: modifying maps, zones, or lines may disable affected schedules. This is something that happens on the robot firmware, and we are looking into a workaround",
+        "features": "Zones and lines",
+        "floorPlan": "Floor plan",
+        "undoPoint": "Undo",
+        "addPoint": "Add point",
+        "closeShape": "Close shape",
+        "presetColors": "Preset colours",
+        "hexColor": "Hex colour",
+        "noMapData": "No map available for this run"
     },
     "settings": {
         "serial": "Serial nr: {{serial}}",
         "birthday": "Birthday: {{date}}",
+        "batteryCycles": "Battery cycles: {{cycles}}",
+        "robotModel": "Model: {{model}}",
         "robotSettings": "Robot settings",
         "forceFloorplan": "Force floorplan",
         "robotLanguage": "Language",
@@ -184,6 +241,29 @@
         "theme_dark": "Dark",
         "theme_soft": "Dark (soft)",
         "theme_light": "Light",
+        "theme_black": "Black (OLED)",
+        "theme_neato": "Neato",
+        "theme_neato-light": "Neato (classic light)",
+        "theme_midnight": "Midnight",
+        "theme_dusk": "Dusk",
+        "theme_contrast": "High contrast",
+        "themeHint_dark": "Mint",
+        "themeHint_soft": "Mint",
+        "themeHint_light": "Mint",
+        "themeHint_black": "Mint",
+        "themeHint_neato": "Orange",
+        "themeHint_neato-light": "Orange",
+        "themeHint_midnight": "Blue",
+        "themeHint_dusk": "Violet",
+        "themeHint_contrast": "Yellow",
+        "matchSystem": "Match system",
+        "matchSystemInfo": "Uses Light by day and Dark at night",
+        "mapShapeSelect": "Map blob shape",
+        "mapShape": {
+            "circle": "Circle",
+            "square": "Square",
+            "heart": "Heart"
+        },
         "units": "Units",
         "units_metric": "Metric (m², cm)",
         "units_imperial": "Imperial (ft², ft)",
@@ -193,7 +273,10 @@
         "downloadCert": "Download cert",
         "giveFeedback": "Give feedback",
         "downloadLogs": "Download logs",
-        "comingSoon": "Lots more coming soon - stay tuned!"
+        "comingSoon": "Lots more coming soon - stay tuned!",
+        "robot": "Robot",
+        "dangerZone": "Danger zone",
+        "about": "About & support"
     },
     "serverUnreachable": {
         "title": "Could not connect to the server",
@@ -202,7 +285,7 @@
         "retry": "Try again"
     },
     "hasOutdatedRobot": {
-        "title": "You have an robot that is outdated",
+        "title": "You have a robot that is outdated",
         "subtitle": "You are running server version {{serverVersion}} and this requires installer version {{minInstallerVersion}} or higher. Please rerun the installer for the following robots with the latest version.",
         "retry": "Try again"
     },

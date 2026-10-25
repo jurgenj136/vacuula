@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import styles from './map.module.scss'
-import { FaPlus, FaUndo } from 'react-icons/fa'
+import { useTranslation } from 'react-i18next'
+import { LuPlus, LuUndo2 } from 'react-icons/lu'
 import { PiBoundingBox } from 'react-icons/pi'
+import { cn } from '../../utils/cn'
 import { DRAWING } from '../../components/map/constants'
 import type { Point, UseState } from '../../components/map/types'
 import { getCrosshairWorldCoords } from '../../components/map/utils'
@@ -39,8 +40,9 @@ export default function MapCanvas({
     setClosedAsPolygon,
     setDrawerOpen
 }: MapCanvasProps) {
+    const { t } = useTranslation()
     // TODO: decide on how exactly i want this to work, for now just show the button if there is at least 3 points.
-    const [showCloseAsPolygon, setShowCloseAsPolygon] = useState(false)
+    const [, setShowCloseAsPolygon] = useState(false)
 
     const { canvasRef, mapSize, zoom, offset, isDragging, hasMoved, canvasHandlers } = useMap({
         mapId,
@@ -51,6 +53,7 @@ export default function MapCanvas({
     })
 
     const addPointAtCrosshair = () => {
+        if (!mapSize) return
         const coords = getCrosshairWorldCoords(canvasRef, offset, zoom, mapSize)
         setCurrentLinePoints(prev => [...prev, coords])
     }
@@ -89,7 +92,7 @@ export default function MapCanvas({
         <>
             <canvas
                 ref={canvasRef}
-                className={styles.canvas}
+                className="block size-full bg-(--map-editor-bg)"
                 onMouseDown={canvasHandlers.onMouseDown}
                 onMouseMove={canvasHandlers.onMouseMove}
                 onMouseUp={canvasHandlers.onMouseUp}
@@ -105,18 +108,20 @@ export default function MapCanvas({
             />
 
             {mode === 'boundary-edit' && (
-                <div className={styles.actionButtons}>
-                    <div onClick={undo} className={styles.undo}>
-                        <FaUndo size={20} color="var(--text)" />
-                    </div>
-                    <div onClick={addPointAtCrosshair} className={`${styles.add} ${closedAsPolygon ? styles.disabled : ''}`}>
-                        <FaPlus size={40} color="var(--text)" />
-                    </div>
-                    <div onClick={closeAsPolygon} className={`${styles.closePolygon} ${((currentLinePoints.length > 2) && !closedAsPolygon) ? '' : styles.disabled}`}>
-                        <PiBoundingBox size={20} color="var(--text)" />
-                    </div>
+                <div className="absolute inset-x-0 bottom-[calc(var(--map-sheet-inset,0px)+1.5rem)] flex items-center justify-center gap-8">
+                    <button type="button" aria-label={t('map.undoPoint')} title={t('map.undoPoint')} onClick={undo} className={cn(ACTION, 'size-14 border border-line-strong bg-surface text-fg enabled:hover:bg-surface-hover')}>
+                        <LuUndo2 size={22} aria-hidden="true" />
+                    </button>
+                    <button type="button" aria-label={t('map.addPoint')} title={t('map.addPoint')} onClick={addPointAtCrosshair} disabled={closedAsPolygon || !mapSize} className={cn(ACTION, 'size-20 bg-accent text-on-accent enabled:hover:bg-accent-hover')}>
+                        <LuPlus size={36} strokeWidth={2.5} aria-hidden="true" />
+                    </button>
+                    <button type="button" aria-label={t('map.closeShape')} title={t('map.closeShape')} onClick={closeAsPolygon} disabled={!(currentLinePoints.length > 2 && !closedAsPolygon)} className={cn(ACTION, 'size-14 border border-line-strong bg-surface text-fg enabled:hover:bg-surface-hover')}>
+                        <PiBoundingBox size={22} aria-hidden="true" />
+                    </button>
                 </div>
             )}
         </>
     )
 }
+
+const ACTION = 'pressable focus-ring flex cursor-pointer items-center justify-center rounded-full shadow-float disabled:cursor-not-allowed disabled:opacity-40'

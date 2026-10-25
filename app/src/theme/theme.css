@@ -1,22 +1,10 @@
 /*
- * Vacuula design tokens (runtime theme).
- *
- * Two independent axes, both set as attributes on <html>:
- *   data-theme  = "dark" | "soft" | "light"   -> surfaces, text, borders, status colours
- *   data-accent = "mint"             -> brand/accent colour
- *
- * Dark + mint are the defaults and are declared on plain :root so the page is
- * correct even before any attribute is set. To add an accent, add one block
- * for dark and one for light (see "Accent" below) and register it in
- * src/theme/index.ts - nothing else needs to change.
- *
- * Every colour in the app lives in this file. Components use the tokens
- * (directly as var(--x) or through the aliases in src/variables.scss).
- * The two page background values are duplicated in index.html (anti-flash
- * script) and src/theme/index.ts - keep them in sync.
+ * Vacuula design tokens. data-theme picks a theme block (THEME_MODES in src/theme/index.ts);
+ * data-accent picks the accent for themes without their own.
+ * Page backgrounds are duplicated in index.html (anti-flash script) and src/theme/index.ts - keep in sync.
  */
 
-/* ---------- Mode: dark (default) ---------- */
+/* ---------- dark (default) ---------- */
 :root {
   color-scheme: dark;
 
@@ -24,6 +12,8 @@
   --surface: #181c1f;
   --surface-hover: #1e2327;
   --surface-2: #22282c;
+  --raised: #2a3035;
+  --raised-ring: #3d454c;
 
   --border: #262b30;
   --border-strong: #343b41;
@@ -32,7 +22,6 @@
   --text-muted: #8a93a0;
   --text-dim: #4a535d;
 
-  --success: #3ddc97;
   --warn: #f0b040;
   --warn-bg: #4a3410;
   --warn-text: #f2dfb7;
@@ -44,24 +33,18 @@
   --err-soft: rgba(240, 112, 112, 0.15);
   --info: #66b3ff;
   --info-bg: #1a4672;
-  --violet: #a78bfa;
+  --info-text: #cfe5ff;
+  --info-icon-bg: #2f7fd6;
 
   --overlay: rgba(0, 0, 0, 0.6);
-  --overlay-bg: rgba(15, 17, 19, 0.8);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.5);
 
-  --switch-track: rgba(128, 128, 128, 0.3);
-  --switch-knob: #999999;
-
-  --battery-text-on-fill: #0f1113;
+  --switch-track: #343b41;
+  --switch-knob: #8a93a0;
 }
 
-/* ---------- Mode: soft (dark, easier on the eyes) ----------
-   Same structure as dark but built on a slate grey (#25292e, L 16%) instead of
-   near-black (L 7%): no pure black or white anywhere, off-white text, status
-   colours 10-15% less saturated, lighter shadows. */
+/* ---------- soft: slate grey dark, easier on the eyes ---------- */
 :root[data-theme="soft"] {
   color-scheme: dark;
 
@@ -69,6 +52,8 @@
   --surface: #2c3137;
   --surface-hover: #343a41;
   --surface-2: #3b424a;
+  --raised: #434a53;
+  --raised-ring: #59626c;
 
   --border: #3a4148;
   --border-strong: #4c545d;
@@ -77,7 +62,6 @@
   --text-muted: #9aa3ad;
   --text-dim: #6b747e;
 
-  --success: #4fd19d;
   --warn: #e6b25a;
   --warn-bg: #4a3a1c;
   --warn-text: #f0dcb0;
@@ -89,21 +73,18 @@
   --err-soft: rgba(232, 138, 138, 0.15);
   --info: #7db6f0;
   --info-bg: #1a4672;
-  --violet: #b39dfa;
+  --info-text: #d3e6fa;
+  --info-icon-bg: #3d7fc4;
 
   --overlay: rgba(0, 0, 0, 0.5);
-  --overlay-bg: rgba(37, 41, 46, 0.82);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.22);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.38);
 
-  --switch-track: rgba(255, 255, 255, 0.15);
+  --switch-track: #4c545d;
   --switch-knob: #b0b7bf;
-
-  --battery-text-on-fill: #25292e;
 }
 
-/* ---------- Mode: light ---------- */
+/* ---------- light ---------- */
 :root[data-theme="light"] {
   color-scheme: light;
 
@@ -111,6 +92,8 @@
   --surface: #ffffff;
   --surface-hover: #eef1f0;
   --surface-2: #e8ecea;
+  --raised: #e3e8e6;
+  --raised-ring: #c3cac6;
 
   --border: #d9dedb;
   --border-strong: #c3cac6;
@@ -119,7 +102,6 @@
   --text-muted: #5c6670;
   --text-dim: #a5adb5;
 
-  --success: #12a866;
   --warn: #c47a0a;
   --warn-bg: #fdf1d8;
   --warn-text: #6b4306;
@@ -130,42 +112,324 @@
   --err-icon-bg: #e05252;
   --err-soft: rgba(209, 63, 63, 0.12);
   --info: #0a458d;
-  --info-bg: #60a3e6;
-  --violet: #7c3aed;
+  --info-bg: #dbe9f9;
+  --info-text: #062a55;
+  --info-icon-bg: #2f7fd6;
 
   --overlay: rgba(0, 0, 0, 0.35);
-  --overlay-bg: rgba(244, 246, 245, 0.85);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.16);
 
-  --switch-track: rgba(0, 0, 0, 0.15);
+  --switch-track: #c3cac6;
   --switch-knob: #ffffff;
-
-  --battery-text-on-fill: #0f1113;
 }
 
-/* ---------- Accent: mint (default) ---------- */
+/* ---------- black: OLED ---------- */
+:root[data-theme="black"] {
+  color-scheme: dark;
+
+  --bg: #000000;
+  --surface: #101213;
+  --surface-hover: #16191b;
+  --surface-2: #1a1d20;
+  --raised: #202428;
+  --raised-ring: #343a40;
+
+  --border: #1e2226;
+  --border-strong: #2c3237;
+
+  --text: #f2f4f3;
+  --text-muted: #8a93a0;
+  --text-dim: #4a535d;
+
+  --warn: #f0b040;
+  --warn-bg: #3d2b0d;
+  --warn-text: #f2dfb7;
+  --warn-icon-bg: #d29b26;
+  --err: #f07070;
+  --err-bg: #3d1518;
+  --err-text: #ecabaf;
+  --err-icon-bg: #cc2e38;
+  --err-soft: rgba(240, 112, 112, 0.15);
+  --info: #66b3ff;
+  --info-bg: #143a60;
+  --info-text: #cfe5ff;
+  --info-icon-bg: #2f7fd6;
+
+  --overlay: rgba(0, 0, 0, 0.7);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.7);
+
+  --switch-track: #2c3237;
+  --switch-knob: #8a93a0;
+}
+
+/* ---------- neato: Neato slate dark ---------- */
+:root[data-theme="neato"] {
+  color-scheme: dark;
+
+  --bg: #1b2027;
+  --surface: #232a33;
+  --surface-hover: #29313b;
+  --surface-2: #2c3540;
+  --raised: #343e4a;
+  --raised-ring: #4a5563;
+
+  --border: #2f3842;
+  --border-strong: #3d4855;
+
+  --text: #eef1f4;
+  --text-muted: #9aa4b1;
+  --text-dim: #5d6774;
+
+  --warn: #f0b040;
+  --warn-bg: #4a3410;
+  --warn-text: #f2dfb7;
+  --warn-icon-bg: #d29b26;
+  --err: #f07070;
+  --err-bg: #4a1a1e;
+  --err-text: #ecabaf;
+  --err-icon-bg: #cc2e38;
+  --err-soft: rgba(240, 112, 112, 0.15);
+  --info: #66b3ff;
+  --info-bg: #1a4672;
+  --info-text: #cfe5ff;
+  --info-icon-bg: #2f7fd6;
+
+  --overlay: rgba(0, 0, 0, 0.55);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.36);
+  --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.45);
+
+  --switch-track: #3d4855;
+  --switch-knob: #9aa4b1;
+}
+
+/* ---------- neato-light: Neato classic light ---------- */
+:root[data-theme="neato-light"] {
+  color-scheme: light;
+
+  --bg: #f4f5f7;
+  --surface: #ffffff;
+  --surface-hover: #f0f1f4;
+  --surface-2: #eceef1;
+  --raised: #e4e7eb;
+  --raised-ring: #c9ccd1;
+
+  --border: #dedcde;
+  --border-strong: #c9ccd1;
+
+  --text: #343e4a;
+  --text-muted: #666d77;
+  --text-dim: #a3a9b1;
+
+  --warn: #b86f06;
+  --warn-bg: #fdf1d8;
+  --warn-text: #6b4306;
+  --warn-icon-bg: #f0b040;
+  --err: #c93636;
+  --err-bg: #fde3e3;
+  --err-text: #7a1f1f;
+  --err-icon-bg: #e05252;
+  --err-soft: rgba(201, 54, 54, 0.12);
+  --info: #0a458d;
+  --info-bg: #dbe9f9;
+  --info-text: #062a55;
+  --info-icon-bg: #2f7fd6;
+
+  --overlay: rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.16);
+
+  --switch-track: #c9ccd1;
+  --switch-knob: #ffffff;
+}
+
+/* ---------- midnight: blue ---------- */
+:root[data-theme="midnight"] {
+  color-scheme: dark;
+
+  --bg: #0b121b;
+  --surface: #132030;
+  --surface-hover: #182739;
+  --surface-2: #1b2b3f;
+  --raised: #22344b;
+  --raised-ring: #35496a;
+
+  --border: #1f2f42;
+  --border-strong: #2c3f56;
+
+  --text: #e8eef6;
+  --text-muted: #8fa0b5;
+  --text-dim: #4d5d72;
+
+  --warn: #f0b040;
+  --warn-bg: #45320f;
+  --warn-text: #f2dfb7;
+  --warn-icon-bg: #d29b26;
+  --err: #f07070;
+  --err-bg: #46191f;
+  --err-text: #ecabaf;
+  --err-icon-bg: #cc2e38;
+  --err-soft: rgba(240, 112, 112, 0.15);
+  --info: #66b3ff;
+  --info-bg: #17406b;
+  --info-text: #cfe5ff;
+  --info-icon-bg: #2f7fd6;
+
+  --overlay: rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.5);
+
+  --switch-track: #2c3f56;
+  --switch-knob: #8fa0b5;
+}
+
+/* ---------- dusk: violet ---------- */
+:root[data-theme="dusk"] {
+  color-scheme: dark;
+
+  --bg: #13111c;
+  --surface: #1d1a2a;
+  --surface-hover: #231f33;
+  --surface-2: #272338;
+  --raised: #302a45;
+  --raised-ring: #463f63;
+
+  --border: #2c2840;
+  --border-strong: #3b3554;
+
+  --text: #eeeaf6;
+  --text-muted: #9c95b0;
+  --text-dim: #5a536e;
+
+  --warn: #f0b040;
+  --warn-bg: #45320f;
+  --warn-text: #f2dfb7;
+  --warn-icon-bg: #d29b26;
+  --err: #f07070;
+  --err-bg: #46191f;
+  --err-text: #ecabaf;
+  --err-icon-bg: #cc2e38;
+  --err-soft: rgba(240, 112, 112, 0.15);
+  --info: #66b3ff;
+  --info-bg: #1a4672;
+  --info-text: #cfe5ff;
+  --info-icon-bg: #2f7fd6;
+
+  --overlay: rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.5);
+
+  --switch-track: #3b3554;
+  --switch-knob: #9c95b0;
+}
+
+/* ---------- contrast: black / white, yellow accent ---------- */
+:root[data-theme="contrast"] {
+  color-scheme: dark;
+
+  --bg: #000000;
+  --surface: #000000;
+  --surface-hover: #1a1a1a;
+  --surface-2: #1a1a1a;
+  --raised: #262626;
+  --raised-ring: #ffffff;
+
+  --border: #ffffff;
+  --border-strong: #ffffff;
+
+  --text: #ffffff;
+  --text-muted: #e0e0e0;
+  --text-dim: #bdbdbd;
+
+  --warn: #ffb020;
+  --warn-bg: #3a2a00;
+  --warn-text: #ffffff;
+  --warn-icon-bg: #ffb020;
+  --err: #ff6b6b;
+  --err-bg: #3d0000;
+  --err-text: #ffffff;
+  --err-icon-bg: #ff3b3b;
+  --err-soft: rgba(255, 107, 107, 0.22);
+  --info: #6cb8ff;
+  --info-bg: #002a55;
+  --info-text: #ffffff;
+  --info-icon-bg: #3d8bff;
+
+  --overlay: rgba(0, 0, 0, 0.8);
+  --shadow-md: none;
+  --shadow-lg: none;
+
+  --switch-track: #4d4d4d;
+  --switch-knob: #ffffff;
+}
+
+/* ---------- Accent ----------
+   Mint is the accent of dark, soft, light and black; the other themes bring
+   their own. Theme accents use [data-theme][data-accent] so they beat the
+   plain accent blocks regardless of order. */
 :root,
 :root[data-accent="mint"] {
   --accent: #3ddc97;
   --accent-hover: #5ee5aa;
+  --accent-text: #3ddc97;
   --on-accent: #05261a;
 }
 
+:root[data-theme="soft"],
+:root[data-theme="soft"][data-accent] {
+  --accent: #4fd19d;
+  --accent-hover: #68d9ad;
+  --accent-text: #4fd19d;
+  --on-accent: #0c2a1d;
+}
+
 :root[data-theme="light"],
-:root[data-accent="mint"][data-theme="light"] {
-  --accent: #12a866;
-  --accent-hover: #0f9058;
+:root[data-theme="light"][data-accent] {
+  --accent: #0b8a54;
+  --accent-hover: #0a7a4a;
+  --accent-text: #0b7a4b;
   --on-accent: #ffffff;
 }
 
-/* Soft: the same mint, slightly desaturated so it does not glare on the grey. */
-:root[data-theme="soft"],
-:root[data-accent="mint"][data-theme="soft"] {
-  --accent: #4fd19d;
-  --accent-hover: #68d9ad;
-  --on-accent: #0c2a1d;
+:root[data-theme="neato"],
+:root[data-theme="neato"][data-accent] {
+  --accent: #ff6021;
+  --accent-hover: #ff7a45;
+  --accent-text: #ff7a45;
+  --on-accent: #1a0b03;
+}
+
+:root[data-theme="neato-light"],
+:root[data-theme="neato-light"][data-accent] {
+  --accent: #d14100;
+  --accent-hover: #b83900;
+  --accent-text: #c93c00;
+  --on-accent: #ffffff;
+}
+
+:root[data-theme="midnight"],
+:root[data-theme="midnight"][data-accent] {
+  --accent: #5aa9ff;
+  --accent-hover: #7dbcff;
+  --accent-text: #5aa9ff;
+  --on-accent: #04182e;
+}
+
+:root[data-theme="dusk"],
+:root[data-theme="dusk"][data-accent] {
+  --accent: #a78bfa;
+  --accent-hover: #bba5fb;
+  --accent-text: #a78bfa;
+  --on-accent: #1a0f33;
+}
+
+:root[data-theme="contrast"],
+:root[data-theme="contrast"][data-accent] {
+  --accent: #ffd60a;
+  --accent-hover: #ffe14d;
+  --accent-text: #ffd60a;
+  --on-accent: #000000;
 }
 
 /* ---------- Accent tints (derived, valid for every accent) ---------- */
@@ -173,8 +437,12 @@
   --accent-soft: color-mix(in srgb, var(--accent) 15%, transparent);
   --accent-ring: color-mix(in srgb, var(--accent) 12%, transparent);
   --accent-glow: color-mix(in srgb, var(--accent) 25%, transparent);
-  --accent-surface: color-mix(in srgb, var(--accent) 12%, var(--surface));
   --accent-border: color-mix(in srgb, var(--accent) 45%, var(--surface));
+}
+
+/* High contrast: the selected ring is the full accent, not a tint. */
+:root[data-theme="contrast"] {
+  --accent-border: var(--accent);
 }
 
 /* ---------- Page ---------- */
@@ -188,10 +456,11 @@ body {
 }
 
 /* ---------- Map canvas ----------
-   Read from JS (canvas fillStyle cannot use var()), see pages/map/constants.ts.
-   Floor cells keep the same dark colour in every theme so the map always reads
+   Read from JS (canvas fillStyle cannot use var()), see components/map/constants.ts.
+   Floor cells keep the same dark colour in most themes so the map always reads
    the same; the surround and the wall/line colour follow the theme. Plain
-   colours only - no color-mix(), the canvas parser does not resolve it. */
+   colours only - no color-mix(), the canvas parser does not resolve it.
+   Dark-ish themes start from these values, light-ish ones from "light". */
 :root {
   --map-bg: #13161a;          /* Runs tab: map panel */
   --map-editor-bg: #0f1113;   /* Map tab: same as the page background */
@@ -203,15 +472,13 @@ body {
   --map-crosshair: #3ddc97;
   --map-in-progress: #4ab3f5;
   /* Runs tab cleaned-area overlay: hsl saturation, lightness and alpha
-     (numbers, read by components/map/drawingFunctions.ts). Dark theme keeps
-     the original look. */
+     (numbers, read by components/map/drawingFunctions.ts). */
   --map-run-sat: 75;
   --map-run-light: 55;
   --map-run-opacity: 0.55;
 }
 
-/* Soft theme: the floor must sit visibly ABOVE the slate page background, so
-   it gets its own (lighter) --map-empty; walls/lines take the soft mint. */
+/* Soft: the floor must sit visibly ABOVE the slate page background. */
 :root[data-theme="soft"] {
   --map-bg: #2a2f35;
   --map-editor-bg: #25292e;
@@ -226,7 +493,8 @@ body {
   --map-run-opacity: 0.6;
 }
 
-/* Light theme: mid-grey surround, dark green walls/lines; floor cells stay dark. */
+/* Light: mid-grey surround, dark walls/lines; floor cells stay dark.
+   The cleaned overlay goes vivid and near-opaque so it pops on the dark floor. */
 :root[data-theme="light"] {
   --map-bg: #c9cfcc;
   --map-editor-bg: #c9cfcc;
@@ -235,9 +503,71 @@ body {
   --map-line: #0b7a4b;
   --map-crosshair: #0b7a4b;
   --map-in-progress: #1f6fd0;
-  /* Against the light surround the half-transparent overlay read as grey;
-     go vivid and near-opaque so cleaned cells pop on the dark floor. */
   --map-run-sat: 90;
   --map-run-light: 58;
   --map-run-opacity: 0.9;
+}
+
+:root[data-theme="black"] {
+  --map-bg: #0a0c0d;
+  --map-editor-bg: #000000;
+}
+
+:root[data-theme="neato"] {
+  --map-bg: #20262e;
+  --map-editor-bg: #1b2027;
+  --map-empty: #3a434e;
+  --map-wall: #ff7a45;
+  --map-line: #ff7a45;
+  --map-crosshair: #ff7a45;
+  --map-in-progress: #66b3ff;
+}
+
+:root[data-theme="neato-light"] {
+  --map-bg: #cdd1d6;
+  --map-editor-bg: #cdd1d6;
+  --map-empty: #343e4a;
+  --map-wall: #c93c00;
+  --map-grid: rgba(0, 0, 0, 0.15);
+  --map-line: #c93c00;
+  --map-crosshair: #c93c00;
+  --map-in-progress: #1f6fd0;
+  --map-run-sat: 90;
+  --map-run-light: 58;
+  --map-run-opacity: 0.9;
+}
+
+:root[data-theme="midnight"] {
+  --map-bg: #0f1824;
+  --map-editor-bg: #0b121b;
+  --map-empty: #2a3a4f;
+  --map-wall: #5aa9ff;
+  --map-line: #5aa9ff;
+  --map-crosshair: #5aa9ff;
+  --map-in-progress: #3ddc97;
+}
+
+:root[data-theme="dusk"] {
+  --map-bg: #17151f;
+  --map-editor-bg: #13111c;
+  --map-empty: #353046;
+  --map-wall: #a78bfa;
+  --map-line: #a78bfa;
+  --map-crosshair: #a78bfa;
+  --map-in-progress: #66b3ff;
+}
+
+/* High contrast: grey floor on black, yellow walls, white crosshair. */
+:root[data-theme="contrast"] {
+  --map-bg: #000000;
+  --map-editor-bg: #000000;
+  --map-empty: #3d3d3d;
+  --map-wall: #ffd60a;
+  --map-grid: rgba(255, 255, 255, 0.35);
+  --map-line: #ffd60a;
+  --map-crosshair: #ffffff;
+  --map-in-progress: #6cb8ff;
+  --map-run-sat: 90;
+  --map-run-light: 60;
+  --map-run-opacity: 0.8;
 }

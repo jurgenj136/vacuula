@@ -3,11 +3,11 @@ import { DRAWING } from './constants'
 import { useCanvasViewport } from './useCanvasViewport'
 import { decodeRLE, calcFitZoomAndOffset } from './utils'
 import { drawMap, computeIgnoredRunValues, colorForPathValue, type CellShape } from './drawingFunctions'
-import { Http } from '../../http'
 import type { Offset } from './types'
 import { useCleaning, usePersistentMap } from '../../loaders/resources'
 import { useRobot } from '../../context/useRobot'
 import { RobotType } from '../../types'
+import { loadSelectedMapShape } from '../../pages/settings/mapshapes'
 
 export interface MapSize { width: number; height: number }
 
@@ -32,16 +32,25 @@ interface UseMapOptions {
     backgroundToken?: string
 }
 
+function heightAboveSheet(container: HTMLElement, height: number) {
+    const probe = document.createElement('div')
+    probe.style.cssText = 'position:absolute;visibility:hidden;height:var(--map-sheet-inset,0px)'
+    container.appendChild(probe)
+    const inset = probe.getBoundingClientRect().height
+    probe.remove()
+    return height > inset ? height - inset : height
+}
+
 export function useMap({
     mapId,
     runId,
-    shape = 'circle',
+    shape = loadSelectedMapShape(),
     fitOnLoad = true,
     extraDraw,
     redrawKey,
     backgroundToken
 }: UseMapOptions) {
-    const canvasRef = useRef<HTMLCanvasElement | undefined>(undefined)
+    const canvasRef = useRef<HTMLCanvasElement>(null)
     const cellsRef = useRef<number[] | null>(null)
     const runCellsRef = useRef<number[] | null>(null)
     const runIgnoreSetRef = useRef<Set<number>>(new Set())
@@ -59,8 +68,10 @@ export function useMap({
         handleTouchStart, handleTouchMove, handleTouchEnd,
         centerView, setZoom, setOffset
     } = useCanvasViewport({ initialZoom: 4, initialOffset: { x: 0, y: 0 } })
+    const viewportRef = useRef({ zoom, offset })
+    useEffect(() => { viewportRef.current = { zoom, offset } }, [zoom, offset])
 
-    const draw = useCallback((currentZoom: number = zoom, currentOffset: Offset = offset) => {
+    const draw = useCallback((currentZoom: number = viewportRef.current.zoom, currentOffset: Offset = viewportRef.current.offset) => {
         const canvas = canvasRef.current
         if (!canvas || !cellsRef.current || !mapSize) return
         const ctx = canvas.getContext('2d')
@@ -84,7 +95,7 @@ export function useMap({
         userInteractedRef.current = true
         handleTouchStart(e)
     }, [handleTouchStart])
-    const onWheel = useCallback((e: React.WheelEvent) => {
+    const onWheel = useCallback((e: React.WheelEvent<HTMLCanvasElement>) => {
         userInteractedRef.current = true
         handleWheel(e)
     }, [handleWheel])
@@ -137,8 +148,9 @@ export function useMap({
             canvas.height = height
 
             if (fitOnLoad && cellsRef.current && mapSize && !userInteractedRef.current) {
+                const fitHeight = heightAboveSheet(parent, height)
                 const fit = calcFitZoomAndOffset(
-                    cellsRef.current, mapSize, width, height,
+                    cellsRef.current, mapSize, width, fitHeight,
                     DRAWING.MIN_ZOOM, DRAWING.MAX_ZOOM
                 )
                 if (fit) {
@@ -146,7 +158,7 @@ export function useMap({
                     setOffset(fit.offset)
                     return
                 }
-                centerView(mapSize.width, mapSize.height, 4, width, height)
+                centerView(mapSize.width, mapSize.height, 4, width, fitHeight)
                 return
             }
             draw()
@@ -169,7 +181,7 @@ export function useMap({
         const parent = canvas?.parentElement
         if (!canvas || !parent || !cellsRef.current || !mapSize) return
         const { width, height } = parent.getBoundingClientRect()
-        const fit = calcFitZoomAndOffset(cellsRef.current, mapSize, width, height, DRAWING.MIN_ZOOM, DRAWING.MAX_ZOOM)
+        const fit = calcFitZoomAndOffset(cellsRef.current, mapSize, width, heightAboveSheet(parent, height), DRAWING.MIN_ZOOM, DRAWING.MAX_ZOOM)
         if (fit) {
             setZoom(fit.zoom)
             setOffset(fit.offset)

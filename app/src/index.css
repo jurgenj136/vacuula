@@ -1,25 +1,127 @@
-body, html {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    color: var(--text);
-    background: var(--bg);
-    overscroll-behavior: none;
-    touch-action: none;
+@import "tailwindcss";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+@import "./theme/theme.css";
+
+@theme inline {
+  --color-*: initial;
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-2: var(--surface-2);
+  --color-raised: var(--raised);
+  --color-raised-ring: var(--raised-ring);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-fg: var(--text);
+  --color-muted: var(--text-muted);
+  --color-dim: var(--text-dim);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-text: var(--accent-text);
+  --color-on-accent: var(--on-accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ring: var(--accent-ring);
+  --color-accent-border: var(--accent-border);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-warn-text: var(--warn-text);
+  --color-warn-icon-bg: var(--warn-icon-bg);
+  --color-err: var(--err);
+  --color-err-bg: var(--err-bg);
+  --color-err-text: var(--err-text);
+  --color-err-icon-bg: var(--err-icon-bg);
+  --color-err-soft: var(--err-soft);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+  --color-info-text: var(--info-text);
+  --color-info-icon-bg: var(--info-icon-bg);
+  --color-overlay: var(--overlay);
+  --color-switch-track: var(--switch-track);
+  --color-switch-knob: var(--switch-knob);
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  --shadow-raised: var(--shadow-md);
+  --shadow-float: var(--shadow-lg);
+  --shadow-sheet: 0 -6px 20px rgba(0, 0, 0, 0.35);
 }
 
-html {
-    font-size: 62.5%;
+@theme {
+  --font-sans: "Geist Variable", system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, monospace;
+
+  --text-micro: 11px;
+  --text-micro--line-height: 14px;
+  --text-caption: 13px;
+  --text-caption--line-height: 18px;
+  --text-body: 15px;
+  --text-body--line-height: 20px;
+  --text-display: 32px;
+  --text-display--line-height: 38px;
+
+  --tracking-heading: -0.01em;
+  --tracking-display: -0.02em;
+
+  --radius-panel: 20px;
+
+  /* The Neato Gen4 firmware queues the find-me sound 5 times back-to-back
+     (2.46 s file + <=0.1 s polling between repeats), so the bell swings 5 x 2.5 s.
+     Keep in sync with BELL_MS in src/pages/home/home.tsx. Keyframes follow the sound's envelope:
+     2% hard hit (0.05 s), 12% second hit (0.30 s), 35% bell peak (0.85 s),
+     53% end of swell (1.30 s), 85% sound faded (2.10 s), then silence. */
+  --animate-bell-swing: bell-swing 2.5s ease-in-out 5;
+  --animate-progress-slide: progress-slide 1.2s ease-in-out infinite;
+
+  @keyframes progress-slide {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(300%); }
+  }
+
+  @keyframes bell-swing {
+    0% { transform: rotate(0deg); }
+    2% { transform: rotate(-6deg); }
+    12% { transform: rotate(6deg); }
+    20% { transform: rotate(0deg); }
+    35% { transform: rotate(-14deg); }
+    45% { transform: rotate(12deg); }
+    53% { transform: rotate(-8deg); }
+    65% { transform: rotate(4deg); }
+    75% { transform: rotate(-2deg); }
+    85% { transform: rotate(0deg); }
+    100% { transform: rotate(0deg); }
+  }
+}
+
+@custom-variant theme-contrast (&:where([data-theme="contrast"] *));
+
+@utility focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+@utility pressable {
+  transition: transform 0.15s ease-out, background-color 0.15s ease-out, border-color 0.15s ease-out,
+    color 0.15s ease-out, opacity 0.15s ease-out;
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overscroll-behavior: none;
+  touch-action: none;
 }
 
 body {
-    font-size: 1.6rem;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* App-like scrolling: content still scrolls, but no scrollbar is drawn */

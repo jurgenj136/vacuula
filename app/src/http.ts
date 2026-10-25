@@ -1,13 +1,6 @@
 import axios from "axios";
-import i18n from "./i18n";
 import { Neato, type QuickRobotInfo } from "./types";
 import type { NoGoLine, VacuulaMapData, Zone } from "./components/map/types";
-
-declare module 'axios' {
-  export interface AxiosRequestConfig {
-    skipLoader?: boolean;
-  }
-}
 
 const ha_ingress = window.location.pathname.match(/^\/api\/hassio_ingress\/[^/]+/)
 export const BASE_PATH = ha_ingress ? ha_ingress[0] : ""
@@ -26,51 +19,6 @@ export interface ServerInfo {
 const instance = axios.create({
   baseURL: `${BASE_PATH}/api`, 
 });
-
-export type LoadingState = { isLoading: boolean; message?: string };
-
-let loadingStateCallback: ((state: LoadingState) => void) | null = null;
-let pendingRequests = 0;
-let hideTimer: ReturnType<typeof setTimeout> | null = null;
-
-const startLoading = () => {
-  pendingRequests += 1;
-  if (hideTimer) {
-    clearTimeout(hideTimer);
-    hideTimer = null;
-  }
-  if (pendingRequests === 1) {
-    loadingStateCallback?.({ isLoading: true, message: i18n.t('common.sendingCommand') });
-  }
-};
-
-const stopLoading = () => {
-  pendingRequests = Math.max(0, pendingRequests - 1);
-  if (pendingRequests === 0) {
-    // small delay avoids flicker when requests fire back to back
-    hideTimer = setTimeout(() => {
-      hideTimer = null;
-      loadingStateCallback?.({ isLoading: false });
-    }, 150);
-  }
-};
-
-
-instance.interceptors.request.use((config) => {
-  if (!config.skipLoader) startLoading();
-  return config;
-});
-
-instance.interceptors.response.use(
-  (response) => {
-    if (!response.config.skipLoader) stopLoading();
-    return response;
-  },
-  (error) => {
-    if (!error.config?.skipLoader) stopLoading();
-    return Promise.reject(error);
-  }
-);
 
 export class Http {
   static sendCmd<T>(robotSerial: string, cmd: object) {
@@ -136,10 +84,6 @@ export class Http {
 
   static updateRobot(serial: string, data: { name: string }) {
     return instance.post(`/robot/${serial}`, data)
-  }
-
-  static setLoadingStateCallback(cb: ((state: LoadingState) => void) | null) {
-    loadingStateCallback = cb;
   }
 }
 

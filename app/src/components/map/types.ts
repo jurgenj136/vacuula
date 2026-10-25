@@ -7,7 +7,7 @@ export interface Zone {
     id: string
     name: string
     color: string
-    type: 'polygon' | 'polyline'
+    type: 'polygon'
     vertices: Point[]
     enabled: boolean
     
