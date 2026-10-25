@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { drawBase, onDockImageReady } from './drawingFunctions'
 import type { ExtraDrawFn } from './useMap'
 import type { VacuulaMapData } from './types'
+import { useFeedback } from '../../feedback/useFeedback'
 
 interface MapProps {
     mapId: string
@@ -36,6 +37,7 @@ function basePoseFromMapData(data: VacuulaMapData) {
 export default function Map({ mapId, runId }: MapProps) {
     const { t } = useTranslation()
     const { robot } = useRobot()
+    const feedback = useFeedback()
     const { data: persistantMapData, error, refresh: refreshPersistantMapData } = usePersistentMap(mapId);
 
     const [dockReady, setDockReady] = useState(false)
@@ -72,7 +74,7 @@ export default function Map({ mapId, runId }: MapProps) {
             </div>
             {robot.type === RobotType.NeatoGen4 && !persistantMapData?.in_maps_list && (
                 <div className="p-4">
-                    <Button text={t('map.useAsFloormap')} style='tonal' onClick={() => { Http.postUseMapAsFloorPlan(robot.serial, mapId).then(refreshPersistantMapData) }} />
+                    <Button text={t('map.useAsFloormap')} style='tonal' onClick={() => feedback.write(() => Http.postUseMapAsFloorPlan(robot.serial, mapId).then(refreshPersistantMapData))} />
                 </div>
             )}
         </>

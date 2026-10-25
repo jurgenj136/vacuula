@@ -4,7 +4,6 @@ import { Routes, Route } from "react-router"
 import Runs from "./pages/runs/runs"
 import Topbar from "./components/topbar/topbar"
 import Home from "./pages/home/home"
-import AppLoadingIndicator from "./components/appLoadingIndicator/appLoadingIndicator"
 import Schedule from "./pages/schedule/schedule"
 import Settings from "./pages/settings/settings"
 import { RequireRobot } from "./components/require/requireRobot"
@@ -15,6 +14,9 @@ import NavRail from "./components/navRail/navRail"
 import { HeaderSlotContext } from "./components/layout/headerSlot"
 import { useLayout } from "./components/layout/useLayout"
 import { cn } from "./utils/cn"
+import ProgressBar from "./components/progressBar/progressBar"
+import Toast from "./components/toast/toast"
+import { dismissToast, useFeedbackState } from "./feedback/feedback"
 
 const Pages = () => (
     <RequireRobot>
@@ -33,6 +35,7 @@ function Shell() {
     const layout = useLayout()
     const isDesktop = layout === 'desktop'
     const [headerSlot, setHeaderSlot] = useState<HTMLElement | null>(null)
+    const { busy, toast } = useFeedbackState()
 
     return (
         <div className="flex h-dvh w-full overflow-hidden bg-bg text-fg">
@@ -42,13 +45,14 @@ function Shell() {
                 'relative isolate flex min-w-0 flex-1 flex-col',
                 layout === 'phone' && 'mx-auto max-w-160',
             )}>
+                <ProgressBar active={busy} />
                 {!isDesktop && (
                     <header className="relative z-20 flex shrink-0 gap-2 px-4 pt-[max(12px,env(safe-area-inset-top))] pb-2 md:max-w-194 md:px-6 md:pt-6">
                         <Topbar />
                         <div ref={setHeaderSlot} className="flex shrink-0 gap-2 empty:hidden md:ml-auto" />
                     </header>
                 )}
-                <main className={cn(
+                <main aria-busy={busy} className={cn(
                     'flex min-h-0 flex-1 overflow-y-auto',
                     layout === 'phone' ? 'pb-[calc(88px+env(safe-area-inset-bottom))]' : 'pr-[env(safe-area-inset-right)]',
                 )}>
@@ -57,18 +61,20 @@ function Shell() {
                     </HeaderSlotContext>
                 </main>
                 {layout === 'phone' && <NavCapsule />}
+                {toast && (
+                    <div className="pointer-events-none absolute inset-x-4 top-[calc(max(12px,env(safe-area-inset-top))+68px)] z-1000 flex justify-center md:inset-x-7 md:top-auto md:bottom-7 md:justify-end">
+                        <Toast key={toast.id} toast={toast} onDismiss={() => dismissToast(toast.id)} />
+                    </div>
+                )}
             </div>
         </div>
     )
 }
 
 const App = () => (
-    <>
-        <AppLoadingIndicator />
-        <RequireRobots>
-            <Shell />
-        </RequireRobots>
-    </>
+    <RequireRobots>
+        <Shell />
+    </RequireRobots>
 )
 
 export default App

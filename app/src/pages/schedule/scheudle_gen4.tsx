@@ -16,6 +16,7 @@ import type { TFunction } from 'i18next'
 import { dayKey } from '../../i18n/days'
 import { useGetPromotedFloorplan } from '../../utils/floormaps'
 import { useRobot } from '../../context/useRobot'
+import { useFeedback } from '../../feedback/useFeedback'
 import type { NoGoLine, UseState, Zone } from '../../components/map/types'
 import { isGen4D10 } from '../../components/topbar/robotInfo'
 import { formatUtcOffset } from '../../utils/clockTime'
@@ -62,6 +63,7 @@ export default () => {
     })
 
     const { robot, serverInfo } = useRobot()
+    const feedback = useFeedback()
     const offset = serverInfo.utc_offset_minutes ?? 0
 
     const setFormFromEvent = (event: Neato.Gen4.CommandEvent) => {
@@ -109,7 +111,7 @@ export default () => {
     const removeEvent = (id: string) => {
         if (!schedule) return;
         setDrawerOpen(false);
-        GEN4_COMMANDS.deleteScheduledEvent(robot.serial, id).finally(() => getSchedule())
+        feedback.write(() => GEN4_COMMANDS.deleteScheduledEvent(robot.serial, id).finally(() => getSchedule()))
     }
 
     const updateForm = <T extends object>(update: UseState<T>, patch: Partial<T>) => {
@@ -145,7 +147,7 @@ export default () => {
                             >
                                 <Switch label={t('schedule.eventSwitch', { time: item.time })} checked={item.enabled} onChange={() => {
                                     item.enabled = !item.enabled;
-                                    GEN4_COMMANDS.updateOrAddSchduledEvent(robot.serial, item).then(() => getSchedule())
+                                    feedback.write(() => GEN4_COMMANDS.updateOrAddSchduledEvent(robot.serial, item).finally(() => getSchedule()))
                                 }} />
                             </EventRow>
                         )
@@ -252,7 +254,7 @@ export default () => {
                                 selectedZones.map(z => ({ map: { rank_id: mapId, track_id: z, nogo_enabled: nogoEnabled }, settings }));
 
 
-                        GEN4_COMMANDS.updateOrAddSchduledEvent(robot.serial, {
+                        feedback.write(() => GEN4_COMMANDS.updateOrAddSchduledEvent(robot.serial, {
                             ...scheduleForm,
                             command: {
                                 ability: "cleaning.start",
@@ -263,7 +265,7 @@ export default () => {
                         }).finally(() => {
                             setDrawerOpen(false)
                             getSchedule()
-                        })
+                        }))
                     }} />
 
                     {scheduleForm.id && (

@@ -11,10 +11,12 @@ import type { UseState } from '../../components/map/types'
 import { SelectRow } from './selectRow'
 import { Section } from './section'
 import { FactoryReset } from './factoryReset'
+import { useFeedback } from '../../feedback/useFeedback'
 
 export const Gen4RobotSettings = () => {
     const { t } = useTranslation()
     const { robot } = useRobot()
+    const feedback = useFeedback()
 
     const [cleaningOptions, setCleaningOptions] = useState<Neato.Gen4.SettingsCleaningOptions>()
     const [robotLanguage, setRobotLanguage] = useState<Neato.Gen4.SettingsRobotLanguage>()
@@ -41,7 +43,7 @@ export const Gen4RobotSettings = () => {
     const setSettings = <Op extends Neato.Gen4.SettingsSetOperation>(operation: Op, update: Neato.Gen4.SettingsMap[Op]) => {
         const b = settingsDataBinders[operation]
         b.useStateUpdater(update as any) // TODO: Find out how to type this
-        GEN4_COMMANDS.setSettings(robot.serial, { operation: operation, values: update }).finally(b.dataFetcher)
+        feedback.write(() => GEN4_COMMANDS.setSettings(robot.serial, { operation: operation, values: update }).finally(b.dataFetcher))
     }
 
     if (!robot || !cleaningOptions || !robotLanguage) return; // TODO: loading UI
@@ -92,6 +94,7 @@ const ReminderRow = ({ label, options, value, onChange }: {
 export const Gen3RobotSettings = () => {
     const { t } = useTranslation()
     const { robot } = useRobot()
+    const feedback = useFeedback()
 
     const [preferences, setPreferences] = useState<Neato.Gen3.Preferences | undefined>(undefined)
     const isInitialLoad = useRef(true)
@@ -111,7 +114,7 @@ export const Gen3RobotSettings = () => {
             isInitialLoad.current = false
             return
         }
-        GEN3_COMMANDS.setPreferences(robot.serial, preferences);
+        feedback.write(() => GEN3_COMMANDS.setPreferences(robot.serial, preferences));
     }, [preferences])
 
     const updateForm = <T,>(update: UseState<T>, patch: Partial<T>) => {

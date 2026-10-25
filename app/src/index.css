@@ -71,6 +71,12 @@
      2% hard hit (0.05 s), 12% second hit (0.30 s), 35% bell peak (0.85 s),
      53% end of swell (1.30 s), 85% sound faded (2.10 s), then silence. */
   --animate-bell-swing: bell-swing 2.5s ease-in-out 5;
+  --animate-progress-slide: progress-slide 1.2s ease-in-out infinite;
+
+  @keyframes progress-slide {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(300%); }
+  }
 
   @keyframes bell-swing {
     0% { transform: rotate(0deg); }

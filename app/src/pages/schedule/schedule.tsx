@@ -7,6 +7,7 @@ import Button from '../../components/button/button'
 import { GEN3_COMMANDS } from '../../http/gen3'
 import { CleaningMode } from '../../types/neato/gen3/state'
 import { useRobot } from '../../context/useRobot'
+import { useFeedback } from '../../feedback/useFeedback'
 import { RobotDay } from '../../types/neato/gen3/api'
 import { RobotType } from '../../types'
 import Scheudle_gen4 from './scheudle_gen4'
@@ -27,6 +28,7 @@ export default () => {
     const { t } = useTranslation()
 
     const { robot, serverInfo } = useRobot()
+    const feedback = useFeedback()
 
     if (robot?.type === RobotType.NeatoGen4) return <Scheudle_gen4 />
 
@@ -66,7 +68,7 @@ export default () => {
     const removeEvent = (index: number) => {
         if (!schedule) return;
         schedule.events.splice(index, 1)
-        GEN3_COMMANDS.setSchedule(robot.serial, schedule.events).finally(() => getSchedule())
+        feedback.write(() => GEN3_COMMANDS.setSchedule(robot.serial, schedule.events).finally(() => getSchedule()))
     }
 
     const updateForm = <T extends object>(update: UseState<T>, patch: Partial<T>) => {
@@ -92,7 +94,7 @@ export default () => {
                         <Switch label={t('schedule.enabled')} checked={schedule.enabled} onChange={() => {
                             let cmd = GEN3_COMMANDS.enableSchedule;
                             if (schedule.enabled) cmd = GEN3_COMMANDS.disableSchedule;
-                            cmd(robot.serial).then(() => getSchedule());
+                            feedback.write(() => cmd(robot.serial).then(() => getSchedule()));
                         }} />
                     </ListRow>
                 </ListGroup>
@@ -167,7 +169,7 @@ export default () => {
 
                     <Button text={t('common.save')} style='primary' disabled={!canSave} onClick={() => {
                         setDrawerOpen(false)
-                        GEN3_COMMANDS.setSchedule(robot.serial, [scheduleForm, ...schedule.events]).finally(() => getSchedule())
+                        feedback.write(() => GEN3_COMMANDS.setSchedule(robot.serial, [scheduleForm, ...schedule.events]).finally(() => getSchedule()))
                     }} />
                 </div>
             </FormPane>

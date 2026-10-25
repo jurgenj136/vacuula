@@ -16,8 +16,20 @@
         "offline": "Offline",
         "options": "Opções",
         "notAvailable": "N/D",
-        "loading": "A carregar",
-        "sendingCommand": "A enviar comando..."
+        "loading": "A carregar"
+    },
+    "feedback": {
+        "start": "{{name}} está a limpar",
+        "stop": "{{name}} parou",
+        "pause": "{{name}} está em pausa",
+        "resume": "{{name}} está a limpar",
+        "base": "{{name}} está a regressar à base",
+        "locate": "{{name}} está a tocar um som",
+        "explore": "{{name}} está a explorar um novo mapa",
+        "unreachable": "Não foi possível contactar {{name}}",
+        "saveFailed": "Não foi possível guardar as alterações",
+        "retry": "Tentar novamente",
+        "dismiss": "Fechar"
     },
     "modes": {
         "auto": "Auto",

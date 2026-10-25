@@ -16,8 +16,20 @@
         "offline": "Offline",
         "options": "Options",
         "notAvailable": "N/A",
-        "loading": "Loading",
-        "sendingCommand": "Sending command..."
+        "loading": "Loading"
+    },
+    "feedback": {
+        "start": "{{name}} is cleaning",
+        "stop": "{{name}} stopped",
+        "pause": "{{name}} paused",
+        "resume": "{{name}} is cleaning",
+        "base": "{{name}} is heading to base",
+        "locate": "{{name}} is playing a sound",
+        "explore": "{{name}} is exploring a new map",
+        "unreachable": "Couldn't reach {{name}}",
+        "saveFailed": "Couldn't save changes",
+        "retry": "Retry",
+        "dismiss": "Dismiss"
     },
     "modes": {
         "auto": "Auto",

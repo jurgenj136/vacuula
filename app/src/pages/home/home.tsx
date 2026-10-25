@@ -28,6 +28,7 @@ import Chip from '../../components/chip/chip'
 import Card from '../../components/card/card'
 import { HeaderActions } from '../../components/layout/headerActions'
 import { useLayout } from '../../components/layout/useLayout'
+import { useFeedback } from '../../feedback/useFeedback'
 
 // How long the "locate" bell icon keeps animating. The Neato Gen4 firmware
 // queues the find-me sound 5 times back-to-back (2.46 s file + <=0.1 s polling
@@ -80,6 +81,8 @@ export default function Home() {
     const timeAgoFormatter = useTimeAgoFormatter()
     const { mascot } = useMascot()
     const layout = useLayout()
+    const feedback = useFeedback()
+    const commands = robot.type === RobotType.NeatoGen3 ? GEN3_COMMANDS : GEN4_COMMANDS
 
     const [gen3__cleaningMode, gen3__setCleaningMode] = useState<CleaningMode>(getGen3CleaningMode())
     const [gen3__navigationMode, gen3__setNavigationMode] = useState<CleaningNavigationMode>(getGen3NavigationMode())
@@ -132,24 +135,25 @@ export default function Home() {
 
     const locate = () => {
         setBellAnimating(true);
-        (robot.type === RobotType.NeatoGen3 ? GEN3_COMMANDS : GEN4_COMMANDS).findMe(robot.serial);
+        feedback.action(() => commands.findMe(robot.serial), 'locate')
         // Reset animation after all 5 swings complete
         setTimeout(() => setBellAnimating(false), BELL_MS)
     }
 
     const dismissAlert = () => {
-        GEN3_COMMANDS.dismissCurrentAlert(robot.serial).then((data) => {
+        feedback.write(() => GEN3_COMMANDS.dismissCurrentAlert(robot.serial).then((data) => {
             // TODO: type and so!
             if ((data.data as { result?: string }).result === 'ok') getGen3State(robot.serial, robot.name)
-        })
+        }))
     }
 
-    const start = async () => {
+    const start = () => feedback.action(startCleaning, 'start')
+
+    const startCleaning = () => {
         // GEN3
         if (robot.type === RobotType.NeatoGen3) {
             if (gen3__cleaningCategory === CleaningCategory.SPOT) {
-                GEN3_COMMANDS.startCleaningSpot(robot.serial, spotHeight, spotWidth, gen3__cleaningMode, gen3__navigationMode)
-                return;
+                return GEN3_COMMANDS.startCleaningSpot(robot.serial, spotHeight, spotWidth, gen3__cleaningMode, gen3__navigationMode)
             }
 
             let cat = gen3__cleaningCategory;
@@ -161,31 +165,29 @@ export default function Home() {
             // TODO: gen3 has no mutlizone yet
             if (cat === CleaningCategory.MAP && selectedZones.length === 1 && isDocked(robot)) {
                 const [mapId, zoneId] = selectedZones[0].split('||:||')
-                GEN3_COMMANDS.startCleaningZone(robot.serial, mapId, zoneId, gen3__cleaningMode, gen3__navigationMode)
-                return
+                return GEN3_COMMANDS.startCleaningZone(robot.serial, mapId, zoneId, gen3__cleaningMode, gen3__navigationMode)
             }
-            GEN3_COMMANDS.startCleaning(robot.serial, cat, gen3__cleaningMode, gen3__navigationMode)
-
-            // GEN4
-        } else if (robot.type === RobotType.NeatoGen4) {
-            // stuff is technically for gen3, but will piggyback of it for now, later make its own separate things? TODO
-            if (gen3__cleaningCategory === CleaningCategory.HOUSE || !promotedFloorplan) {
-                GEN4_COMMANDS.startCleaning(robot.serial, gen4__effectiveCleaningMode, gen4__navigationMode)
-                return
-            }
-
-            GEN4_COMMANDS.startCleaning(robot.serial, gen4__effectiveCleaningMode, gen4__navigationMode, promotedFloorplan?.id, nogoEnabled, selectedZones)
+            return GEN3_COMMANDS.startCleaning(robot.serial, cat, gen3__cleaningMode, gen3__navigationMode)
         }
+
+        // GEN4
+        // stuff is technically for gen3, but will piggyback of it for now, later make its own separate things? TODO
+        if (gen3__cleaningCategory === CleaningCategory.HOUSE || !promotedFloorplan) {
+            return GEN4_COMMANDS.startCleaning(robot.serial, gen4__effectiveCleaningMode, gen4__navigationMode)
+        }
+
+        return GEN4_COMMANDS.startCleaning(robot.serial, gen4__effectiveCleaningMode, gen4__navigationMode, promotedFloorplan?.id, nogoEnabled, selectedZones)
     }
 
     const sendToBase = () => {
-        if (robot.availableCommands.pause) {
-            (robot.type === RobotType.NeatoGen3 ? GEN3_COMMANDS : GEN4_COMMANDS).pauseCleaning(robot.serial).then(() => {
-                setTimeout(() => {
-                    (robot.type === RobotType.NeatoGen3 ? GEN3_COMMANDS : GEN4_COMMANDS).sendToBase(robot.serial);
-                }, 3500) // pulled my my arsle, more trial and error needed here! TODO: flag based actions, not in initial release however
-            })
-        } else (robot.type === RobotType.NeatoGen3 ? GEN3_COMMANDS : GEN4_COMMANDS).sendToBase(robot.serial);
+        const pauseFirst = robot.availableCommands.pause
+        feedback.action(async () => {
+            if (pauseFirst) {
+                await commands.pauseCleaning(robot.serial)
+                await new Promise(resolve => setTimeout(resolve, 3500)) // pulled my my arsle, more trial and error needed here! TODO: flag based actions, not in initial release however
+            }
+            return commands.sendToBase(robot.serial)
+        }, 'base')
     }
 
     const stopDisabled = robot.type === RobotType.NeatoGen3 ? !robot.availableCommands.stop :
@@ -382,9 +384,7 @@ export default function Home() {
                         label={t('home.stop')}
                         icon={<LuSquare size={20} fill="currentColor" aria-hidden="true" />}
                         disabled={stopDisabled}
-                        onClick={() => {
-                            (robot.type === RobotType.NeatoGen3 ? GEN3_COMMANDS : GEN4_COMMANDS).stopCleaning(robot.serial);
-                        }}
+                        onClick={() => feedback.action(() => commands.stopCleaning(robot.serial), 'stop')}
                     />
 
                     {robot.availableCommands.pause ? (
@@ -394,9 +394,7 @@ export default function Home() {
                             className="min-w-0 grow"
                             text={t('home.pauseCleaning')}
                             icon={<LuPause size={20} fill="currentColor" aria-hidden="true" />}
-                            onClick={() => {
-                                (robot.type === RobotType.NeatoGen3 ? GEN3_COMMANDS : GEN4_COMMANDS).pauseCleaning(robot.serial);
-                            }}
+                            onClick={() => feedback.action(() => commands.pauseCleaning(robot.serial), 'pause')}
                         />
                     ) : robot.availableCommands?.resume ? (
                         <Button
@@ -405,9 +403,7 @@ export default function Home() {
                             className="min-w-0 grow"
                             text={t('home.resumeCleaning')}
                             icon={<LuPlay size={20} fill="currentColor" aria-hidden="true" />}
-                            onClick={() => {
-                                (robot.type === RobotType.NeatoGen3 ? GEN3_COMMANDS : GEN4_COMMANDS).resumeCleaning(robot.serial)
-                            }}
+                            onClick={() => feedback.action(() => commands.resumeCleaning(robot.serial), 'resume')}
                         />
                     ) : (
                         <Button

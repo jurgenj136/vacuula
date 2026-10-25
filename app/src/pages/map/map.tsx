@@ -34,6 +34,7 @@ import { getGen3CleaningMode, getGen3NavigationMode, getGen4CleaningMode, getGen
 import { BoundaryDetails, EditBoundaryDetails } from './boundaryPanels'
 import { BoundaryTypes } from './boundaryTypes'
 import { BoundaryType, IconTile, ItemRow, Swatch } from './featureRow'
+import { useFeedback } from '../../feedback/useFeedback'
 
 
 export default () => {
@@ -62,6 +63,7 @@ export default () => {
     const [activeBoundaryId, setActiveBoundaryId] = useState<string | undefined>(undefined);
 
     const { robot } = useRobot()
+    const feedback = useFeedback()
     const skipNextPostRef = useRef(false)
 
     const { data: persistentMaps, refresh: updatePersistentMaps } = usePersistentMaps()
@@ -120,10 +122,10 @@ export default () => {
     const updatePersistentMap = (data: { name: string, enabled: boolean }, mapToChange?: string) => {
         const map = mapToChange || persistentMap;
         if (!map) return;
-        Http.updatePersistentMap(robot.serial, map, data).finally(() => {
+        feedback.write(() => Http.updatePersistentMap(robot.serial, map, data).finally(() => {
             updatePersistentMaps()
             if (persistentMap) setMode('boundaries')
-        })
+        }))
     }
 
     const getMapBoundaries = () => {
@@ -144,14 +146,14 @@ export default () => {
             return
         }
         if (robot.type === RobotType.NeatoGen4) {
-            Http.postBoundaries(robot.serial, persistentMap, boundaries).then(() => {
+            feedback.write(() => Http.postBoundaries(robot.serial, persistentMap, boundaries).then(() => {
                 getMapBoundaries();
                 const map = persistentMaps?.find(p => p.id === persistentMap)
                 // If the map is promoted, promote it again
                 if (map && 'promoted' in map && map.promoted) {
-                    Http.promoteFloorplan(robot.serial, map.id).then(() => updatePersistentMaps());
+                    return Http.promoteFloorplan(robot.serial, map.id).then(() => updatePersistentMaps());
                 }
-            });
+            }));
             return
         }
 
@@ -163,9 +165,7 @@ export default () => {
                 }
                 : boundary
         );
-        GEN3_COMMANDS.setMapBoundaries(robot.serial, persistentMap, updatedBoundaries).catch(() => {
-            getMapBoundaries();
-        });
+        feedback.write(() => GEN3_COMMANDS.setMapBoundaries(robot.serial, persistentMap, updatedBoundaries).finally(getMapBoundaries));
     }, [boundaries]);
 
     // mode changes
@@ -265,12 +265,12 @@ export default () => {
     const cleanZone = async (zone: Zone) => {
         if (!persistentMap) return
         if (robot.type === RobotType.NeatoGen3) {
-            GEN3_COMMANDS.startCleaningZone(robot.serial, persistentMap, zone.id, getGen3CleaningMode(), getGen3NavigationMode())
+            feedback.action(() => GEN3_COMMANDS.startCleaningZone(robot.serial, persistentMap, zone.id, getGen3CleaningMode(), getGen3NavigationMode()), 'start')
             return;
         }
         const promotedFloorplan = await getPromotedFloorplan();
         if (!promotedFloorplan) return // TODO: ERROR (will do when i do gen3)
-        GEN4_COMMANDS.startCleaning(robot.serial, getGen4CleaningMode(robot), getGen4NavigationMode(), promotedFloorplan.id, true, [zone.id])
+        feedback.action(() => GEN4_COMMANDS.startCleaning(robot.serial, getGen4CleaningMode(robot), getGen4NavigationMode(), promotedFloorplan.id, true, [zone.id]), 'start')
     }
 
 
@@ -348,9 +348,9 @@ export default () => {
                             'pressable focus-ring flex min-h-16 w-full cursor-pointer items-center gap-3 rounded-2xl border border-accent-border bg-accent-soft px-3 py-2.5 text-left',
                             !isDocked(robot) && 'pointer-events-none opacity-40',
                         )}
-                        onClick={() => robot.type === RobotType.NeatoGen4
+                        onClick={() => feedback.action(() => robot.type === RobotType.NeatoGen4
                             ? GEN4_COMMANDS.startCleaning(robot.serial, getGen4CleaningMode(robot), getGen4NavigationMode())
-                            : GEN3_COMMANDS.startPersistentMapExploration(robot.serial)}>
+                            : GEN3_COMMANDS.startPersistentMapExploration(robot.serial), 'explore')}>
                         <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-on-accent">
                             <LuPlus size={18} strokeWidth={2.5} />
                         </span>
@@ -379,10 +379,10 @@ export default () => {
                         (persistentMaps?.find(p => p.id === persistentMap) as Floorplan)?.in_maps_list &&
                         !(persistentMaps?.find(p => p.id === persistentMap) as Floorplan)?.promoted && (
                             <Button className="mt-2" text={t('map.stopUsingAsFloormap')} style='danger' onClick={() =>
-                                Http.postUnuseMapAsFloorPlan(robot.serial, persistentMap).then(() => {
+                                feedback.write(() => Http.postUnuseMapAsFloorPlan(robot.serial, persistentMap).then(() => {
                                     setMode('maps')
                                     updatePersistentMaps()
-                                })} />
+                                }))} />
                         )}
                 </>
             )}
@@ -549,8 +549,8 @@ interface PromoteDemoteBtnProps {
 }
 const PromoteDemoteBtn = ({ robot, map, onSuccess }: PromoteDemoteBtnProps) => {
     const { t } = useTranslation()
-    return <Button text={map.promoted ? t('map.demote') : t('map.promote')} onClick={() => {
-        if (map.promoted) Http.demoteFloorplan(robot.serial, map.id).finally(() => onSuccess())
-        else Http.promoteFloorplan(robot.serial, map.id).finally(() => onSuccess());
-    }} style={map.promoted ? 'danger' : 'tonal'} />
+    const feedback = useFeedback()
+    return <Button text={map.promoted ? t('map.demote') : t('map.promote')} onClick={() => feedback.write(() =>
+        (map.promoted ? Http.demoteFloorplan(robot.serial, map.id) : Http.promoteFloorplan(robot.serial, map.id)).finally(() => onSuccess())
+    )} style={map.promoted ? 'danger' : 'tonal'} />
 }

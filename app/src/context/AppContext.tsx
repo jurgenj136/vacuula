@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
-import { BASE_PATH, Http, type LoadingState, type ServerInfo } from '../http'
+import { BASE_PATH, Http, type ServerInfo } from '../http'
 import { GEN3_COMMANDS } from '../http/gen3'
 import type { UseState } from '../components/map/types'
 import { Neato, RobotType, type QuickRobotInfo, type Robot } from '../types'
@@ -11,6 +11,8 @@ import { useTheme } from '../theme'
 import Loading from '../pages/loading/loading'
 import { ServerHasOutdatedRobot, ServerUnreachable } from '../components/require/emptyState'
 import { isRobotOutdated } from '../utils/version'
+import { track } from '../feedback/feedback'
+import i18n from '../i18n'
 
 interface AppContextType {
     serverInfo: ServerInfo,
@@ -28,8 +30,6 @@ interface AppContextType {
 
     isLoading: boolean
     setIsLoading: (loading: boolean) => void
-    loadingState: LoadingState
-    setLoadingState: (state: LoadingState) => void
 
     message: string | null
     setMessage: (msg: string | null) => void
@@ -50,15 +50,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const { isDark: isDarkMode, setTheme } = useTheme()
     const setIsDarkMode = (dark: boolean) => setTheme(dark ? 'dark' : 'light')
     const [isLoading, setIsLoading] = useState(false)
-    const [loadingState, setLoadingState] = useState<LoadingState>({ isLoading: false })
     const [message, setMessage] = useState<string | null>(null)
     const [hasOutdatedRobot, setHasOutdatedRobot] = useState(false)
     const [serverInfo, setServerInfo] = useState<ServerInfo>()
     const [serverInfoError, setServerInfoError] = useState(false)
-
-    useEffect(() => {
-        Http.setLoadingStateCallback(setLoadingState)
-    }, [])
 
     useEffect(() => {
         if (!robots || !serverInfo) return
@@ -134,21 +129,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
         const serial = robot.serial
         const previousName = robot.name
 
-        setRobot(cur => cur && cur.serial === serial ? { ...cur, name } : cur)
-        setRobots(cur => {
-            if (!cur || !cur[serial]) return cur
-            return { ...cur, [serial]: { ...cur[serial], name } }
-        })
-
-        try {
-            await Http.updateRobot(serial, { name })
-        } catch (err) {
-            setRobot(cur => cur && cur.serial === serial ? { ...cur, name: previousName } : cur)
+        const applyName = (value: string) => {
+            setRobot(cur => cur && cur.serial === serial ? { ...cur, name: value } : cur)
             setRobots(cur => {
                 if (!cur || !cur[serial]) return cur
-                return { ...cur, [serial]: { ...cur[serial], name: previousName } }
+                return { ...cur, [serial]: { ...cur[serial], name: value } }
             })
         }
+
+        await track(() => {
+            applyName(name)
+            return Http.updateRobot(serial, { name }).catch(err => {
+                applyName(previousName)
+                throw err
+            })
+        }, { error: i18n.t('feedback.saveFailed') })
     }
 
     // fetch floorplans/persistent maps whenever the connected robot changes
@@ -309,8 +304,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setIsDarkMode,
         isLoading,
         setIsLoading,
-        loadingState,
-        setLoadingState,
         message,
         setMessage,
         robot,
