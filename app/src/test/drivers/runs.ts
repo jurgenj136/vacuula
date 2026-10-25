@@ -15,3 +15,7 @@ export const openRun = (user: User, index: number) => user.click(screen.getAllBy
 export const detailShown = (text: string) => textShown(text)
 export const useAsFloormapAvailable = () => screen.queryByRole('button', { name: t('map.useAsFloormap') }) !== null
 export const useAsFloormap = (user: User) => user.click(screen.getByRole('button', { name: t('map.useAsFloormap') }))
+export const segmentTags = (title: string) =>
+    [...screen.getByText(title).parentElement!.querySelectorAll('span')]
+        .filter(el => el.className.includes('rounded-lg'))
+        .map(el => el.textContent!.trim())

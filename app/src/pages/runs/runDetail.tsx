@@ -21,6 +21,10 @@ export default function RunDetail({ cleaning }: { cleaning: Cleaning }) {
     const { t } = useTranslation()
     const { formatArea } = useUnits()
     const complete = isComplete(cleaning)
+    // the server can send gen3 runs without mode/navigation
+    const gen3Settings = 'run' in cleaning
+        ? [Neato.Gen3.CleaningMode[cleaning.run.mode], Neato.Gen3.CleaningNavigationMode[cleaning.run.navigation_mode]].filter(Boolean).join(' ')
+        : ''
 
     return (
         <div className="flex flex-col gap-4 pb-2">
@@ -63,7 +67,7 @@ export default function RunDetail({ cleaning }: { cleaning: Cleaning }) {
                         {cleaning.run.error && <span className="text-xs text-err">{cleaning.run.error}</span>}
                         <div className="flex flex-wrap gap-1.5">
                             <Pill>{formatArea(cleaning.run.cleaned_area)}</Pill>
-                            <Pill>{Neato.Gen3.CleaningMode[cleaning.run.mode]} {Neato.Gen3.CleaningNavigationMode[cleaning.run.navigation_mode]}</Pill>
+                            {gen3Settings && <Pill>{gen3Settings}</Pill>}
                         </div>
                         <span className="font-mono text-xs text-muted">
                             {t('runs.timing', { error: cleaning.run.time_in_error, pause: cleaning.run.time_in_pause, charging: cleaning.run.time_in_suspended_cleaning })}, {t('runs.pickedUp', { count: cleaning.run.picked_up_count })}

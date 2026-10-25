@@ -65,4 +65,17 @@ describe('Runs - Gen3', () => {
         expect(runs.useAsFloormapAvailable()).toBe(false)
         await requests.expectNoWrites()
     })
+
+    test('a run without mode or navigation shows no empty tag', async () => {
+        const { user } = await open('gen3', db => {
+            for (const r of db.gen3.runs) {
+                const run = r.run as Partial<typeof r.run>
+                delete run.mode
+                delete run.navigation_mode
+            }
+        })
+        await runs.openRun(user, 0)
+        await expect.poll(() => runs.detailShown('complete | 42min 10sec')).toBe(true)
+        expect(runs.segmentTags('complete | 42min 10sec')).not.toContain('')
+    })
 })
